@@ -1,0 +1,22 @@
+name: ScoreSpark
+options:
+  bundleIdPrefix: com.scorespark
+  deploymentTarget:
+    iOS: "18.0"
+  xcodeVersion: "16.0"
+settings:
+  SWIFT_VERSION: "6.0"
+  SWIFT_STRICT_CONCURRENCY: complete
+targets:
+  ScoreSpark:
+    type: application
+    platform: iOS
+    sources:
+      - ScoreSpark
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: com.scorespark.app
+      INFOPLIST_GENERATION_CLASS: $(PRODUCT_MODULE_NAME).ScoreSparkApp
+      GENERATE_INFOPLIST_FILE: YES
+      SWIFT_EMIT_LOC_STRINGS: YES
+      ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+      ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor

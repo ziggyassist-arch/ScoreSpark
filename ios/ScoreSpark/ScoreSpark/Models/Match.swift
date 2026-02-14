@@ -22,14 +22,14 @@ struct Match: Identifiable, Sendable {
     var isLive: Bool { status == .live || status == .halfTime }
     var displayTime: String {
         switch status {
-        case .live: "\(minute ?? 0)'"
-        case .halfTime: "HT"
-        case .finished: "FT"
+        case .live: return "\(minute ?? 0)'"
+        case .halfTime: return "HT"
+        case .finished: return "FT"
         case .upcoming:
             let formatter = DateFormatter()
             formatter.dateFormat = "HH:mm"
             return formatter.string(from: startTime)
-        case .postponed: "PPD"
+        case .postponed: return "PPD"
         }
     }
 

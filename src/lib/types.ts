@@ -1,4 +1,4 @@
-export type Sport = "soccer" | "nba" | "nfl";
+export type Sport = "soccer" | "nba" | "nfl" | "nhl" | "mlb";
 
 export type MatchStatus = "live" | "upcoming" | "finished";
 
@@ -72,6 +72,20 @@ export interface NBAStandingRow {
   lost: number;
   winPct: string;
   gamesBehind: string;
+  streak: string;
+  last10: string;
+}
+
+export interface NHLStandingRow {
+  position: number;
+  team: Team;
+  played: number;
+  won: number;
+  lost: number;
+  otLosses: number;
+  points: number;
+  goalsFor: number;
+  goalsAgainst: number;
   streak: string;
   last10: string;
 }

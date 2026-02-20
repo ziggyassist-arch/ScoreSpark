@@ -4,6 +4,7 @@ import {
   MatchEvent,
   StandingRow,
   NBAStandingRow,
+  NHLStandingRow,
   League,
   Lineup,
 } from "./types";
@@ -21,6 +22,8 @@ export const leagues: League[] = [
   { id: "seriea", name: "Serie A", sport: "soccer", country: "Italy" },
   { id: "nba", name: "NBA", sport: "nba", country: "USA" },
   { id: "nfl", name: "NFL", sport: "nfl", country: "USA" },
+  { id: "nhl", name: "NHL", sport: "nhl", country: "USA" },
+  { id: "mlb", name: "MLB", sport: "mlb", country: "USA" },
 ];
 
 // ─── Soccer Teams ──────────────────────────────────────────────
@@ -92,11 +95,53 @@ const nflTeams: Record<string, Team> = {
   LAR: { id: "lar", name: "LA Rams", shortName: "LAR", badge: badge("LAR"), sport: "nfl" },
 };
 
+// ─── NHL Teams ────────────────────────────────────────────────
+const nhlTeams: Record<string, Team> = {
+  BOS2: { id: "bos2", name: "Boston Bruins", shortName: "BOS", badge: badge("BOS"), sport: "nhl" },
+  TOR: { id: "tor", name: "Toronto Maple Leafs", shortName: "TOR", badge: badge("TOR"), sport: "nhl" },
+  NYR: { id: "nyr", name: "New York Rangers", shortName: "NYR", badge: badge("NYR"), sport: "nhl" },
+  EDM: { id: "edm", name: "Edmonton Oilers", shortName: "EDM", badge: badge("EDM"), sport: "nhl" },
+  FLA: { id: "fla", name: "Florida Panthers", shortName: "FLA", badge: badge("FLA"), sport: "nhl" },
+  COL: { id: "col", name: "Colorado Avalanche", shortName: "COL", badge: badge("COL"), sport: "nhl" },
+  PIT: { id: "pit", name: "Pittsburgh Penguins", shortName: "PIT", badge: badge("PIT"), sport: "nhl" },
+  WSH: { id: "wsh", name: "Washington Capitals", shortName: "WSH", badge: badge("WSH"), sport: "nhl" },
+  CAR: { id: "car", name: "Carolina Hurricanes", shortName: "CAR", badge: badge("CAR"), sport: "nhl" },
+  DAL3: { id: "dal3", name: "Dallas Stars", shortName: "DAL", badge: badge("DAL"), sport: "nhl" },
+  VGK: { id: "vgk", name: "Vegas Golden Knights", shortName: "VGK", badge: badge("VGK"), sport: "nhl" },
+  WPG: { id: "wpg", name: "Winnipeg Jets", shortName: "WPG", badge: badge("WPG"), sport: "nhl" },
+  NJD: { id: "njd", name: "New Jersey Devils", shortName: "NJD", badge: badge("NJD"), sport: "nhl" },
+  TB: { id: "tb", name: "Tampa Bay Lightning", shortName: "TB", badge: badge("TB"), sport: "nhl" },
+  VAN: { id: "van", name: "Vancouver Canucks", shortName: "VAN", badge: badge("VAN"), sport: "nhl" },
+  NSH: { id: "nsh", name: "Nashville Predators", shortName: "NSH", badge: badge("NSH"), sport: "nhl" },
+};
+
+// ─── MLB Teams ────────────────────────────────────────────────
+const mlbTeams: Record<string, Team> = {
+  NYY: { id: "nyy", name: "New York Yankees", shortName: "NYY", badge: badge("NYY"), sport: "mlb" },
+  LAD: { id: "lad", name: "Los Angeles Dodgers", shortName: "LAD", badge: badge("LAD"), sport: "mlb" },
+  HOU2: { id: "hou2", name: "Houston Astros", shortName: "HOU", badge: badge("HOU"), sport: "mlb" },
+  ATL: { id: "atl", name: "Atlanta Braves", shortName: "ATL", badge: badge("ATL"), sport: "mlb" },
+  PHI3: { id: "phi3", name: "Philadelphia Phillies", shortName: "PHI", badge: badge("PHI"), sport: "mlb" },
+  TEX: { id: "tex", name: "Texas Rangers", shortName: "TEX", badge: badge("TEX"), sport: "mlb" },
+  NYM: { id: "nym", name: "New York Mets", shortName: "NYM", badge: badge("NYM"), sport: "mlb" },
+  CHC: { id: "chc", name: "Chicago Cubs", shortName: "CHC", badge: badge("CHC"), sport: "mlb" },
+  BAL2: { id: "bal2", name: "Baltimore Orioles", shortName: "BAL", badge: badge("BAL"), sport: "mlb" },
+  SD: { id: "sd", name: "San Diego Padres", shortName: "SD", badge: badge("SD"), sport: "mlb" },
+  MIN2: { id: "min2", name: "Minnesota Twins", shortName: "MIN", badge: badge("MIN"), sport: "mlb" },
+  BOS3: { id: "bos3", name: "Boston Red Sox", shortName: "BOS", badge: badge("BOS"), sport: "mlb" },
+  SEA: { id: "sea", name: "Seattle Mariners", shortName: "SEA", badge: badge("SEA"), sport: "mlb" },
+  MIL2: { id: "mil2", name: "Milwaukee Brewers", shortName: "MIL", badge: badge("MIL"), sport: "mlb" },
+  ARI: { id: "ari", name: "Arizona Diamondbacks", shortName: "ARI", badge: badge("ARI"), sport: "mlb" },
+  TB2: { id: "tb2", name: "Tampa Bay Rays", shortName: "TB", badge: badge("TB"), sport: "mlb" },
+};
+
 // ─── All Teams (flat) ──────────────────────────────────────────
 export const allTeams: Team[] = [
   ...Object.values(soccerTeams),
   ...Object.values(nbaTeams),
   ...Object.values(nflTeams),
+  ...Object.values(nhlTeams),
+  ...Object.values(mlbTeams),
 ];
 
 // ─── Soccer Matches ────────────────────────────────────────────

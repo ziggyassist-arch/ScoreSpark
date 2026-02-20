@@ -33,6 +33,8 @@ export default function FavoritesView() {
     soccer: "ring-sport-soccer/30",
     nba: "ring-sport-nba/30",
     nfl: "ring-sport-nfl/30",
+    nhl: "ring-sport-nhl/30",
+    mlb: "ring-sport-mlb/30",
   };
 
   return (

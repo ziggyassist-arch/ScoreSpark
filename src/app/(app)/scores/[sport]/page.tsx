@@ -8,12 +8,14 @@ const sportLabels: Record<Sport, string> = {
   soccer: "Soccer",
   nba: "NBA",
   nfl: "NFL",
+  nhl: "NHL",
+  mlb: "MLB",
 };
 
-const validSports = new Set<string>(["soccer", "nba", "nfl"]);
+const validSports = new Set<string>(["soccer", "nba", "nfl", "nhl", "mlb"]);
 
 export function generateStaticParams() {
-  return [{ sport: "soccer" }, { sport: "nba" }, { sport: "nfl" }];
+  return [{ sport: "soccer" }, { sport: "nba" }, { sport: "nfl" }, { sport: "nhl" }, { sport: "mlb" }];
 }
 
 export function generateMetadata({ params }: { params: Promise<{ sport: string }> }) {

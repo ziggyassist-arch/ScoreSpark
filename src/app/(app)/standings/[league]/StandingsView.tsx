@@ -2,13 +2,16 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { eplStandings, nbaEastStandings, nbaWestStandings } from "@/lib/mock-data";
+import { eplStandings, nbaEastStandings, nbaWestStandings, nhlStandings, mlbALStandings, mlbNLStandings } from "@/lib/mock-data";
 import type { FormResult } from "@/lib/types";
 
 const leagueTabs = [
   { id: "epl", label: "Premier League", href: "/standings/epl" },
   { id: "nba-east", label: "NBA East", href: "/standings/nba-east" },
   { id: "nba-west", label: "NBA West", href: "/standings/nba-west" },
+  { id: "nhl", label: "NHL", href: "/standings/nhl" },
+  { id: "mlb-al", label: "MLB AL", href: "/standings/mlb-al" },
+  { id: "mlb-nl", label: "MLB NL", href: "/standings/mlb-nl" },
 ];
 
 function FormDot({ result }: { result: FormResult }) {
@@ -229,6 +232,190 @@ function NBATable({ conference }: { conference: "east" | "west" }) {
   );
 }
 
+function NHLTable() {
+  return (
+    <div className="overflow-x-auto hide-scrollbar">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-white/30 text-[11px] uppercase tracking-wider">
+            <th className="text-left py-3 px-2 w-8">#</th>
+            <th className="text-left py-3 px-2">Team</th>
+            <th className="text-center py-3 px-1 w-8">GP</th>
+            <th className="text-center py-3 px-1 w-8">W</th>
+            <th className="text-center py-3 px-1 w-8">L</th>
+            <th className="text-center py-3 px-1 w-10">OTL</th>
+            <th className="text-center py-3 px-1 w-10 font-bold text-white/50">Pts</th>
+            <th className="text-center py-3 px-1 w-10 hidden sm:table-cell">GF</th>
+            <th className="text-center py-3 px-1 w-10 hidden sm:table-cell">GA</th>
+            <th className="text-center py-3 px-2 w-12 hidden sm:table-cell">Streak</th>
+            <th className="text-center py-3 px-2 w-14 hidden sm:table-cell">L10</th>
+          </tr>
+        </thead>
+        <tbody>
+          {nhlStandings.map((row, i) => {
+            const playoffLine = i === 7 ? "border-b-2 border-b-sport-nhl/30" : "";
+
+            return (
+              <tr
+                key={row.team.id}
+                className={`border-b border-white/5 hover:bg-white/5 transition-colors ${playoffLine}`}
+              >
+                <td className="py-3 px-2 text-white/40 tabular-nums">
+                  {row.position}
+                </td>
+                <td className="py-3 px-2">
+                  <div className="flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={row.team.badge}
+                      alt={row.team.shortName}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded"
+                    />
+                    <span className="text-white/80 font-medium hidden sm:inline">
+                      {row.team.name}
+                    </span>
+                    <span className="text-white/80 font-medium sm:hidden">
+                      {row.team.shortName}
+                    </span>
+                  </div>
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums">
+                  {row.played}
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums">
+                  {row.won}
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums">
+                  {row.lost}
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums">
+                  {row.otLosses}
+                </td>
+                <td className="text-center py-3 px-1 text-white font-bold tabular-nums">
+                  {row.points}
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums hidden sm:table-cell">
+                  {row.goalsFor}
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums hidden sm:table-cell">
+                  {row.goalsAgainst}
+                </td>
+                <td className="text-center py-3 px-2 hidden sm:table-cell">
+                  <span
+                    className={`text-xs font-medium ${
+                      row.streak.startsWith("W")
+                        ? "text-live-green/80"
+                        : "text-live-red/80"
+                    }`}
+                  >
+                    {row.streak}
+                  </span>
+                </td>
+                <td className="text-center py-3 px-2 text-white/40 tabular-nums hidden sm:table-cell">
+                  {row.last10}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      {/* Legend */}
+      <div className="flex flex-wrap gap-4 mt-4 px-2 text-[11px] text-white/30">
+        <div className="flex items-center gap-1.5">
+          <span className="w-2.5 h-2.5 rounded-full bg-sport-nhl/50" />
+          Playoff Cutoff
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function MLBTable({ league }: { league: "al" | "nl" }) {
+  const standings = league === "al" ? mlbALStandings : mlbNLStandings;
+
+  return (
+    <div className="overflow-x-auto hide-scrollbar">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="text-white/30 text-[11px] uppercase tracking-wider">
+            <th className="text-left py-3 px-2 w-8">#</th>
+            <th className="text-left py-3 px-2">Team</th>
+            <th className="text-center py-3 px-1 w-8">W</th>
+            <th className="text-center py-3 px-1 w-8">L</th>
+            <th className="text-center py-3 px-2 w-14">PCT</th>
+            <th className="text-center py-3 px-2 w-10">GB</th>
+            <th className="text-center py-3 px-2 w-12 hidden sm:table-cell">Streak</th>
+            <th className="text-center py-3 px-2 w-14 hidden sm:table-cell">L10</th>
+          </tr>
+        </thead>
+        <tbody>
+          {standings.map((row, i) => {
+            const playoffLine = i === 5 ? "border-b-2 border-b-sport-mlb/30" : "";
+
+            return (
+              <tr
+                key={row.team.id}
+                className={`border-b border-white/5 hover:bg-white/5 transition-colors ${playoffLine}`}
+              >
+                <td className="py-3 px-2 text-white/40 tabular-nums">
+                  {row.position}
+                </td>
+                <td className="py-3 px-2">
+                  <div className="flex items-center gap-2">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={row.team.badge}
+                      alt={row.team.shortName}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded"
+                    />
+                    <span className="text-white/80 font-medium hidden sm:inline">
+                      {row.team.name}
+                    </span>
+                    <span className="text-white/80 font-medium sm:hidden">
+                      {row.team.shortName}
+                    </span>
+                  </div>
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums">
+                  {row.won}
+                </td>
+                <td className="text-center py-3 px-1 text-white/50 tabular-nums">
+                  {row.lost}
+                </td>
+                <td className="text-center py-3 px-2 text-white/60 tabular-nums font-medium">
+                  {row.winPct}
+                </td>
+                <td className="text-center py-3 px-2 text-white/40 tabular-nums">
+                  {row.gamesBehind}
+                </td>
+                <td className="text-center py-3 px-2 hidden sm:table-cell">
+                  <span
+                    className={`text-xs font-medium ${
+                      row.streak.startsWith("W")
+                        ? "text-live-green/80"
+                        : "text-live-red/80"
+                    }`}
+                  >
+                    {row.streak}
+                  </span>
+                </td>
+                <td className="text-center py-3 px-2 text-white/40 tabular-nums hidden sm:table-cell">
+                  {row.last10}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export default function StandingsView({ league }: { league: string }) {
   const pathname = usePathname();
 
@@ -264,6 +451,9 @@ export default function StandingsView({ league }: { league: string }) {
         {league === "epl" && <EPLTable />}
         {league === "nba-east" && <NBATable conference="east" />}
         {league === "nba-west" && <NBATable conference="west" />}
+        {league === "nhl" && <NHLTable />}
+        {league === "mlb-al" && <MLBTable league="al" />}
+        {league === "mlb-nl" && <MLBTable league="nl" />}
       </div>
     </div>
   );

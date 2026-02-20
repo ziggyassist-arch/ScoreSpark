@@ -8,6 +8,8 @@ const sports = [
   { label: "Soccer", href: "/scores/soccer", emoji: "\u26BD", color: "bg-sport-soccer/20 text-sport-soccer" },
   { label: "NBA", href: "/scores/nba", emoji: "\uD83C\uDFC0", color: "bg-sport-nba/20 text-sport-nba" },
   { label: "NFL", href: "/scores/nfl", emoji: "\uD83C\uDFC8", color: "bg-sport-nfl/20 text-sport-nfl" },
+  { label: "NHL", href: "/scores/nhl", emoji: "\uD83C\uDFD2", color: "bg-sport-nhl/20 text-sport-nhl" },
+  { label: "MLB", href: "/scores/mlb", emoji: "\u26BE", color: "bg-sport-mlb/20 text-sport-mlb" },
 ];
 
 export default function SportSwitcher() {

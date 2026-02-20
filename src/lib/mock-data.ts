@@ -772,11 +772,199 @@ export const nflMatches: Match[] = [
   },
 ];
 
+// ─── NHL Matches ──────────────────────────────────────────────
+export const nhlMatches: Match[] = [
+  // --- LIVE ---
+  {
+    id: "nhl-1",
+    sport: "nhl",
+    league: "NHL",
+    leagueShort: "NHL",
+    homeTeam: nhlTeams.BOS2,
+    awayTeam: nhlTeams.TOR,
+    homeScore: 3,
+    awayScore: 2,
+    status: "live",
+    minute: 3, // period
+    startTime: "2026-02-20T19:00:00Z",
+    venue: "TD Garden",
+    events: [],
+  },
+  {
+    id: "nhl-2",
+    sport: "nhl",
+    league: "NHL",
+    leagueShort: "NHL",
+    homeTeam: nhlTeams.COL,
+    awayTeam: nhlTeams.EDM,
+    homeScore: 1,
+    awayScore: 1,
+    status: "live",
+    minute: 2, // period
+    startTime: "2026-02-20T21:00:00Z",
+    venue: "Ball Arena",
+    events: [],
+  },
+  // --- FINISHED ---
+  {
+    id: "nhl-3",
+    sport: "nhl",
+    league: "NHL",
+    leagueShort: "NHL",
+    homeTeam: nhlTeams.NYR,
+    awayTeam: nhlTeams.PIT,
+    homeScore: 4,
+    awayScore: 1,
+    status: "finished",
+    startTime: "2026-02-19T19:00:00Z",
+    venue: "Madison Square Garden",
+    events: [],
+  },
+  {
+    id: "nhl-4",
+    sport: "nhl",
+    league: "NHL",
+    leagueShort: "NHL",
+    homeTeam: nhlTeams.FLA,
+    awayTeam: nhlTeams.WSH,
+    homeScore: 5,
+    awayScore: 3,
+    status: "finished",
+    startTime: "2026-02-19T19:30:00Z",
+    venue: "Amerant Bank Arena",
+    events: [],
+  },
+  // --- UPCOMING ---
+  {
+    id: "nhl-5",
+    sport: "nhl",
+    league: "NHL",
+    leagueShort: "NHL",
+    homeTeam: nhlTeams.CAR,
+    awayTeam: nhlTeams.DAL3,
+    homeScore: null,
+    awayScore: null,
+    status: "upcoming",
+    startTime: "2026-02-21T19:00:00Z",
+    venue: "PNC Arena",
+    events: [],
+  },
+  {
+    id: "nhl-6",
+    sport: "nhl",
+    league: "NHL",
+    leagueShort: "NHL",
+    homeTeam: nhlTeams.VGK,
+    awayTeam: nhlTeams.WPG,
+    homeScore: null,
+    awayScore: null,
+    status: "upcoming",
+    startTime: "2026-02-21T22:00:00Z",
+    venue: "T-Mobile Arena",
+    events: [],
+  },
+];
+
+// ─── MLB Matches ──────────────────────────────────────────────
+export const mlbMatches: Match[] = [
+  // --- LIVE ---
+  {
+    id: "mlb-1",
+    sport: "mlb",
+    league: "MLB",
+    leagueShort: "MLB",
+    homeTeam: mlbTeams.NYY,
+    awayTeam: mlbTeams.BOS3,
+    homeScore: 5,
+    awayScore: 3,
+    status: "live",
+    minute: 6, // inning
+    startTime: "2026-02-20T18:05:00Z",
+    venue: "Yankee Stadium",
+    events: [],
+  },
+  {
+    id: "mlb-2",
+    sport: "mlb",
+    league: "MLB",
+    leagueShort: "MLB",
+    homeTeam: mlbTeams.LAD,
+    awayTeam: mlbTeams.SD,
+    homeScore: 2,
+    awayScore: 2,
+    status: "live",
+    minute: 4, // inning
+    startTime: "2026-02-20T22:10:00Z",
+    venue: "Dodger Stadium",
+    events: [],
+  },
+  // --- FINISHED ---
+  {
+    id: "mlb-3",
+    sport: "mlb",
+    league: "MLB",
+    leagueShort: "MLB",
+    homeTeam: mlbTeams.HOU2,
+    awayTeam: mlbTeams.TEX,
+    homeScore: 7,
+    awayScore: 4,
+    status: "finished",
+    startTime: "2026-02-19T20:10:00Z",
+    venue: "Minute Maid Park",
+    events: [],
+  },
+  {
+    id: "mlb-4",
+    sport: "mlb",
+    league: "MLB",
+    leagueShort: "MLB",
+    homeTeam: mlbTeams.ATL,
+    awayTeam: mlbTeams.PHI3,
+    homeScore: 3,
+    awayScore: 6,
+    status: "finished",
+    startTime: "2026-02-19T19:20:00Z",
+    venue: "Truist Park",
+    events: [],
+  },
+  // --- UPCOMING ---
+  {
+    id: "mlb-5",
+    sport: "mlb",
+    league: "MLB",
+    leagueShort: "MLB",
+    homeTeam: mlbTeams.NYM,
+    awayTeam: mlbTeams.CHC,
+    homeScore: null,
+    awayScore: null,
+    status: "upcoming",
+    startTime: "2026-02-21T19:10:00Z",
+    venue: "Citi Field",
+    events: [],
+  },
+  {
+    id: "mlb-6",
+    sport: "mlb",
+    league: "MLB",
+    leagueShort: "MLB",
+    homeTeam: mlbTeams.BAL2,
+    awayTeam: mlbTeams.MIN2,
+    homeScore: null,
+    awayScore: null,
+    status: "upcoming",
+    startTime: "2026-02-21T18:35:00Z",
+    venue: "Camden Yards",
+    events: [],
+  },
+];
+
 // ─── All Matches ───────────────────────────────────────────────
 export const allMatches: Match[] = [
   ...soccerMatches,
   ...nbaMatches,
   ...nflMatches,
+  ...nhlMatches,
+  ...mlbMatches,
 ];
 
 // ─── Premier League Standings ──────────────────────────────────
@@ -825,6 +1013,50 @@ export const nbaWestStandings: NBAStandingRow[] = [
   { position: 6, team: nbaTeams.PHX, played: 55, won: 31, lost: 24, winPct: ".564", gamesBehind: "11.0", streak: "W1", last10: "5-5" },
   { position: 7, team: nbaTeams.SAC, played: 56, won: 29, lost: 27, winPct: ".518", gamesBehind: "13.5", streak: "L3", last10: "3-7" },
   { position: 8, team: nbaTeams.GSW, played: 56, won: 28, lost: 28, winPct: ".500", gamesBehind: "14.5", streak: "W2", last10: "5-5" },
+];
+
+// ─── NHL Standings ────────────────────────────────────────────
+export const nhlStandings: NHLStandingRow[] = [
+  { position: 1, team: nhlTeams.WPG, played: 55, won: 37, lost: 14, otLosses: 4, points: 78, goalsFor: 198, goalsAgainst: 142, streak: "W4", last10: "8-1-1" },
+  { position: 2, team: nhlTeams.FLA, played: 55, won: 35, lost: 16, otLosses: 4, points: 74, goalsFor: 192, goalsAgainst: 148, streak: "W2", last10: "7-2-1" },
+  { position: 3, team: nhlTeams.CAR, played: 54, won: 34, lost: 16, otLosses: 4, points: 72, goalsFor: 185, goalsAgainst: 140, streak: "L1", last10: "6-3-1" },
+  { position: 4, team: nhlTeams.DAL3, played: 55, won: 33, lost: 17, otLosses: 5, points: 71, goalsFor: 180, goalsAgainst: 152, streak: "W1", last10: "6-3-1" },
+  { position: 5, team: nhlTeams.COL, played: 54, won: 33, lost: 18, otLosses: 3, points: 69, goalsFor: 195, goalsAgainst: 160, streak: "W3", last10: "7-3-0" },
+  { position: 6, team: nhlTeams.EDM, played: 55, won: 32, lost: 19, otLosses: 4, points: 68, goalsFor: 190, goalsAgainst: 165, streak: "W1", last10: "5-4-1" },
+  { position: 7, team: nhlTeams.NYR, played: 55, won: 30, lost: 20, otLosses: 5, points: 65, goalsFor: 175, goalsAgainst: 158, streak: "W2", last10: "6-3-1" },
+  { position: 8, team: nhlTeams.TOR, played: 54, won: 30, lost: 20, otLosses: 4, points: 64, goalsFor: 182, goalsAgainst: 162, streak: "L2", last10: "5-4-1" },
+  { position: 9, team: nhlTeams.BOS2, played: 55, won: 29, lost: 21, otLosses: 5, points: 63, goalsFor: 170, goalsAgainst: 158, streak: "W1", last10: "5-4-1" },
+  { position: 10, team: nhlTeams.VGK, played: 55, won: 29, lost: 21, otLosses: 5, points: 63, goalsFor: 178, goalsAgainst: 164, streak: "L1", last10: "4-5-1" },
+  { position: 11, team: nhlTeams.TB, played: 54, won: 28, lost: 21, otLosses: 5, points: 61, goalsFor: 172, goalsAgainst: 160, streak: "W1", last10: "5-4-1" },
+  { position: 12, team: nhlTeams.WSH, played: 55, won: 27, lost: 22, otLosses: 6, points: 60, goalsFor: 168, goalsAgainst: 165, streak: "L1", last10: "4-5-1" },
+  { position: 13, team: nhlTeams.VAN, played: 55, won: 26, lost: 23, otLosses: 6, points: 58, goalsFor: 165, goalsAgainst: 170, streak: "L3", last10: "3-6-1" },
+  { position: 14, team: nhlTeams.NJD, played: 54, won: 25, lost: 24, otLosses: 5, points: 55, goalsFor: 160, goalsAgainst: 172, streak: "W1", last10: "4-5-1" },
+  { position: 15, team: nhlTeams.PIT, played: 55, won: 24, lost: 25, otLosses: 6, points: 54, goalsFor: 158, goalsAgainst: 175, streak: "L2", last10: "3-6-1" },
+  { position: 16, team: nhlTeams.NSH, played: 55, won: 22, lost: 27, otLosses: 6, points: 50, goalsFor: 148, goalsAgainst: 180, streak: "L1", last10: "3-6-1" },
+];
+
+// ─── MLB AL Standings ─────────────────────────────────────────
+export const mlbALStandings: NBAStandingRow[] = [
+  { position: 1, team: mlbTeams.NYY, played: 95, won: 58, lost: 37, winPct: ".611", gamesBehind: "-", streak: "W3", last10: "7-3" },
+  { position: 2, team: mlbTeams.BAL2, played: 94, won: 56, lost: 38, winPct: ".596", gamesBehind: "1.5", streak: "W1", last10: "6-4" },
+  { position: 3, team: mlbTeams.HOU2, played: 95, won: 54, lost: 41, winPct: ".568", gamesBehind: "4.0", streak: "L1", last10: "5-5" },
+  { position: 4, team: mlbTeams.MIN2, played: 94, won: 52, lost: 42, winPct: ".553", gamesBehind: "5.5", streak: "W2", last10: "6-4" },
+  { position: 5, team: mlbTeams.TEX, played: 95, won: 50, lost: 45, winPct: ".526", gamesBehind: "8.0", streak: "L2", last10: "4-6" },
+  { position: 6, team: mlbTeams.SEA, played: 94, won: 49, lost: 45, winPct: ".521", gamesBehind: "8.5", streak: "W1", last10: "5-5" },
+  { position: 7, team: mlbTeams.BOS3, played: 95, won: 48, lost: 47, winPct: ".505", gamesBehind: "10.0", streak: "L3", last10: "3-7" },
+  { position: 8, team: mlbTeams.TB2, played: 94, won: 46, lost: 48, winPct: ".489", gamesBehind: "11.5", streak: "L1", last10: "4-6" },
+];
+
+// ─── MLB NL Standings ─────────────────────────────────────────
+export const mlbNLStandings: NBAStandingRow[] = [
+  { position: 1, team: mlbTeams.LAD, played: 95, won: 60, lost: 35, winPct: ".632", gamesBehind: "-", streak: "W5", last10: "8-2" },
+  { position: 2, team: mlbTeams.PHI3, played: 95, won: 57, lost: 38, winPct: ".600", gamesBehind: "3.0", streak: "W2", last10: "7-3" },
+  { position: 3, team: mlbTeams.ATL, played: 94, won: 55, lost: 39, winPct: ".585", gamesBehind: "4.5", streak: "L1", last10: "6-4" },
+  { position: 4, team: mlbTeams.MIL2, played: 95, won: 53, lost: 42, winPct: ".558", gamesBehind: "7.0", streak: "W1", last10: "5-5" },
+  { position: 5, team: mlbTeams.ARI, played: 94, won: 51, lost: 43, winPct: ".543", gamesBehind: "8.5", streak: "W3", last10: "7-3" },
+  { position: 6, team: mlbTeams.SD, played: 95, won: 50, lost: 45, winPct: ".526", gamesBehind: "10.0", streak: "L2", last10: "4-6" },
+  { position: 7, team: mlbTeams.NYM, played: 95, won: 48, lost: 47, winPct: ".505", gamesBehind: "12.0", streak: "W1", last10: "5-5" },
+  { position: 8, team: mlbTeams.CHC, played: 94, won: 46, lost: 48, winPct: ".489", gamesBehind: "13.5", streak: "L1", last10: "4-6" },
 ];
 
 // ─── Lineups (Arsenal vs Chelsea example) ──────────────────────

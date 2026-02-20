@@ -7,54 +7,74 @@ struct FavoritesView: View {
 
     var body: some View {
         ScrollView {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 16) {
                 // My starred teams
                 if !viewModel.favoriteTeams.isEmpty {
-                    SectionHeader(title: "My Teams", icon: "star.fill")
+                    Text("My Teams")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AppColors.textSecondary)
+                        .padding(.horizontal, 16)
+
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack(spacing: 12) {
                             ForEach(viewModel.favoriteTeams) { team in
-                                VStack(spacing: 6) {
+                                VStack(spacing: 4) {
                                     ZStack(alignment: .topTrailing) {
                                         Circle()
                                             .fill(Color(hex: team.primaryColor).opacity(0.3))
-                                            .frame(width: 56, height: 56)
+                                            .frame(width: 48, height: 48)
                                             .overlay {
                                                 Text(team.shortName)
-                                                    .font(.system(size: 14, weight: .bold, design: .rounded))
+                                                    .font(.system(size: 13, weight: .bold))
                                                     .foregroundStyle(Color(hex: team.primaryColor))
                                             }
                                         Image(systemName: "star.fill")
-                                            .font(.system(size: 10))
+                                            .font(.system(size: 8))
                                             .foregroundStyle(AppColors.gold)
-                                            .offset(x: 4, y: -4)
+                                            .offset(x: 2, y: -2)
                                     }
                                     Text(team.shortName)
-                                        .font(AppTypography.caption)
-                                        .foregroundStyle(AppColors.textSecondary)
+                                        .font(.system(size: 10, weight: .medium))
+                                        .foregroundStyle(AppColors.textTertiary)
                                 }
                                 .onTapGesture { viewModel.toggleFavorite(team) }
                             }
                         }
-                        .padding(.horizontal)
+                        .padding(.horizontal, 16)
                     }
                 }
 
                 // Followed matches
                 if !viewModel.favoriteMatches.isEmpty {
-                    SectionHeader(title: "Followed Matches", icon: "bell.fill")
-                    ForEach(viewModel.favoriteMatches) { match in
-                        MatchCard(match: match)
-                            .padding(.horizontal)
+                    Text("Upcoming & Recent")
+                        .font(.system(size: 13, weight: .semibold))
+                        .foregroundStyle(AppColors.textSecondary)
+                        .padding(.horizontal, 16)
+
+                    LazyVStack(spacing: 0) {
+                        ForEach(viewModel.favoriteMatches) { match in
+                            NavigationLink(value: match.id) {
+                                FotMobMatchRow(match: match)
+                            }
+                            .buttonStyle(.plain)
+
+                            Divider()
+                                .overlay(Color.white.opacity(0.06))
+                                .padding(.horizontal, 12)
+                        }
                     }
                 }
 
-                // Browse teams by sport
-                SectionHeader(title: "Browse Teams", icon: "magnifyingglass")
+                // Browse teams
+                Text("Browse Teams")
+                    .font(.system(size: 13, weight: .semibold))
+                    .foregroundStyle(AppColors.textSecondary)
+                    .padding(.horizontal, 16)
+                    .padding(.top, 8)
 
                 // Sport selector
                 ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 8) {
+                    HStack(spacing: 6) {
                         ForEach(Sport.sports) { sport in
                             let isSelected = viewModel.browseSport == sport
                             Button {
@@ -62,14 +82,14 @@ struct FavoritesView: View {
                                     viewModel.updateBrowseSport(sport)
                                 }
                             } label: {
-                                HStack(spacing: 4) {
+                                HStack(spacing: 3) {
                                     Text(sport.emoji)
-                                        .font(.system(size: 13))
+                                        .font(.system(size: 12))
                                     Text(sport.rawValue)
-                                        .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                        .font(.system(size: 12, weight: .semibold))
                                 }
                                 .foregroundStyle(isSelected ? AppColors.darkNavy : AppColors.textSecondary)
-                                .padding(.horizontal, 12)
+                                .padding(.horizontal, 10)
                                 .padding(.vertical, 6)
                                 .background(
                                     isSelected ? Color(hex: sport.accentColor) : AppColors.surface,
@@ -78,47 +98,44 @@ struct FavoritesView: View {
                             }
                         }
                     }
-                    .padding(.horizontal)
+                    .padding(.horizontal, 16)
                 }
 
                 // Team grid
-                LazyVGrid(columns: columns, spacing: 16) {
+                LazyVGrid(columns: columns, spacing: 12) {
                     ForEach(viewModel.browseTeams) { team in
                         Button {
                             withAnimation(.snappy) { viewModel.toggleFavorite(team) }
                         } label: {
-                            VStack(spacing: 6) {
+                            VStack(spacing: 4) {
                                 ZStack(alignment: .topTrailing) {
                                     Circle()
                                         .fill(Color(hex: team.primaryColor).opacity(0.25))
-                                        .frame(width: 52, height: 52)
+                                        .frame(width: 44, height: 44)
                                         .overlay {
                                             Text(String(team.shortName.prefix(3)))
-                                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                                .font(.system(size: 11, weight: .bold))
                                                 .foregroundStyle(Color(hex: team.primaryColor))
                                         }
                                     if viewModel.isFavorite(team) {
                                         Image(systemName: "star.fill")
-                                            .font(.system(size: 10))
+                                            .font(.system(size: 8))
                                             .foregroundStyle(AppColors.gold)
                                             .offset(x: 2, y: -2)
                                     }
                                 }
                                 Text(team.shortName)
-                                    .font(.system(size: 10, weight: .medium, design: .rounded))
+                                    .font(.system(size: 9, weight: .medium))
                                     .foregroundStyle(AppColors.textSecondary)
                                     .lineLimit(1)
                             }
                         }
                     }
                 }
-                .padding(.horizontal)
+                .padding(.horizontal, 16)
             }
-            .padding(.vertical)
+            .padding(.vertical, 8)
         }
-        .background(AppColors.background)
-        .navigationTitle("Favorites")
-        .toolbarTitleDisplayMode(.large)
         .task { await viewModel.load() }
     }
 }

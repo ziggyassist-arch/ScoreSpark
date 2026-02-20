@@ -16,7 +16,7 @@ enum AppColors {
     static let textPrimary = white
     static let textSecondary = white.opacity(0.7)
     static let textTertiary = white.opacity(0.4)
-    static let livePulse = Color.red
+    static let livePulse = Color(hex: "22C55E")
     static let win = Color.green
     static let loss = Color.red.opacity(0.8)
     static let draw = white.opacity(0.5)

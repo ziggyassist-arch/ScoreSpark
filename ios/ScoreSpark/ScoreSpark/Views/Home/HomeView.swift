@@ -6,17 +6,19 @@ struct HomeView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: 24) {
+            VStack(spacing: 16) {
                 // Logo header
                 HStack {
                     Image("Logo")
                         .resizable()
                         .scaledToFit()
-                        .frame(height: 32)
+                        .frame(height: 28)
                     Spacer()
-                    SportSwitcher()
                 }
                 .padding(.horizontal)
+
+                // Sport switcher
+                SportSwitcher()
 
                 // Live Now
                 if !viewModel.liveMatches.isEmpty {
@@ -37,28 +39,32 @@ struct HomeView: View {
                     }
                 }
 
-                // My Teams
-                VStack(alignment: .leading, spacing: 12) {
-                    SectionHeader(title: "My Teams", icon: "star.fill")
-                    ForEach(viewModel.myTeamMatches) { match in
-                        NavigationLink(value: match.id) {
-                            MatchCard(match: match)
+                // Recent Results
+                if !viewModel.myTeamMatches.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        SectionHeader(title: "Results", icon: "checkmark.circle.fill")
+                        ForEach(viewModel.myTeamMatches) { match in
+                            NavigationLink(value: match.id) {
+                                MatchCard(match: match)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
 
                 // Upcoming
-                VStack(alignment: .leading, spacing: 12) {
-                    SectionHeader(title: "Upcoming", icon: "clock.fill")
-                    ForEach(viewModel.upcomingMatches) { match in
-                        NavigationLink(value: match.id) {
-                            MatchCard(match: match)
+                if !viewModel.upcomingMatches.isEmpty {
+                    VStack(alignment: .leading, spacing: 12) {
+                        SectionHeader(title: "Upcoming", icon: "clock.fill")
+                        ForEach(viewModel.upcomingMatches) { match in
+                            NavigationLink(value: match.id) {
+                                MatchCard(match: match)
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                        .padding(.horizontal)
                     }
-                    .padding(.horizontal)
                 }
             }
             .padding(.vertical)

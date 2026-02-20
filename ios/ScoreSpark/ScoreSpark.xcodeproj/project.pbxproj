@@ -14,6 +14,7 @@
 		2C0A2EEB1EC59B66DA1A389B /* Standing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A8E41AA4E5EA0D4A38755D34 /* Standing.swift */; };
 		2F36F8419FF1AEA9EF96062B /* Match.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8BE162B2CC737AFB4BA6F5C2 /* Match.swift */; };
 		2FA1D219D2FBA243A8578A65 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8C4DD746FE922BADB235821 /* MainTabView.swift */; };
+		304B8A1CB203A5070F3E3EE6 /* MockDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0BC1151073EF2DE469548F96 /* MockDataService.swift */; };
 		3108342F9A3876A1CD1F5543 /* FavoritesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10531EE9B287A8BA7B379C89 /* FavoritesViewModel.swift */; };
 		342A460B0CFBC163703788C4 /* AppColors.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92CF79633734F6D232F06CC /* AppColors.swift */; };
 		3DD73C01EC9FE04F9783DA16 /* League.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3E2108F52C9CF1BCDD981373 /* League.swift */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		0997D42B500287B4690B838C /* StandingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StandingsViewModel.swift; sourceTree = "<group>"; };
+		0BC1151073EF2DE469548F96 /* MockDataService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockDataService.swift; sourceTree = "<group>"; };
 		103E0E21B353ECC7739181E0 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
 		10531EE9B287A8BA7B379C89 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
 		1AC08910C675B4F264C825F3 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
@@ -154,6 +156,7 @@
 			isa = PBXGroup;
 			children = (
 				769E12F4EC55539ABEC3EA1E /* APIService.swift */,
+				0BC1151073EF2DE469548F96 /* MockDataService.swift */,
 				402508A45A15CC27C46236C4 /* NotificationService.swift */,
 				456E8E90E4DD0BFAA4D106D1 /* ScoreService.swift */,
 			);
@@ -311,6 +314,7 @@
 				DEC6386AAD43D4DE5F515143 /* MatchDetailView.swift in Sources */,
 				EFF74BC337650B6838496C53 /* MatchListView.swift in Sources */,
 				68433CCA44BE6C8A32088A3B /* MatchesViewModel.swift in Sources */,
+				304B8A1CB203A5070F3E3EE6 /* MockDataService.swift in Sources */,
 				C842E25E050EFE6B46BD69EF /* NotificationService.swift in Sources */,
 				4ADCC75B57A51451DC2CF87C /* Player.swift in Sources */,
 				0FDB1C6E4DFC165DFDABCF72 /* ScoreService.swift in Sources */,

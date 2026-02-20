@@ -45,17 +45,38 @@ struct MatchCard: View {
 
     private func teamColumn(_ team: Team, alignment: HorizontalAlignment) -> some View {
         VStack(alignment: alignment, spacing: 6) {
-            Circle()
-                .fill(AppColors.surfaceLight)
-                .frame(width: 40, height: 40)
-                .overlay {
-                    Text(team.shortName.prefix(2))
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
-                        .foregroundStyle(AppColors.accent)
-                }
+            teamLogo(team, size: 40)
             Text(team.shortName)
                 .font(AppTypography.caption)
                 .foregroundStyle(AppColors.textSecondary)
+        }
+    }
+
+    private func teamLogo(_ team: Team, size: CGFloat) -> some View {
+        Group {
+            if team.sport == .soccer, let url = team.logoURL {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFit()
+                } placeholder: {
+                    Circle()
+                        .fill(Color(hex: team.primaryColor).opacity(0.3))
+                        .overlay {
+                            Text(String(team.shortName.prefix(2)))
+                                .font(.system(size: size * 0.35, weight: .bold, design: .rounded))
+                                .foregroundStyle(.white)
+                        }
+                }
+                .frame(width: size, height: size)
+            } else {
+                Circle()
+                    .fill(Color(hex: team.primaryColor).opacity(0.3))
+                    .frame(width: size, height: size)
+                    .overlay {
+                        Text(String(team.shortName.prefix(3)))
+                            .font(.system(size: size * 0.3, weight: .bold, design: .rounded))
+                            .foregroundStyle(Color(hex: team.primaryColor))
+                    }
+            }
         }
     }
 

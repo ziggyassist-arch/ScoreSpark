@@ -15,10 +15,7 @@ final class MatchesViewModel {
     func load(sport: Sport) async {
         isLoading = true
         try? await Task.sleep(for: .milliseconds(300))
-        groups = [
-            LeagueGroup(league: .premierLeague, matches: [.previewLive, .previewFinished]),
-            LeagueGroup(league: .laLiga, matches: [.previewUpcoming]),
-        ]
+        groups = MockDataService.leagueGroups(for: sport)
         isLoading = false
     }
 }

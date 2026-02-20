@@ -5,20 +5,14 @@ struct MainTabView: View {
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            Tab("Home", systemImage: "house.fill", value: 0) {
+            Tab("Scores", systemImage: "sportscourt.fill", value: 0) {
                 NavigationStack { HomeView() }
             }
-            Tab("Matches", systemImage: "sportscourt.fill", value: 1) {
-                NavigationStack { MatchListView() }
-            }
-            Tab("Standings", systemImage: "list.number", value: 2) {
+            Tab("Standings", systemImage: "list.number", value: 1) {
                 NavigationStack { StandingsView() }
             }
-            Tab("Favorites", systemImage: "star.fill", value: 3) {
+            Tab("Favorites", systemImage: "star.fill", value: 2) {
                 NavigationStack { FavoritesView() }
-            }
-            Tab("More", systemImage: "ellipsis", value: 4) {
-                NavigationStack { SettingsView() }
             }
         }
         .tint(AppColors.gold)

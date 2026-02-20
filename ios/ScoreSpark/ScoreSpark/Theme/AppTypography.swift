@@ -7,6 +7,7 @@ enum AppTypography {
     static let subheadline = Font.system(.subheadline, design: .rounded, weight: .medium)
     static let body = Font.system(.body, design: .rounded)
     static let caption = Font.system(.caption, design: .rounded)
-    static let score = Font.system(size: 36, weight: .heavy, design: .rounded)
-    static let scoreMedium = Font.system(size: 24, weight: .bold, design: .rounded)
+    static let score = Font.system(size: 36, weight: .heavy, design: .rounded).monospacedDigit()
+    static let scoreMedium = Font.system(size: 24, weight: .bold, design: .rounded).monospacedDigit()
+    static let scoreCompact = Font.system(size: 18, weight: .bold, design: .rounded).monospacedDigit()
 }

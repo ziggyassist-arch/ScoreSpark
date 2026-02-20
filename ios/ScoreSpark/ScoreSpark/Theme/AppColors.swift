@@ -21,6 +21,13 @@ enum AppColors {
     static let loss = Color.red.opacity(0.8)
     static let draw = white.opacity(0.5)
 
+    // Sport colors
+    static let soccerGreen = Color(hex: "22C55E")
+    static let nbaOrange = Color(hex: "F97316")
+    static let nflBlue = Color(hex: "3B82F6")
+    static let nhlPurple = Color(hex: "A855F7")
+    static let mlbRed = Color(hex: "EF4444")
+
     static let cardGradient = LinearGradient(
         colors: [deepIndigo, darkNavy],
         startPoint: .topLeading,

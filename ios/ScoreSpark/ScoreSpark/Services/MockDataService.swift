@@ -72,118 +72,118 @@ enum MockDataService {
     // MARK: - NBA Teams
 
     static let celtics = Team(id: "bos-nba", name: "Boston Celtics", shortName: "BOS",
-        logoURL: nil, sport: .nba, primaryColor: "007A33")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612738/global/L/logo.svg"), sport: .nba, primaryColor: "007A33")
     static let lakers = Team(id: "lal-nba", name: "LA Lakers", shortName: "LAL",
-        logoURL: nil, sport: .nba, primaryColor: "552583")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612747/global/L/logo.svg"), sport: .nba, primaryColor: "552583")
     static let warriors = Team(id: "gsw-nba", name: "Golden State Warriors", shortName: "GSW",
-        logoURL: nil, sport: .nba, primaryColor: "1D428A")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612744/global/L/logo.svg"), sport: .nba, primaryColor: "1D428A")
     static let bucks = Team(id: "mil-nba", name: "Milwaukee Bucks", shortName: "MIL",
-        logoURL: nil, sport: .nba, primaryColor: "00471B")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612749/global/L/logo.svg"), sport: .nba, primaryColor: "00471B")
     static let nuggets = Team(id: "den-nba", name: "Denver Nuggets", shortName: "DEN",
-        logoURL: nil, sport: .nba, primaryColor: "0E2240")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612743/global/L/logo.svg"), sport: .nba, primaryColor: "0E2240")
     static let heat = Team(id: "mia-nba", name: "Miami Heat", shortName: "MIA",
-        logoURL: nil, sport: .nba, primaryColor: "98002E")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612748/global/L/logo.svg"), sport: .nba, primaryColor: "98002E")
     static let sixers = Team(id: "phi-nba", name: "Philadelphia 76ers", shortName: "PHI",
-        logoURL: nil, sport: .nba, primaryColor: "006BB6")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612755/global/L/logo.svg"), sport: .nba, primaryColor: "006BB6")
     static let knicks = Team(id: "nyk-nba", name: "New York Knicks", shortName: "NYK",
-        logoURL: nil, sport: .nba, primaryColor: "F58426")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612752/global/L/logo.svg"), sport: .nba, primaryColor: "F58426")
     static let suns = Team(id: "phx-nba", name: "Phoenix Suns", shortName: "PHX",
-        logoURL: nil, sport: .nba, primaryColor: "1D1160")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612756/global/L/logo.svg"), sport: .nba, primaryColor: "1D1160")
     static let thunder = Team(id: "okc-nba", name: "Oklahoma City Thunder", shortName: "OKC",
-        logoURL: nil, sport: .nba, primaryColor: "007AC1")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612760/global/L/logo.svg"), sport: .nba, primaryColor: "007AC1")
     static let cavs = Team(id: "cle-nba", name: "Cleveland Cavaliers", shortName: "CLE",
-        logoURL: nil, sport: .nba, primaryColor: "860038")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612739/global/L/logo.svg"), sport: .nba, primaryColor: "860038")
     static let mavs = Team(id: "dal-nba", name: "Dallas Mavericks", shortName: "DAL",
-        logoURL: nil, sport: .nba, primaryColor: "00538C")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612742/global/L/logo.svg"), sport: .nba, primaryColor: "00538C")
     static let pacers = Team(id: "ind-nba", name: "Indiana Pacers", shortName: "IND",
-        logoURL: nil, sport: .nba, primaryColor: "002D62")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612754/global/L/logo.svg"), sport: .nba, primaryColor: "002D62")
     static let magic = Team(id: "orl-nba", name: "Orlando Magic", shortName: "ORL",
-        logoURL: nil, sport: .nba, primaryColor: "0077C0")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612753/global/L/logo.svg"), sport: .nba, primaryColor: "0077C0")
     static let timberwolves = Team(id: "min-nba", name: "Minnesota Timberwolves", shortName: "MIN",
-        logoURL: nil, sport: .nba, primaryColor: "0C2340")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612750/global/L/logo.svg"), sport: .nba, primaryColor: "0C2340")
     static let clippers = Team(id: "lac-nba", name: "LA Clippers", shortName: "LAC",
-        logoURL: nil, sport: .nba, primaryColor: "C8102E")
+        logoURL: URL(string: "https://cdn.nba.com/logos/nba/1610612746/global/L/logo.svg"), sport: .nba, primaryColor: "C8102E")
 
     // MARK: - NFL Teams
 
     static let chiefs = Team(id: "kc-nfl", name: "Kansas City Chiefs", shortName: "KC",
-        logoURL: nil, sport: .nfl, primaryColor: "E31837")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/kc.png"), sport: .nfl, primaryColor: "E31837")
     static let eagles = Team(id: "phi-nfl", name: "Philadelphia Eagles", shortName: "PHI",
-        logoURL: nil, sport: .nfl, primaryColor: "004C54")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/phi.png"), sport: .nfl, primaryColor: "004C54")
     static let niners = Team(id: "sf-nfl", name: "San Francisco 49ers", shortName: "SF",
-        logoURL: nil, sport: .nfl, primaryColor: "AA0000")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/sf.png"), sport: .nfl, primaryColor: "AA0000")
     static let cowboys = Team(id: "dal-nfl", name: "Dallas Cowboys", shortName: "DAL",
-        logoURL: nil, sport: .nfl, primaryColor: "003594")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/dal.png"), sport: .nfl, primaryColor: "003594")
     static let ravens = Team(id: "bal-nfl", name: "Baltimore Ravens", shortName: "BAL",
-        logoURL: nil, sport: .nfl, primaryColor: "241773")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/bal.png"), sport: .nfl, primaryColor: "241773")
     static let bills = Team(id: "buf-nfl", name: "Buffalo Bills", shortName: "BUF",
-        logoURL: nil, sport: .nfl, primaryColor: "00338D")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/buf.png"), sport: .nfl, primaryColor: "00338D")
     static let lions = Team(id: "det-nfl", name: "Detroit Lions", shortName: "DET",
-        logoURL: nil, sport: .nfl, primaryColor: "0076B6")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/det.png"), sport: .nfl, primaryColor: "0076B6")
     static let packers = Team(id: "gb-nfl", name: "Green Bay Packers", shortName: "GB",
-        logoURL: nil, sport: .nfl, primaryColor: "203731")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/gb.png"), sport: .nfl, primaryColor: "203731")
     static let dolphins = Team(id: "mia-nfl", name: "Miami Dolphins", shortName: "MIA",
-        logoURL: nil, sport: .nfl, primaryColor: "008E97")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/mia.png"), sport: .nfl, primaryColor: "008E97")
     static let texans = Team(id: "hou-nfl", name: "Houston Texans", shortName: "HOU",
-        logoURL: nil, sport: .nfl, primaryColor: "03202F")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/hou.png"), sport: .nfl, primaryColor: "03202F")
     static let steelers = Team(id: "pit-nfl", name: "Pittsburgh Steelers", shortName: "PIT",
-        logoURL: nil, sport: .nfl, primaryColor: "FFB612")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/pit.png"), sport: .nfl, primaryColor: "FFB612")
     static let bengals = Team(id: "cin-nfl", name: "Cincinnati Bengals", shortName: "CIN",
-        logoURL: nil, sport: .nfl, primaryColor: "FB4F14")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nfl/500/cin.png"), sport: .nfl, primaryColor: "FB4F14")
 
     // MARK: - NHL Teams
 
     static let bruins = Team(id: "bos-nhl", name: "Boston Bruins", shortName: "BOS",
-        logoURL: nil, sport: .nhl, primaryColor: "FFB81C")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/bos.png"), sport: .nhl, primaryColor: "FFB81C")
     static let mapleLeafs = Team(id: "tor-nhl", name: "Toronto Maple Leafs", shortName: "TOR",
-        logoURL: nil, sport: .nhl, primaryColor: "00205B")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/tor.png"), sport: .nhl, primaryColor: "00205B")
     static let rangers = Team(id: "nyr-nhl", name: "New York Rangers", shortName: "NYR",
-        logoURL: nil, sport: .nhl, primaryColor: "0038A8")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/nyr.png"), sport: .nhl, primaryColor: "0038A8")
     static let oilers = Team(id: "edm-nhl", name: "Edmonton Oilers", shortName: "EDM",
-        logoURL: nil, sport: .nhl, primaryColor: "041E42")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/edm.png"), sport: .nhl, primaryColor: "041E42")
     static let panthers = Team(id: "fla-nhl", name: "Florida Panthers", shortName: "FLA",
-        logoURL: nil, sport: .nhl, primaryColor: "041E42")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/fla.png"), sport: .nhl, primaryColor: "041E42")
     static let avalanche = Team(id: "col-nhl", name: "Colorado Avalanche", shortName: "COL",
-        logoURL: nil, sport: .nhl, primaryColor: "6F263D")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/col.png"), sport: .nhl, primaryColor: "6F263D")
     static let hurricanes = Team(id: "car-nhl", name: "Carolina Hurricanes", shortName: "CAR",
-        logoURL: nil, sport: .nhl, primaryColor: "CC0000")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/car.png"), sport: .nhl, primaryColor: "CC0000")
     static let stars = Team(id: "dal-nhl", name: "Dallas Stars", shortName: "DAL",
-        logoURL: nil, sport: .nhl, primaryColor: "006847")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/dal.png"), sport: .nhl, primaryColor: "006847")
     static let jets = Team(id: "wpg-nhl", name: "Winnipeg Jets", shortName: "WPG",
-        logoURL: nil, sport: .nhl, primaryColor: "041E42")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/wpg.png"), sport: .nhl, primaryColor: "041E42")
     static let canucks = Team(id: "van-nhl", name: "Vancouver Canucks", shortName: "VAN",
-        logoURL: nil, sport: .nhl, primaryColor: "00205B")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/van.png"), sport: .nhl, primaryColor: "00205B")
     static let lightning = Team(id: "tbl-nhl", name: "Tampa Bay Lightning", shortName: "TBL",
-        logoURL: nil, sport: .nhl, primaryColor: "002868")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/tb.png"), sport: .nhl, primaryColor: "002868")
     static let goldenKnights = Team(id: "vgk-nhl", name: "Vegas Golden Knights", shortName: "VGK",
-        logoURL: nil, sport: .nhl, primaryColor: "B4975A")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/nhl/500/vgk.png"), sport: .nhl, primaryColor: "B4975A")
 
     // MARK: - MLB Teams
 
     static let yankees = Team(id: "nyy-mlb", name: "New York Yankees", shortName: "NYY",
-        logoURL: nil, sport: .mlb, primaryColor: "003087")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png"), sport: .mlb, primaryColor: "003087")
     static let dodgers = Team(id: "lad-mlb", name: "Los Angeles Dodgers", shortName: "LAD",
-        logoURL: nil, sport: .mlb, primaryColor: "005A9C")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png"), sport: .mlb, primaryColor: "005A9C")
     static let astros = Team(id: "hou-mlb", name: "Houston Astros", shortName: "HOU",
-        logoURL: nil, sport: .mlb, primaryColor: "002D62")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png"), sport: .mlb, primaryColor: "002D62")
     static let braves = Team(id: "atl-mlb", name: "Atlanta Braves", shortName: "ATL",
-        logoURL: nil, sport: .mlb, primaryColor: "CE1141")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png"), sport: .mlb, primaryColor: "CE1141")
     static let phillies = Team(id: "phi-mlb", name: "Philadelphia Phillies", shortName: "PHI",
-        logoURL: nil, sport: .mlb, primaryColor: "E81828")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png"), sport: .mlb, primaryColor: "E81828")
     static let texasRangers = Team(id: "tex-mlb", name: "Texas Rangers", shortName: "TEX",
-        logoURL: nil, sport: .mlb, primaryColor: "003278")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png"), sport: .mlb, primaryColor: "003278")
     static let orioles = Team(id: "bal-mlb", name: "Baltimore Orioles", shortName: "BAL",
-        logoURL: nil, sport: .mlb, primaryColor: "DF4601")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/bal.png"), sport: .mlb, primaryColor: "DF4601")
     static let twins = Team(id: "min-mlb", name: "Minnesota Twins", shortName: "MIN",
-        logoURL: nil, sport: .mlb, primaryColor: "002B5C")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/min.png"), sport: .mlb, primaryColor: "002B5C")
     static let padres = Team(id: "sd-mlb", name: "San Diego Padres", shortName: "SD",
-        logoURL: nil, sport: .mlb, primaryColor: "2F241D")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png"), sport: .mlb, primaryColor: "2F241D")
     static let cubs = Team(id: "chc-mlb", name: "Chicago Cubs", shortName: "CHC",
-        logoURL: nil, sport: .mlb, primaryColor: "0E3386")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png"), sport: .mlb, primaryColor: "0E3386")
     static let guardians = Team(id: "cle-mlb", name: "Cleveland Guardians", shortName: "CLE",
-        logoURL: nil, sport: .mlb, primaryColor: "00385D")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/cle.png"), sport: .mlb, primaryColor: "00385D")
     static let mets = Team(id: "nym-mlb", name: "New York Mets", shortName: "NYM",
-        logoURL: nil, sport: .mlb, primaryColor: "002D72")
+        logoURL: URL(string: "https://a.espncdn.com/i/teamlogos/mlb/500/nym.png"), sport: .mlb, primaryColor: "002D72")
 
     // MARK: - Soccer Matches (15)
 

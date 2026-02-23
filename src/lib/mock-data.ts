@@ -9,9 +9,21 @@ import {
   Lineup,
 } from "./types";
 
-// ─── Helper ────────────────────────────────────────────────────
+// ─── Helpers ───────────────────────────────────────────────────
 function badge(abbr: string) {
   return `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${abbr}`;
+}
+function nbaBadge(abbr: string) {
+  return `https://a.espncdn.com/i/teamlogos/nba/500/${abbr.toLowerCase()}.png`;
+}
+function nflBadge(abbr: string) {
+  return `https://a.espncdn.com/i/teamlogos/nfl/500/${abbr.toLowerCase()}.png`;
+}
+function nhlBadge(abbr: string) {
+  return `https://a.espncdn.com/i/teamlogos/nhl/500/${abbr.toLowerCase()}.png`;
+}
+function mlbBadge(abbr: string) {
+  return `https://a.espncdn.com/i/teamlogos/mlb/500/${abbr.toLowerCase()}.png`;
 }
 
 // ─── Leagues ───────────────────────────────────────────────────
@@ -63,76 +75,76 @@ const soccerTeams: Record<string, Team> = {
 
 // ─── NBA Teams ─────────────────────────────────────────────────
 const nbaTeams: Record<string, Team> = {
-  BOS: { id: "bos", name: "Boston Celtics", shortName: "BOS", badge: badge("BOS"), sport: "nba" },
-  NYK: { id: "nyk", name: "New York Knicks", shortName: "NYK", badge: badge("NYK"), sport: "nba" },
-  MIL: { id: "mil", name: "Milwaukee Bucks", shortName: "MIL", badge: badge("MIL"), sport: "nba" },
-  PHI: { id: "phi", name: "Philadelphia 76ers", shortName: "PHI", badge: badge("PHI"), sport: "nba" },
-  CLE: { id: "cle", name: "Cleveland Cavaliers", shortName: "CLE", badge: badge("CLE"), sport: "nba" },
-  MIA: { id: "mia", name: "Miami Heat", shortName: "MIA", badge: badge("MIA"), sport: "nba" },
-  OKC: { id: "okc", name: "OKC Thunder", shortName: "OKC", badge: badge("OKC"), sport: "nba" },
-  DEN: { id: "den", name: "Denver Nuggets", shortName: "DEN", badge: badge("DEN"), sport: "nba" },
-  MIN: { id: "min", name: "Minnesota Timberwolves", shortName: "MIN", badge: badge("MIN"), sport: "nba" },
-  LAL: { id: "lal", name: "LA Lakers", shortName: "LAL", badge: badge("LAL"), sport: "nba" },
-  GSW: { id: "gsw", name: "Golden State Warriors", shortName: "GSW", badge: badge("GSW"), sport: "nba" },
-  DAL: { id: "dal", name: "Dallas Mavericks", shortName: "DAL", badge: badge("DAL"), sport: "nba" },
-  PHX: { id: "phx", name: "Phoenix Suns", shortName: "PHX", badge: badge("PHX"), sport: "nba" },
-  SAC: { id: "sac", name: "Sacramento Kings", shortName: "SAC", badge: badge("SAC"), sport: "nba" },
-  IND: { id: "ind", name: "Indiana Pacers", shortName: "IND", badge: badge("IND"), sport: "nba" },
-  ORL: { id: "orl", name: "Orlando Magic", shortName: "ORL", badge: badge("ORL"), sport: "nba" },
+  BOS: { id: "bos", name: "Boston Celtics", shortName: "BOS", badge: nbaBadge("bos"), sport: "nba" },
+  NYK: { id: "nyk", name: "New York Knicks", shortName: "NYK", badge: nbaBadge("ny"), sport: "nba" },
+  MIL: { id: "mil", name: "Milwaukee Bucks", shortName: "MIL", badge: nbaBadge("mil"), sport: "nba" },
+  PHI: { id: "phi", name: "Philadelphia 76ers", shortName: "PHI", badge: nbaBadge("phi"), sport: "nba" },
+  CLE: { id: "cle", name: "Cleveland Cavaliers", shortName: "CLE", badge: nbaBadge("cle"), sport: "nba" },
+  MIA: { id: "mia", name: "Miami Heat", shortName: "MIA", badge: nbaBadge("mia"), sport: "nba" },
+  OKC: { id: "okc", name: "OKC Thunder", shortName: "OKC", badge: nbaBadge("okc"), sport: "nba" },
+  DEN: { id: "den", name: "Denver Nuggets", shortName: "DEN", badge: nbaBadge("den"), sport: "nba" },
+  MIN: { id: "min", name: "Minnesota Timberwolves", shortName: "MIN", badge: nbaBadge("min"), sport: "nba" },
+  LAL: { id: "lal", name: "LA Lakers", shortName: "LAL", badge: nbaBadge("lal"), sport: "nba" },
+  GSW: { id: "gsw", name: "Golden State Warriors", shortName: "GSW", badge: nbaBadge("gs"), sport: "nba" },
+  DAL: { id: "dal", name: "Dallas Mavericks", shortName: "DAL", badge: nbaBadge("dal"), sport: "nba" },
+  PHX: { id: "phx", name: "Phoenix Suns", shortName: "PHX", badge: nbaBadge("phx"), sport: "nba" },
+  SAC: { id: "sac", name: "Sacramento Kings", shortName: "SAC", badge: nbaBadge("sac"), sport: "nba" },
+  IND: { id: "ind", name: "Indiana Pacers", shortName: "IND", badge: nbaBadge("ind"), sport: "nba" },
+  ORL: { id: "orl", name: "Orlando Magic", shortName: "ORL", badge: nbaBadge("orl"), sport: "nba" },
 };
 
 // ─── NFL Teams ─────────────────────────────────────────────────
 const nflTeams: Record<string, Team> = {
-  KC: { id: "kc", name: "Kansas City Chiefs", shortName: "KC", badge: badge("KC"), sport: "nfl" },
-  SF: { id: "sf", name: "San Francisco 49ers", shortName: "SF", badge: badge("SF"), sport: "nfl" },
-  BAL: { id: "bal", name: "Baltimore Ravens", shortName: "BAL", badge: badge("BAL"), sport: "nfl" },
-  DET: { id: "det", name: "Detroit Lions", shortName: "DET", badge: badge("DET"), sport: "nfl" },
-  BUF: { id: "buf", name: "Buffalo Bills", shortName: "BUF", badge: badge("BUF"), sport: "nfl" },
-  DAL2: { id: "dal2", name: "Dallas Cowboys", shortName: "DAL", badge: badge("DAL"), sport: "nfl" },
-  GB: { id: "gb", name: "Green Bay Packers", shortName: "GB", badge: badge("GB"), sport: "nfl" },
-  PHI2: { id: "phi2", name: "Philadelphia Eagles", shortName: "PHI", badge: badge("PHI"), sport: "nfl" },
-  HOU: { id: "hou", name: "Houston Texans", shortName: "HOU", badge: badge("HOU"), sport: "nfl" },
-  LAR: { id: "lar", name: "LA Rams", shortName: "LAR", badge: badge("LAR"), sport: "nfl" },
+  KC: { id: "kc", name: "Kansas City Chiefs", shortName: "KC", badge: nflBadge("kc"), sport: "nfl" },
+  SF: { id: "sf", name: "San Francisco 49ers", shortName: "SF", badge: nflBadge("sf"), sport: "nfl" },
+  BAL: { id: "bal", name: "Baltimore Ravens", shortName: "BAL", badge: nflBadge("bal"), sport: "nfl" },
+  DET: { id: "det", name: "Detroit Lions", shortName: "DET", badge: nflBadge("det"), sport: "nfl" },
+  BUF: { id: "buf", name: "Buffalo Bills", shortName: "BUF", badge: nflBadge("buf"), sport: "nfl" },
+  DAL2: { id: "dal2", name: "Dallas Cowboys", shortName: "DAL", badge: nflBadge("dal"), sport: "nfl" },
+  GB: { id: "gb", name: "Green Bay Packers", shortName: "GB", badge: nflBadge("gb"), sport: "nfl" },
+  PHI2: { id: "phi2", name: "Philadelphia Eagles", shortName: "PHI", badge: nflBadge("phi"), sport: "nfl" },
+  HOU: { id: "hou", name: "Houston Texans", shortName: "HOU", badge: nflBadge("hou"), sport: "nfl" },
+  LAR: { id: "lar", name: "LA Rams", shortName: "LAR", badge: nflBadge("lar"), sport: "nfl" },
 };
 
 // ─── NHL Teams ────────────────────────────────────────────────
 const nhlTeams: Record<string, Team> = {
-  BOS2: { id: "bos2", name: "Boston Bruins", shortName: "BOS", badge: badge("BOS"), sport: "nhl" },
-  TOR: { id: "tor", name: "Toronto Maple Leafs", shortName: "TOR", badge: badge("TOR"), sport: "nhl" },
-  NYR: { id: "nyr", name: "New York Rangers", shortName: "NYR", badge: badge("NYR"), sport: "nhl" },
-  EDM: { id: "edm", name: "Edmonton Oilers", shortName: "EDM", badge: badge("EDM"), sport: "nhl" },
-  FLA: { id: "fla", name: "Florida Panthers", shortName: "FLA", badge: badge("FLA"), sport: "nhl" },
-  COL: { id: "col", name: "Colorado Avalanche", shortName: "COL", badge: badge("COL"), sport: "nhl" },
-  PIT: { id: "pit", name: "Pittsburgh Penguins", shortName: "PIT", badge: badge("PIT"), sport: "nhl" },
-  WSH: { id: "wsh", name: "Washington Capitals", shortName: "WSH", badge: badge("WSH"), sport: "nhl" },
-  CAR: { id: "car", name: "Carolina Hurricanes", shortName: "CAR", badge: badge("CAR"), sport: "nhl" },
-  DAL3: { id: "dal3", name: "Dallas Stars", shortName: "DAL", badge: badge("DAL"), sport: "nhl" },
-  VGK: { id: "vgk", name: "Vegas Golden Knights", shortName: "VGK", badge: badge("VGK"), sport: "nhl" },
-  WPG: { id: "wpg", name: "Winnipeg Jets", shortName: "WPG", badge: badge("WPG"), sport: "nhl" },
-  NJD: { id: "njd", name: "New Jersey Devils", shortName: "NJD", badge: badge("NJD"), sport: "nhl" },
-  TB: { id: "tb", name: "Tampa Bay Lightning", shortName: "TB", badge: badge("TB"), sport: "nhl" },
-  VAN: { id: "van", name: "Vancouver Canucks", shortName: "VAN", badge: badge("VAN"), sport: "nhl" },
-  NSH: { id: "nsh", name: "Nashville Predators", shortName: "NSH", badge: badge("NSH"), sport: "nhl" },
+  BOS2: { id: "bos2", name: "Boston Bruins", shortName: "BOS", badge: nhlBadge("bos"), sport: "nhl" },
+  TOR: { id: "tor", name: "Toronto Maple Leafs", shortName: "TOR", badge: nhlBadge("tor"), sport: "nhl" },
+  NYR: { id: "nyr", name: "New York Rangers", shortName: "NYR", badge: nhlBadge("nyr"), sport: "nhl" },
+  EDM: { id: "edm", name: "Edmonton Oilers", shortName: "EDM", badge: nhlBadge("edm"), sport: "nhl" },
+  FLA: { id: "fla", name: "Florida Panthers", shortName: "FLA", badge: nhlBadge("fla"), sport: "nhl" },
+  COL: { id: "col", name: "Colorado Avalanche", shortName: "COL", badge: nhlBadge("col"), sport: "nhl" },
+  PIT: { id: "pit", name: "Pittsburgh Penguins", shortName: "PIT", badge: nhlBadge("pit"), sport: "nhl" },
+  WSH: { id: "wsh", name: "Washington Capitals", shortName: "WSH", badge: nhlBadge("wsh"), sport: "nhl" },
+  CAR: { id: "car", name: "Carolina Hurricanes", shortName: "CAR", badge: nhlBadge("car"), sport: "nhl" },
+  DAL3: { id: "dal3", name: "Dallas Stars", shortName: "DAL", badge: nhlBadge("dal"), sport: "nhl" },
+  VGK: { id: "vgk", name: "Vegas Golden Knights", shortName: "VGK", badge: nhlBadge("vgk"), sport: "nhl" },
+  WPG: { id: "wpg", name: "Winnipeg Jets", shortName: "WPG", badge: nhlBadge("wpg"), sport: "nhl" },
+  NJD: { id: "njd", name: "New Jersey Devils", shortName: "NJD", badge: nhlBadge("njd"), sport: "nhl" },
+  TB: { id: "tb", name: "Tampa Bay Lightning", shortName: "TB", badge: nhlBadge("tbl"), sport: "nhl" },
+  VAN: { id: "van", name: "Vancouver Canucks", shortName: "VAN", badge: nhlBadge("van"), sport: "nhl" },
+  NSH: { id: "nsh", name: "Nashville Predators", shortName: "NSH", badge: nhlBadge("nsh"), sport: "nhl" },
 };
 
 // ─── MLB Teams ────────────────────────────────────────────────
 const mlbTeams: Record<string, Team> = {
-  NYY: { id: "nyy", name: "New York Yankees", shortName: "NYY", badge: badge("NYY"), sport: "mlb" },
-  LAD: { id: "lad", name: "Los Angeles Dodgers", shortName: "LAD", badge: badge("LAD"), sport: "mlb" },
-  HOU2: { id: "hou2", name: "Houston Astros", shortName: "HOU", badge: badge("HOU"), sport: "mlb" },
-  ATL: { id: "atl", name: "Atlanta Braves", shortName: "ATL", badge: badge("ATL"), sport: "mlb" },
-  PHI3: { id: "phi3", name: "Philadelphia Phillies", shortName: "PHI", badge: badge("PHI"), sport: "mlb" },
-  TEX: { id: "tex", name: "Texas Rangers", shortName: "TEX", badge: badge("TEX"), sport: "mlb" },
-  NYM: { id: "nym", name: "New York Mets", shortName: "NYM", badge: badge("NYM"), sport: "mlb" },
-  CHC: { id: "chc", name: "Chicago Cubs", shortName: "CHC", badge: badge("CHC"), sport: "mlb" },
-  BAL2: { id: "bal2", name: "Baltimore Orioles", shortName: "BAL", badge: badge("BAL"), sport: "mlb" },
-  SD: { id: "sd", name: "San Diego Padres", shortName: "SD", badge: badge("SD"), sport: "mlb" },
-  MIN2: { id: "min2", name: "Minnesota Twins", shortName: "MIN", badge: badge("MIN"), sport: "mlb" },
-  BOS3: { id: "bos3", name: "Boston Red Sox", shortName: "BOS", badge: badge("BOS"), sport: "mlb" },
-  SEA: { id: "sea", name: "Seattle Mariners", shortName: "SEA", badge: badge("SEA"), sport: "mlb" },
-  MIL2: { id: "mil2", name: "Milwaukee Brewers", shortName: "MIL", badge: badge("MIL"), sport: "mlb" },
-  ARI: { id: "ari", name: "Arizona Diamondbacks", shortName: "ARI", badge: badge("ARI"), sport: "mlb" },
-  TB2: { id: "tb2", name: "Tampa Bay Rays", shortName: "TB", badge: badge("TB"), sport: "mlb" },
+  NYY: { id: "nyy", name: "New York Yankees", shortName: "NYY", badge: mlbBadge("nyy"), sport: "mlb" },
+  LAD: { id: "lad", name: "Los Angeles Dodgers", shortName: "LAD", badge: mlbBadge("lad"), sport: "mlb" },
+  HOU2: { id: "hou2", name: "Houston Astros", shortName: "HOU", badge: mlbBadge("hou"), sport: "mlb" },
+  ATL: { id: "atl", name: "Atlanta Braves", shortName: "ATL", badge: mlbBadge("atl"), sport: "mlb" },
+  PHI3: { id: "phi3", name: "Philadelphia Phillies", shortName: "PHI", badge: mlbBadge("phi"), sport: "mlb" },
+  TEX: { id: "tex", name: "Texas Rangers", shortName: "TEX", badge: mlbBadge("tex"), sport: "mlb" },
+  NYM: { id: "nym", name: "New York Mets", shortName: "NYM", badge: mlbBadge("nym"), sport: "mlb" },
+  CHC: { id: "chc", name: "Chicago Cubs", shortName: "CHC", badge: mlbBadge("chc"), sport: "mlb" },
+  BAL2: { id: "bal2", name: "Baltimore Orioles", shortName: "BAL", badge: mlbBadge("bal"), sport: "mlb" },
+  SD: { id: "sd", name: "San Diego Padres", shortName: "SD", badge: mlbBadge("sd"), sport: "mlb" },
+  MIN2: { id: "min2", name: "Minnesota Twins", shortName: "MIN", badge: mlbBadge("min"), sport: "mlb" },
+  BOS3: { id: "bos3", name: "Boston Red Sox", shortName: "BOS", badge: mlbBadge("bos"), sport: "mlb" },
+  SEA: { id: "sea", name: "Seattle Mariners", shortName: "SEA", badge: mlbBadge("sea"), sport: "mlb" },
+  MIL2: { id: "mil2", name: "Milwaukee Brewers", shortName: "MIL", badge: mlbBadge("mil"), sport: "mlb" },
+  ARI: { id: "ari", name: "Arizona Diamondbacks", shortName: "ARI", badge: mlbBadge("ari"), sport: "mlb" },
+  TB2: { id: "tb2", name: "Tampa Bay Rays", shortName: "TB", badge: mlbBadge("tb"), sport: "mlb" },
 };
 
 // ─── All Teams (flat) ──────────────────────────────────────────

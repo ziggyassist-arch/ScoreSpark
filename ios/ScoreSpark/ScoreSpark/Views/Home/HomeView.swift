@@ -34,21 +34,41 @@ struct HomeView: View {
     }
 
     private func leagueHeader(_ league: League) -> some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 6) {
+            if let url = leagueLogoURL(for: league) {
+                AsyncImage(url: url) { image in
+                    image.resizable().scaledToFit()
+                } placeholder: {
+                    EmptyView()
+                }
+                .frame(width: 14, height: 14)
+            }
             Text(league.name)
                 .font(.system(size: 12, weight: .medium))
                 .foregroundStyle(AppColors.textSecondary)
-            Text("·")
-                .font(.system(size: 10))
-                .foregroundStyle(AppColors.textTertiary)
-            Text(league.country)
-                .font(.system(size: 11))
-                .foregroundStyle(AppColors.textTertiary)
+            if !league.country.isEmpty {
+                Text("·")
+                    .font(.system(size: 10))
+                    .foregroundStyle(AppColors.textTertiary)
+                Text(league.country)
+                    .font(.system(size: 11))
+                    .foregroundStyle(AppColors.textTertiary)
+            }
             Spacer()
         }
         .padding(.horizontal, 16)
         .frame(height: 28)
         .background(AppColors.surface.opacity(0.25))
+    }
+
+    private func leagueLogoURL(for league: League) -> URL? {
+        switch league.sport {
+        case .nba: return URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png")
+        case .nfl: return URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png")
+        case .nhl: return URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png")
+        case .mlb: return URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png")
+        default: return league.logoURL
+        }
     }
 }
 
@@ -114,30 +134,17 @@ struct FotMobMatchRow: View {
     }
 
     private func teamBadge(_ team: Team) -> some View {
-        Group {
-            if let url = team.logoURL {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFit()
-                } placeholder: {
-                    Circle()
-                        .fill(Color(hex: team.primaryColor).opacity(0.3))
-                        .overlay {
-                            Text(String(team.shortName.prefix(2)))
-                                .font(.system(size: 7, weight: .bold))
-                                .foregroundStyle(.white)
-                        }
+        AsyncImage(url: team.logoURL) { image in
+            image.resizable().scaledToFit()
+        } placeholder: {
+            Circle()
+                .fill(Color(hex: team.primaryColor).opacity(0.3))
+                .overlay {
+                    Text(String(team.shortName.prefix(2)))
+                        .font(.system(size: 7, weight: .bold))
+                        .foregroundStyle(.white)
                 }
-                .frame(width: 18, height: 18)
-            } else {
-                Circle()
-                    .fill(Color(hex: team.primaryColor).opacity(0.3))
-                    .frame(width: 18, height: 18)
-                    .overlay {
-                        Text(String(team.shortName.prefix(2)))
-                            .font(.system(size: 7, weight: .bold))
-                            .foregroundStyle(Color(hex: team.primaryColor))
-                    }
-            }
         }
+        .frame(width: 18, height: 18)
     }
 }

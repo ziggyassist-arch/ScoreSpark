@@ -276,12 +276,14 @@ export default function MatchDetail({
 }) {
   const [activeTab, setActiveTab] = useState<Tab>("summary");
 
-  const sportColor =
-    match.sport === "soccer"
-      ? "text-sport-soccer"
-      : match.sport === "nba"
-      ? "text-sport-nba"
-      : "text-sport-nfl";
+  const sportColors: Record<string, string> = {
+    soccer: "text-sport-soccer",
+    nba: "text-sport-nba",
+    nfl: "text-sport-nfl",
+    nhl: "text-sport-nhl",
+    mlb: "text-sport-mlb",
+  };
+  const sportColor = sportColors[match.sport] ?? "text-sport-nfl";
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "summary", label: "Summary" },
@@ -317,9 +319,14 @@ export default function MatchDetail({
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
               </span>
               <span className="text-xs font-bold text-live-green">
-                {match.sport === "soccer"
-                  ? `${match.minute}'`
-                  : `Q${match.minute}`}
+                {match.clock?.displayValue
+                  ?? (match.sport === "soccer"
+                    ? `${match.minute}'`
+                    : match.sport === "nhl"
+                    ? `P${match.minute}`
+                    : match.sport === "mlb"
+                    ? `Inn ${match.minute}`
+                    : `Q${match.minute}`)}
               </span>
             </div>
           )}

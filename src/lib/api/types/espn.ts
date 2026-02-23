@@ -1,0 +1,159 @@
+/**
+ * ESPN API v2 response types
+ * Used for NFL, NBA, NHL, and MLB
+ * Endpoint: https://site.api.espn.com/apis/site/v2/sports/{sport}/{league}/scoreboard
+ */
+
+export interface ESPNScoreboardResponse {
+  leagues: ESPNLeague[];
+  events: ESPNEvent[];
+}
+
+export interface ESPNLeague {
+  id: string;
+  name: string;
+  abbreviation: string;
+  season: {
+    year: number;
+    type: { name: string; abbreviation: string };
+  };
+}
+
+export interface ESPNEvent {
+  id: string;
+  date: string;
+  name: string;
+  shortName: string;
+  competitions: ESPNCompetition[];
+  status: ESPNStatus;
+}
+
+export interface ESPNCompetition {
+  id: string;
+  date: string;
+  venue: ESPNVenue;
+  competitors: ESPNCompetitor[];
+  status: ESPNStatus;
+  odds?: ESPNOdds[];
+  situation?: ESPNSituation;
+}
+
+export interface ESPNVenue {
+  id: string;
+  fullName: string;
+  address?: {
+    city: string;
+    state?: string;
+    country?: string;
+  };
+}
+
+export interface ESPNCompetitor {
+  id: string;
+  homeAway: "home" | "away";
+  winner?: boolean;
+  team: ESPNTeam;
+  score: string;
+  linescores?: ESPNLinescore[];
+  records?: ESPNRecord[];
+  statistics?: ESPNStatistic[];
+}
+
+export interface ESPNTeam {
+  id: string;
+  location: string;
+  name: string;
+  abbreviation: string;
+  displayName: string;
+  shortDisplayName: string;
+  color?: string;
+  alternateColor?: string;
+  logo?: string;
+  links?: { href: string; text: string }[];
+}
+
+export interface ESPNLinescore {
+  value: number;
+}
+
+export interface ESPNRecord {
+  name: string;
+  abbreviation: string;
+  type: string;
+  summary: string;
+}
+
+export interface ESPNStatistic {
+  name: string;
+  abbreviation: string;
+  displayValue: string;
+}
+
+export interface ESPNStatus {
+  clock: number;
+  displayClock: string;
+  period: number;
+  type: {
+    id: string;
+    name: string;
+    state: "pre" | "in" | "post";
+    completed: boolean;
+    description: string;
+    detail: string;
+    shortDetail: string;
+  };
+}
+
+export interface ESPNOdds {
+  provider: { name: string };
+  details: string;
+  overUnder: number;
+}
+
+/** NFL-specific: down, distance, possession, etc. */
+export interface ESPNSituation {
+  $ref?: string;
+  lastPlay?: {
+    id: string;
+    type: { id: string; text: string };
+    text: string;
+    scoreValue: number;
+  };
+  down?: number;
+  distance?: number;
+  yardLine?: number;
+  isRedZone?: boolean;
+  possession?: string; // team ID
+  homeTimeouts?: number;
+  awayTimeouts?: number;
+}
+
+// Standings types
+export interface ESPNStandingsResponse {
+  children: ESPNStandingsGroup[];
+}
+
+export interface ESPNStandingsGroup {
+  id: string;
+  name: string;
+  standings: {
+    entries: ESPNStandingsEntry[];
+  };
+  children?: ESPNStandingsGroup[]; // Divisions within conferences
+}
+
+export interface ESPNStandingsEntry {
+  team: ESPNTeam;
+  stats: ESPNStandingStat[];
+}
+
+export interface ESPNStandingStat {
+  name: string;
+  displayName: string;
+  shortDisplayName: string;
+  description: string;
+  abbreviation: string;
+  type: string;
+  value?: number;
+  displayValue: string;
+}

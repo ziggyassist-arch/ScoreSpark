@@ -8,7 +8,7 @@ const navItems = [
     label: "Scores",
     href: "/scores",
     icon: (active: boolean) => (
-      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke={active ? "currentColor" : "currentColor"} strokeWidth={active ? 2.5 : 1.5}>
+      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={active ? 2.5 : 1.5}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6a2.25 2.25 0 01-2.25-2.25V6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z" />
       </svg>
     ),
@@ -44,14 +44,26 @@ export default function Navigation() {
 
   return (
     <>
+      {/* Mobile top header */}
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center px-4">
+        <Link href="/" className="hover:opacity-60 transition-opacity">
+          <span className="text-[17px] font-bold tracking-tight text-white">Score<span className="text-gold-spark">Spark</span></span>
+        </Link>
+      </header>
+
       {/* Desktop sidebar */}
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-20 lg:w-56 bg-surface border-r border-white/5 z-40">
-        <Link href="/" className="flex items-center gap-3 px-4 py-5 border-b border-white/5">
-          <div className="w-10 h-10 rounded-xl bg-gold-spark/20 flex items-center justify-center flex-shrink-0">
-            <span className="text-gold-spark font-bold text-lg">S</span>
-          </div>
-          <span className="hidden lg:block font-bold text-lg">ScoreSpark</span>
+        {/* Logo area */}
+        <Link
+          href="/"
+          className="flex items-center justify-center lg:justify-start px-4 py-5 border-b border-white/5 hover:opacity-80 transition-opacity"
+        >
+          {/* Collapsed: S mark */}
+          <span className="lg:hidden text-xl font-black text-gold-spark">S</span>
+          {/* Expanded: text wordmark, FotMob-sized */}
+          <span className="hidden lg:block text-[17px] font-bold tracking-tight text-white">Score<span className="text-gold-spark">Spark</span></span>
         </Link>
+
         <nav className="flex-1 py-4">
           {navItems.map((item) => {
             const active = isActive(item.href);

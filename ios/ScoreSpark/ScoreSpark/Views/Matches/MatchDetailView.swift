@@ -88,29 +88,18 @@ struct MatchDetailView: View {
 
     private func detailTeamView(_ team: Team) -> some View {
         VStack(spacing: 8) {
-            if team.sport == .soccer, let url = team.logoURL {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFit()
-                } placeholder: {
-                    Circle()
-                        .fill(Color(hex: team.primaryColor).opacity(0.3))
-                        .overlay {
-                            Text(team.shortName)
-                                .font(.system(size: 16, weight: .bold, design: .rounded))
-                                .foregroundStyle(.white)
-                        }
-                }
-                .frame(width: 56, height: 56)
-            } else {
+            AsyncImage(url: team.logoURL) { image in
+                image.resizable().scaledToFit()
+            } placeholder: {
                 Circle()
                     .fill(Color(hex: team.primaryColor).opacity(0.3))
-                    .frame(width: 56, height: 56)
                     .overlay {
                         Text(team.shortName)
-                            .font(.system(size: 14, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color(hex: team.primaryColor))
+                            .font(.system(size: 16, weight: .bold, design: .rounded))
+                            .foregroundStyle(.white)
                     }
             }
+            .frame(width: 56, height: 56)
             Text(team.name)
                 .font(AppTypography.caption)
                 .foregroundStyle(AppColors.textSecondary)

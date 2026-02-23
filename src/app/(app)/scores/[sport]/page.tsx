@@ -1,8 +1,9 @@
 import { notFound } from "next/navigation";
-import { getMatchesBySport } from "@/lib/mock-data";
+import { getMatchesForSport } from "@/lib/services/match-service";
 import type { Sport } from "@/lib/types";
 import SportSwitcher from "@/components/SportSwitcher";
-import MatchList from "@/components/MatchList";
+import LeagueBar from "@/components/LeagueBar";
+import LiveMatchList from "@/components/LiveMatchList";
 
 const sportLabels: Record<Sport, string> = {
   soccer: "Soccer",
@@ -18,10 +19,11 @@ export function generateStaticParams() {
   return [{ sport: "soccer" }, { sport: "nba" }, { sport: "nfl" }, { sport: "nhl" }, { sport: "mlb" }];
 }
 
-export function generateMetadata({ params }: { params: Promise<{ sport: string }> }) {
-  // We can't await in generateMetadata sync, so we return a default
+export function generateMetadata() {
   return { title: "Scores — ScoreSpark" };
 }
+
+export const dynamic = "force-dynamic";
 
 export default async function SportScoresPage({
   params,
@@ -34,7 +36,7 @@ export default async function SportScoresPage({
     notFound();
   }
 
-  const matches = getMatchesBySport(sport);
+  const matches = await getMatchesForSport(sport as Sport);
   const label = sportLabels[sport as Sport];
   const liveCount = matches.filter((m) => m.status === "live").length;
 
@@ -53,8 +55,11 @@ export default async function SportScoresPage({
       {/* Sport Filter */}
       <SportSwitcher />
 
-      {/* Match List */}
-      <MatchList matches={matches} />
+      {/* Top Leagues — soccer only */}
+      {sport === "soccer" && <LeagueBar />}
+
+      {/* Match List with live polling */}
+      <LiveMatchList initialMatches={matches} sport={sport as Sport} />
     </div>
   );
 }

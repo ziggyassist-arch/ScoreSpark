@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
-import { allMatches, sampleLineups } from "@/lib/mock-data";
+import { getMatchDetailById } from "@/lib/services/match-service";
+import { allMatches } from "@/lib/mock-data";
 import MatchDetail from "./MatchDetail";
 
 export function generateStaticParams() {
+  // Pre-generate paths for mock matches; real matches use dynamic rendering
   return allMatches.map((m) => ({ id: m.id }));
 }
 
@@ -10,16 +12,16 @@ export function generateMetadata() {
   return { title: "Match — ScoreSpark" };
 }
 
+export const dynamic = "force-dynamic";
+
 export default async function MatchPage({
   params,
 }: {
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const match = allMatches.find((m) => m.id === id);
-  if (!match) notFound();
+  const result = await getMatchDetailById(id);
+  if (!result) notFound();
 
-  const lineups = sampleLineups[id] ?? null;
-
-  return <MatchDetail match={match} lineups={lineups} />;
+  return <MatchDetail match={result.match} lineups={result.lineups} />;
 }

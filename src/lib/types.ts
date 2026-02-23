@@ -31,6 +31,13 @@ export interface MatchStats {
   passAccuracy: [number, number];
 }
 
+export interface MatchClock {
+  /** Raw minute/quarter/inning value */
+  value?: number;
+  /** Pre-formatted display string: "67'", "Q3 5:42", "Bot 6th" */
+  displayValue?: string;
+}
+
 export interface Match {
   id: string;
   sport: Sport;
@@ -41,11 +48,22 @@ export interface Match {
   homeScore: number | null;
   awayScore: number | null;
   status: MatchStatus;
+  /** @deprecated Use clock.value instead */
   minute?: number;
+  clock?: MatchClock;
   startTime: string;
   events: MatchEvent[];
   stats?: MatchStats;
   venue?: string;
+  /** Source identifier: "live" for real API data, "mock" for demo data */
+  source?: "live" | "mock";
+}
+
+export interface Competition {
+  code: string;
+  name: string;
+  country: string;
+  sport: Sport;
 }
 
 export type FormResult = "W" | "D" | "L";

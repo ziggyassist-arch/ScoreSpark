@@ -5,6 +5,17 @@ import { groupMatchesByLeague } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
 import MatchCard from "./MatchCard";
 
+const LEAGUE_LOGOS: Record<string, string> = {
+  "NBA": "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
+  "NBA (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
+  "NFL": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
+  "NFL (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
+  "NHL": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
+  "NHL (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
+  "MLB": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+  "MLB (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+};
+
 function sortMatches(matches: Match[], favorites: string[]): Match[] {
   const statusOrder: Record<string, number> = { live: 0, upcoming: 1, finished: 2 };
   return [...matches].sort((a, b) => {
@@ -48,6 +59,10 @@ export default function MatchList({ matches }: { matches: Match[] }) {
       {leagueOrder.map(([league, leagueMatches]) => (
         <div key={league}>
           <div className="flex items-center gap-2 mb-3">
+            {LEAGUE_LOGOS[league] && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={LEAGUE_LOGOS[league]} alt={league} width={16} height={16} className="w-4 h-4 object-contain" />
+            )}
             <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider">
               {league}
             </h3>

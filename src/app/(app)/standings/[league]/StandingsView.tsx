@@ -2,13 +2,23 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { eplStandings, nbaEastStandings, nbaWestStandings, nhlStandings, mlbALStandings, mlbNLStandings } from "@/lib/mock-data";
-import type { FormResult } from "@/lib/types";
+import type { FormResult, StandingRow, NBAStandingRow, NHLStandingRow } from "@/lib/types";
 
 const leagueTabs = [
-  { id: "epl", label: "Premier League", href: "/standings/epl" },
+  { id: "epl", label: "EPL", href: "/standings/epl" },
+  { id: "laliga", label: "La Liga", href: "/standings/laliga" },
+  { id: "bundesliga", label: "Bundesliga", href: "/standings/bundesliga" },
+  { id: "seriea", label: "Serie A", href: "/standings/seriea" },
+  { id: "ligue1", label: "Ligue 1", href: "/standings/ligue1" },
+  { id: "ucl", label: "UCL", href: "/standings/ucl" },
+  { id: "uel", label: "UEL", href: "/standings/uel" },
+  { id: "championship", label: "Champ.", href: "/standings/championship" },
+  { id: "eredivisie", label: "Eredivisie", href: "/standings/eredivisie" },
+  { id: "ligapt", label: "Liga PT", href: "/standings/ligapt" },
   { id: "nba-east", label: "NBA East", href: "/standings/nba-east" },
   { id: "nba-west", label: "NBA West", href: "/standings/nba-west" },
+  { id: "nfl-afc", label: "NFL AFC", href: "/standings/nfl-afc" },
+  { id: "nfl-nfc", label: "NFL NFC", href: "/standings/nfl-nfc" },
   { id: "nhl", label: "NHL", href: "/standings/nhl" },
   { id: "mlb-al", label: "MLB AL", href: "/standings/mlb-al" },
   { id: "mlb-nl", label: "MLB NL", href: "/standings/mlb-nl" },
@@ -28,7 +38,7 @@ function FormDot({ result }: { result: FormResult }) {
   );
 }
 
-function EPLTable() {
+function SoccerTable({ standings }: { standings: StandingRow[] }) {
   return (
     <div className="overflow-x-auto hide-scrollbar">
       <table className="w-full text-sm">
@@ -48,7 +58,7 @@ function EPLTable() {
           </tr>
         </thead>
         <tbody>
-          {eplStandings.map((row, i) => {
+          {standings.map((row, i) => {
             const zoneBorder =
               i === 3
                 ? "border-b-2 border-b-sport-soccer/30"
@@ -148,8 +158,7 @@ function EPLTable() {
   );
 }
 
-function NBATable({ conference }: { conference: "east" | "west" }) {
-  const standings = conference === "east" ? nbaEastStandings : nbaWestStandings;
+function NBATable({ standings }: { standings: NBAStandingRow[] }) {
 
   return (
     <div className="overflow-x-auto hide-scrollbar">
@@ -232,7 +241,7 @@ function NBATable({ conference }: { conference: "east" | "west" }) {
   );
 }
 
-function NHLTable() {
+function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
   return (
     <div className="overflow-x-auto hide-scrollbar">
       <table className="w-full text-sm">
@@ -252,7 +261,7 @@ function NHLTable() {
           </tr>
         </thead>
         <tbody>
-          {nhlStandings.map((row, i) => {
+          {standings.map((row, i) => {
             const playoffLine = i === 7 ? "border-b-2 border-b-sport-nhl/30" : "";
 
             return (
@@ -333,8 +342,7 @@ function NHLTable() {
   );
 }
 
-function MLBTable({ league }: { league: "al" | "nl" }) {
-  const standings = league === "al" ? mlbALStandings : mlbNLStandings;
+function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
 
   return (
     <div className="overflow-x-auto hide-scrollbar">
@@ -416,7 +424,19 @@ function MLBTable({ league }: { league: "al" | "nl" }) {
   );
 }
 
-export default function StandingsView({ league }: { league: string }) {
+const SOCCER_LEAGUES = new Set(["epl", "laliga", "bundesliga", "seriea", "ligue1", "ucl", "uel", "eredivisie", "championship", "ligapt"]);
+
+export default function StandingsView({
+  league,
+  soccerStandings,
+  nbaStandings,
+  nhlStandings,
+}: {
+  league: string;
+  soccerStandings?: StandingRow[];
+  nbaStandings?: NBAStandingRow[];
+  nhlStandings?: NHLStandingRow[];
+}) {
   const pathname = usePathname();
 
   return (
@@ -448,12 +468,9 @@ export default function StandingsView({ league }: { league: string }) {
 
       {/* Table */}
       <div className="bg-card rounded-2xl p-4 border border-white/5">
-        {league === "epl" && <EPLTable />}
-        {league === "nba-east" && <NBATable conference="east" />}
-        {league === "nba-west" && <NBATable conference="west" />}
-        {league === "nhl" && <NHLTable />}
-        {league === "mlb-al" && <MLBTable league="al" />}
-        {league === "mlb-nl" && <MLBTable league="nl" />}
+        {soccerStandings && <SoccerTable standings={soccerStandings} />}
+        {nbaStandings && <NBATable standings={nbaStandings} />}
+        {nhlStandings && <NHLTable standings={nhlStandings} />}
       </div>
     </div>
   );

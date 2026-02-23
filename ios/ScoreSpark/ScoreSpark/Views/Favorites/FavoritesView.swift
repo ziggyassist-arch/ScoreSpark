@@ -20,14 +20,18 @@ struct FavoritesView: View {
                             ForEach(viewModel.favoriteTeams) { team in
                                 VStack(spacing: 4) {
                                     ZStack(alignment: .topTrailing) {
-                                        Circle()
-                                            .fill(Color(hex: team.primaryColor).opacity(0.3))
-                                            .frame(width: 48, height: 48)
-                                            .overlay {
-                                                Text(team.shortName)
-                                                    .font(.system(size: 13, weight: .bold))
-                                                    .foregroundStyle(Color(hex: team.primaryColor))
-                                            }
+                                        AsyncImage(url: team.logoURL) { image in
+                                            image.resizable().scaledToFit()
+                                        } placeholder: {
+                                            Circle()
+                                                .fill(Color(hex: team.primaryColor).opacity(0.3))
+                                                .overlay {
+                                                    Text(team.shortName)
+                                                        .font(.system(size: 13, weight: .bold))
+                                                        .foregroundStyle(Color(hex: team.primaryColor))
+                                                }
+                                        }
+                                        .frame(width: 48, height: 48)
                                         Image(systemName: "star.fill")
                                             .font(.system(size: 8))
                                             .foregroundStyle(AppColors.gold)
@@ -109,14 +113,18 @@ struct FavoritesView: View {
                         } label: {
                             VStack(spacing: 4) {
                                 ZStack(alignment: .topTrailing) {
-                                    Circle()
-                                        .fill(Color(hex: team.primaryColor).opacity(0.25))
-                                        .frame(width: 44, height: 44)
-                                        .overlay {
-                                            Text(String(team.shortName.prefix(3)))
-                                                .font(.system(size: 11, weight: .bold))
-                                                .foregroundStyle(Color(hex: team.primaryColor))
-                                        }
+                                    AsyncImage(url: team.logoURL) { image in
+                                        image.resizable().scaledToFit()
+                                    } placeholder: {
+                                        Circle()
+                                            .fill(Color(hex: team.primaryColor).opacity(0.25))
+                                            .overlay {
+                                                Text(String(team.shortName.prefix(3)))
+                                                    .font(.system(size: 11, weight: .bold))
+                                                    .foregroundStyle(Color(hex: team.primaryColor))
+                                            }
+                                    }
+                                    .frame(width: 44, height: 44)
                                     if viewModel.isFavorite(team) {
                                         Image(systemName: "star.fill")
                                             .font(.system(size: 8))

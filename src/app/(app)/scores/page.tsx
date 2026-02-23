@@ -1,11 +1,14 @@
-import { allMatches } from "@/lib/mock-data";
+import { getAllMatches } from "@/lib/services/match-service";
 import SportSwitcher from "@/components/SportSwitcher";
-import MatchList from "@/components/MatchList";
+import LeagueBar from "@/components/LeagueBar";
+import LiveMatchList from "@/components/LiveMatchList";
 
 export const metadata = { title: "Scores — ScoreSpark" };
+export const dynamic = "force-dynamic";
 
-export default function ScoresPage() {
-  const liveCount = allMatches.filter((m) => m.status === "live").length;
+export default async function ScoresPage() {
+  const matches = await getAllMatches();
+  const liveCount = matches.filter((m) => m.status === "live").length;
 
   return (
     <div className="space-y-6">
@@ -22,8 +25,11 @@ export default function ScoresPage() {
       {/* Sport Filter */}
       <SportSwitcher />
 
-      {/* Match List */}
-      <MatchList matches={allMatches} />
+      {/* Top Leagues */}
+      <LeagueBar />
+
+      {/* Match List — client component with live polling */}
+      <LiveMatchList initialMatches={matches} />
     </div>
   );
 }

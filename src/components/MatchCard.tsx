@@ -17,6 +17,20 @@ function TeamBadge({ src, alt }: { src: string; alt: string }) {
   );
 }
 
+function formatLiveTime(match: Match): string {
+  if (match.clock?.displayValue) return match.clock.displayValue;
+  const min = match.clock?.value ?? match.minute;
+  if (!min) return "LIVE";
+  switch (match.sport) {
+    case "soccer": return `${min}'`;
+    case "nba": return `Q${min}`;
+    case "nfl": return `Q${min}`;
+    case "nhl": return `P${min}`;
+    case "mlb": return `Inn ${min}`;
+    default: return `${min}`;
+  }
+}
+
 function StatusBadge({ match }: { match: Match }) {
   if (match.status === "live") {
     return (
@@ -26,11 +40,7 @@ function StatusBadge({ match }: { match: Match }) {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
         </span>
         <span className="text-xs font-bold text-live-green">
-          {match.sport === "soccer"
-            ? `${match.minute}'`
-            : match.sport === "nba"
-            ? `Q${match.minute}`
-            : `Q${match.minute}`}
+          {formatLiveTime(match)}
         </span>
       </div>
     );
@@ -51,12 +61,14 @@ export default function MatchCard({ match }: { match: Match }) {
   const homeIsFav = isFavorite(match.homeTeam.id);
   const awayIsFav = isFavorite(match.awayTeam.id);
 
-  const sportBorderColor =
-    match.sport === "soccer"
-      ? "border-l-sport-soccer/40"
-      : match.sport === "nba"
-      ? "border-l-sport-nba/40"
-      : "border-l-sport-nfl/40";
+  const sportBorderColors: Record<string, string> = {
+    soccer: "border-l-sport-soccer/40",
+    nba: "border-l-sport-nba/40",
+    nfl: "border-l-sport-nfl/40",
+    nhl: "border-l-sport-nhl/40",
+    mlb: "border-l-sport-mlb/40",
+  };
+  const sportBorderColor = sportBorderColors[match.sport] ?? "border-l-sport-nfl/40";
 
   return (
     <Link href={`/match/${match.id}`} className="block group">

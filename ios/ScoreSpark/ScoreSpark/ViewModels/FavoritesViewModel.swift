@@ -8,21 +8,30 @@ final class FavoritesViewModel {
     }
     var browseSport: Sport = .soccer
     var browseTeams: [Team] = []
+    var favoriteMatches: [Match] = []
 
     var favoriteTeams: [Team] {
         MockDataService.allTeams(for: .all).filter { favoriteTeamIds.contains($0.id) }
     }
 
-    var favoriteMatches: [Match] {
-        guard !favoriteTeamIds.isEmpty else { return [] }
-        return MockDataService.allMatches.filter {
-            favoriteTeamIds.contains($0.homeTeam.id) || favoriteTeamIds.contains($0.awayTeam.id)
-        }
-    }
-
     func load() async {
         loadFavorites()
         browseTeams = MockDataService.allTeams(for: browseSport)
+
+        // Fetch live matches and filter by favorites
+        if !favoriteTeamIds.isEmpty {
+            do {
+                let apiMatches = try await APIService.shared.fetchMatches()
+                let all = apiMatches.map { $0.toMatch() }
+                favoriteMatches = all.filter {
+                    favoriteTeamIds.contains($0.homeTeam.id) || favoriteTeamIds.contains($0.awayTeam.id)
+                }
+            } catch {
+                favoriteMatches = MockDataService.allMatches.filter {
+                    favoriteTeamIds.contains($0.homeTeam.id) || favoriteTeamIds.contains($0.awayTeam.id)
+                }
+            }
+        }
     }
 
     func updateBrowseSport(_ sport: Sport) {

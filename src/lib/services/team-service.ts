@@ -44,6 +44,48 @@ interface TeamListItem {
   sport: Sport;
 }
 
+/** Soccer competition codes available on football-data.org free tier */
+export const SOCCER_LEAGUES = [
+  { code: "CL", name: "Champions League", country: "Europe" },
+  { code: "PL", name: "Premier League", country: "England" },
+  { code: "PD", name: "La Liga", country: "Spain" },
+  { code: "BL1", name: "Bundesliga", country: "Germany" },
+  { code: "SA", name: "Serie A", country: "Italy" },
+  { code: "FL1", name: "Ligue 1", country: "France" },
+  { code: "DED", name: "Eredivisie", country: "Netherlands" },
+  { code: "PPL", name: "Primeira Liga", country: "Portugal" },
+  { code: "ELC", name: "Championship", country: "England" },
+] as const;
+
+/**
+ * Fetch soccer teams for a specific competition code (e.g. "CL", "PL")
+ */
+export async function getSoccerTeamsForCompetition(competitionCode: string): Promise<TeamListItem[]> {
+  const cacheKey = `teams-soccer:${competitionCode}`;
+  const cached = cacheGet<TeamListItem[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const res = await fetch(`${FD_BASE}/competitions/${competitionCode}/teams`, {
+      headers: { "X-Auth-Token": FD_KEY },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const teams: TeamListItem[] = (data.teams ?? []).map((t: { id: number; name: string; shortName: string; tla: string; crest: string }) => ({
+      id: `fd-${t.id}`,
+      name: t.name,
+      shortName: t.shortName || t.tla,
+      badge: t.crest,
+      sport: "soccer" as Sport,
+    }));
+    cacheSet(cacheKey, teams, 600_000);
+    return teams;
+  } catch (err) {
+    console.error(`[team-service] Error fetching soccer teams for ${competitionCode}:`, err);
+    return [];
+  }
+}
+
 /**
  * Fetch all teams for a sport (for the Teams tab)
  */
@@ -54,21 +96,7 @@ export async function getTeamsForSport(sport: Sport): Promise<TeamListItem[]> {
 
   try {
     if (sport === "soccer") {
-      // Use football-data.org PL teams
-      const res = await fetch(`${FD_BASE}/competitions/PL/teams`, {
-        headers: { "X-Auth-Token": FD_KEY },
-      });
-      if (!res.ok) return [];
-      const data = await res.json();
-      const teams: TeamListItem[] = (data.teams ?? []).map((t: { id: number; name: string; shortName: string; tla: string; crest: string }) => ({
-        id: `fd-${t.id}`,
-        name: t.name,
-        shortName: t.shortName || t.tla,
-        badge: t.crest,
-        sport: "soccer" as Sport,
-      }));
-      cacheSet(cacheKey, teams, 600_000);
-      return teams;
+      return getSoccerTeamsForCompetition("CL");
     }
 
     // ESPN sports
@@ -118,12 +146,12 @@ function getFallbackTeams(sport: Sport): { id: string; name: string; shortName: 
       { id: "6", name: "Boston Bruins", short: "Bruins" },
       { id: "7", name: "Buffalo Sabres", short: "Sabres" },
       { id: "20", name: "Calgary Flames", short: "Flames" },
-      { id: "7", name: "Carolina Hurricanes", short: "Hurricanes" },
+      { id: "12", name: "Carolina Hurricanes", short: "Hurricanes" },
       { id: "16", name: "Chicago Blackhawks", short: "Blackhawks" },
-      { id: "17", name: "Colorado Avalanche", short: "Avalanche" },
+      { id: "21", name: "Colorado Avalanche", short: "Avalanche" },
       { id: "29", name: "Columbus Blue Jackets", short: "Blue Jackets" },
       { id: "25", name: "Dallas Stars", short: "Stars" },
-      { id: "17", name: "Detroit Red Wings", short: "Red Wings" },
+      { id: "11", name: "Detroit Red Wings", short: "Red Wings" },
       { id: "22", name: "Edmonton Oilers", short: "Oilers" },
       { id: "13", name: "Florida Panthers", short: "Panthers" },
       { id: "26", name: "Los Angeles Kings", short: "Kings" },

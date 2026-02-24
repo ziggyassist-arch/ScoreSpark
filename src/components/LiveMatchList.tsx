@@ -64,7 +64,7 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
   return (
     <div>
       {/* Date strip */}
-      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} />
+      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} sport={sport} />
 
       {/* Live indicator */}
       {isToday && hasLiveMatches && (

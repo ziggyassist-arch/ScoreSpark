@@ -1,0 +1,407 @@
+"use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import type { TeamDetail, SquadPlayer } from "@/lib/services/team-service";
+import type { Team } from "@/lib/types";
+
+interface TeamMatch {
+  id: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  homeScore: number | null;
+  awayScore: number | null;
+  status: string;
+  date: string;
+  competition: string;
+}
+
+type Tab = "overview" | "fixtures" | "squad" | "stats";
+
+const sportColors: Record<string, string> = {
+  soccer: "text-sport-soccer",
+  nba: "text-sport-nba",
+  nfl: "text-sport-nfl",
+  nhl: "text-sport-nhl",
+  mlb: "text-sport-mlb",
+};
+
+function OverviewTab({ team, recent, upcoming }: { team: TeamDetail; recent: TeamMatch[]; upcoming: TeamMatch[] }) {
+  return (
+    <div className="space-y-6">
+      {/* Team Info Card */}
+      <div className="bg-card rounded-2xl p-4 border border-white/5 space-y-3">
+        {team.venue && (
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-white/40">Venue</span>
+            <span className="text-sm text-white/70">{team.venue}</span>
+          </div>
+        )}
+        {team.coach && (
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-white/40">Coach</span>
+            <span className="text-sm text-white/70">{team.coach}</span>
+          </div>
+        )}
+        {team.founded && (
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-white/40">Founded</span>
+            <span className="text-sm text-white/70">{team.founded}</span>
+          </div>
+        )}
+        {team.colors && (
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-white/40">Colors</span>
+            <span className="text-sm text-white/70">{team.colors}</span>
+          </div>
+        )}
+        {team.squad.length > 0 && (
+          <div className="flex justify-between items-center">
+            <span className="text-xs text-white/40">Squad Size</span>
+            <span className="text-sm text-white/70">{team.squad.length} players</span>
+          </div>
+        )}
+      </div>
+
+      {/* Form — Recent Results */}
+      {recent.length > 0 && (
+        <div>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">
+            Recent Form
+          </h3>
+          <div className="flex gap-1.5 mb-3">
+            {recent.slice(0, 5).map((m) => {
+              const isHome = m.homeTeam.id === `fd-${team.id.replace("fd-", "")}` ||
+                m.homeTeam.id === team.id;
+              const teamScore = isHome ? m.homeScore : m.awayScore;
+              const oppScore = isHome ? m.awayScore : m.homeScore;
+              const result = teamScore !== null && oppScore !== null
+                ? teamScore > oppScore ? "W" : teamScore < oppScore ? "L" : "D"
+                : "?";
+              return (
+                <span
+                  key={m.id}
+                  className={`w-7 h-7 rounded-md flex items-center justify-center text-[10px] font-bold ${
+                    result === "W" ? "bg-live-green/20 text-live-green"
+                      : result === "L" ? "bg-live-red/20 text-live-red"
+                      : result === "D" ? "bg-yellow-500/20 text-yellow-500"
+                      : "bg-white/5 text-white/30"
+                  }`}
+                >
+                  {result}
+                </span>
+              );
+            })}
+          </div>
+
+          <div className="space-y-2">
+            {recent.map((m) => (
+              <Link
+                key={m.id}
+                href={`/match/${m.id}`}
+                className="flex items-center justify-between bg-card rounded-xl p-3 border border-white/5 hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-2 flex-1 min-w-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={m.homeTeam.badge} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+                  <span className="text-sm text-white/80 truncate">{m.homeTeam.shortName}</span>
+                  <span className="text-sm font-bold text-white tabular-nums">
+                    {m.homeScore} - {m.awayScore}
+                  </span>
+                  <span className="text-sm text-white/80 truncate">{m.awayTeam.shortName}</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={m.awayTeam.badge} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+                </div>
+                <span className="text-[10px] text-white/30 ml-2">{m.competition}</span>
+              </Link>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Next Match */}
+      {upcoming.length > 0 && (
+        <div>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">
+            Next Match
+          </h3>
+          <div className="bg-card rounded-xl p-4 border border-white/5">
+            <div className="flex items-center justify-center gap-4">
+              <div className="flex flex-col items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={upcoming[0].homeTeam.badge} alt="" className="w-10 h-10 object-contain" />
+                <span className="text-xs text-white/70 mt-1">{upcoming[0].homeTeam.shortName}</span>
+              </div>
+              <div className="text-center">
+                <p className="text-lg font-bold text-white/30">vs</p>
+                <p className="text-[10px] text-white/30 mt-0.5">
+                  {new Date(upcoming[0].date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                </p>
+              </div>
+              <div className="flex flex-col items-center">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={upcoming[0].awayTeam.badge} alt="" className="w-10 h-10 object-contain" />
+                <span className="text-xs text-white/70 mt-1">{upcoming[0].awayTeam.shortName}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function FixturesTab({ recent, upcoming }: { recent: TeamMatch[]; upcoming: TeamMatch[] }) {
+  const all = [...upcoming, ...recent.reverse()];
+
+  if (all.length === 0) {
+    return (
+      <div className="text-center py-12 text-white/30">
+        <p>No fixtures available</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-2">
+      {upcoming.length > 0 && (
+        <>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-2">
+            Upcoming
+          </h3>
+          {upcoming.map((m) => (
+            <div
+              key={m.id}
+              className="flex items-center justify-between bg-card rounded-xl p-3 border border-white/5"
+            >
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={m.homeTeam.badge} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+                <span className="text-sm text-white/80 truncate">{m.homeTeam.shortName}</span>
+                <span className="text-xs text-white/30">vs</span>
+                <span className="text-sm text-white/80 truncate">{m.awayTeam.shortName}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={m.awayTeam.badge} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+              </div>
+              <span className="text-[10px] text-white/30 ml-2">
+                {new Date(m.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+              </span>
+            </div>
+          ))}
+        </>
+      )}
+
+      {recent.length > 0 && (
+        <>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mt-4 mb-2">
+            Results
+          </h3>
+          {recent.map((m) => (
+            <Link
+              key={m.id}
+              href={`/match/${m.id}`}
+              className="flex items-center justify-between bg-card rounded-xl p-3 border border-white/5 hover:bg-white/5 transition-colors"
+            >
+              <div className="flex items-center gap-2 flex-1 min-w-0">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={m.homeTeam.badge} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+                <span className="text-sm text-white/80 truncate">{m.homeTeam.shortName}</span>
+                <span className="text-sm font-bold text-white tabular-nums">
+                  {m.homeScore} - {m.awayScore}
+                </span>
+                <span className="text-sm text-white/80 truncate">{m.awayTeam.shortName}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={m.awayTeam.badge} alt="" width={20} height={20} className="w-5 h-5 object-contain" />
+              </div>
+              <span className="text-[10px] text-white/30 ml-2">
+                {new Date(m.date).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+              </span>
+            </Link>
+          ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+function SquadTab({ squad, sport }: { squad: SquadPlayer[]; sport: string }) {
+  if (squad.length === 0) {
+    return (
+      <div className="text-center py-12 text-white/30">
+        <p>Squad data not available</p>
+      </div>
+    );
+  }
+
+  // Group by position
+  const positionGroups = sport === "soccer"
+    ? ["Goalkeeper", "Defence", "Midfield", "Offence"]
+    : [...new Set(squad.map((p) => p.position))].sort();
+
+  return (
+    <div className="bg-card rounded-2xl border border-white/5 overflow-hidden">
+      {positionGroups.map((pos) => {
+        const players = squad.filter((p) => p.position === pos);
+        if (players.length === 0) return null;
+        return (
+          <div key={pos}>
+            <div className="px-4 py-2 bg-white/5">
+              <span className="text-[11px] font-semibold text-white/40 uppercase tracking-wider">
+                {pos === "Offence" ? "Attack" : pos}
+              </span>
+            </div>
+            {players.map((p) => (
+              <div
+                key={p.id}
+                className="flex items-center gap-3 px-4 py-2.5 border-t border-white/5"
+              >
+                <span className="text-xs text-white/30 w-6 text-right tabular-nums">
+                  {p.shirtNumber ?? "—"}
+                </span>
+                <span className="text-sm text-white/80 flex-1">{p.name}</span>
+                {p.nationality && (
+                  <span className="text-[10px] text-white/30">{p.nationality}</span>
+                )}
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function StatsTab({ team, matches }: { team: TeamDetail; matches: TeamMatch[] }) {
+  const finished = matches.filter((m) => m.status === "finished");
+  const totalGames = finished.length;
+
+  if (totalGames === 0) {
+    return (
+      <div className="text-center py-12 text-white/30">
+        <p>No stats available yet</p>
+      </div>
+    );
+  }
+
+  // Calculate basic stats from matches
+  let wins = 0, draws = 0, losses = 0;
+  let goalsFor = 0, goalsAgainst = 0;
+
+  finished.forEach((m) => {
+    const isHome = m.homeTeam.id === team.id;
+    const teamScore = isHome ? (m.homeScore ?? 0) : (m.awayScore ?? 0);
+    const oppScore = isHome ? (m.awayScore ?? 0) : (m.homeScore ?? 0);
+    goalsFor += teamScore;
+    goalsAgainst += oppScore;
+    if (teamScore > oppScore) wins++;
+    else if (teamScore < oppScore) losses++;
+    else draws++;
+  });
+
+  const winPct = totalGames > 0 ? ((wins / totalGames) * 100).toFixed(1) : "0.0";
+
+  const statRows = [
+    { label: "Games Played", value: totalGames.toString() },
+    { label: "Wins", value: wins.toString() },
+    { label: "Draws", value: draws.toString() },
+    { label: "Losses", value: losses.toString() },
+    { label: "Win %", value: `${winPct}%` },
+    { label: "Goals/Points For", value: goalsFor.toString() },
+    { label: "Goals/Points Against", value: goalsAgainst.toString() },
+    { label: "Goal/Point Diff", value: `${goalsFor - goalsAgainst > 0 ? "+" : ""}${goalsFor - goalsAgainst}` },
+  ];
+
+  return (
+    <div className="bg-card rounded-2xl border border-white/5 overflow-hidden">
+      {statRows.map((row) => (
+        <div key={row.label} className="flex items-center justify-between px-4 py-3 border-t border-white/5 first:border-t-0">
+          <span className="text-sm text-white/40">{row.label}</span>
+          <span className="text-sm font-bold text-white/80 tabular-nums">{row.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export default function TeamPageClient({
+  team,
+  matches,
+}: {
+  team: TeamDetail;
+  matches: TeamMatch[];
+}) {
+  const [activeTab, setActiveTab] = useState<Tab>("overview");
+
+  const recent = matches.filter((m) => m.status === "finished").slice(0, 10);
+  const upcoming = matches.filter((m) => m.status === "upcoming").slice(0, 10);
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "overview", label: "Overview" },
+    { id: "fixtures", label: "Fixtures" },
+    { id: "squad", label: "Squad" },
+    { id: "stats", label: "Stats" },
+  ];
+
+  const sportColor = sportColors[team.sport] ?? "text-sport-soccer";
+
+  return (
+    <div className="space-y-6 animate-slide-up">
+      {/* Team Header — FotMob style */}
+      <div className="bg-card rounded-2xl p-6 border border-white/5">
+        <div className="flex items-center gap-4">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src={team.badge}
+            alt={team.name}
+            width={72}
+            height={72}
+            className="w-[72px] h-[72px] object-contain"
+          />
+          <div className="flex-1 min-w-0">
+            <h1 className="text-2xl font-bold text-white truncate">{team.name}</h1>
+            <p className="text-sm text-white/40 mt-0.5">
+              {[team.venue, team.coach && `Coach: ${team.coach}`]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
+            {team.competitions.length > 0 && (
+              <div className="flex flex-wrap gap-1.5 mt-2">
+                {team.competitions.map((comp) => (
+                  <span
+                    key={comp}
+                    className={`px-2 py-0.5 text-[10px] font-medium bg-white/5 rounded-full ${sportColor}`}
+                  >
+                    {comp}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Tabs */}
+      <div className="flex gap-1 bg-surface rounded-xl p-1">
+        {tabs.map((tab) => (
+          <button
+            key={tab.id}
+            onClick={() => setActiveTab(tab.id)}
+            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+              activeTab === tab.id
+                ? "bg-card text-white shadow-sm"
+                : "text-white/40 hover:text-white/60"
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Tab content */}
+      {activeTab === "overview" && <OverviewTab team={team} recent={recent} upcoming={upcoming} />}
+      {activeTab === "fixtures" && <FixturesTab recent={recent} upcoming={upcoming} />}
+      {activeTab === "squad" && <SquadTab squad={team.squad} sport={team.sport} />}
+      {activeTab === "stats" && <StatsTab team={team} matches={matches} />}
+    </div>
+  );
+}

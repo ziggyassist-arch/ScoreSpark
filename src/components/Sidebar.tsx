@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import type { Sport } from "@/lib/types";
 
 // — News types —
@@ -24,14 +25,6 @@ interface MiniStanding {
   record?: string;
 }
 
-const SPORT_TABS: { sport: Sport; label: string; icon: string }[] = [
-  { sport: "soccer", label: "Soccer", icon: "/leagues/pl.png" },
-  { sport: "nba", label: "NBA", icon: "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png" },
-  { sport: "nfl", label: "NFL", icon: "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png" },
-  { sport: "nhl", label: "NHL", icon: "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png" },
-  { sport: "mlb", label: "MLB", icon: "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png" },
-];
-
 const STANDINGS_LEAGUE_MAP: Record<Sport, string> = {
   soccer: "epl",
   nba: "nba-east",
@@ -48,8 +41,25 @@ const STANDINGS_LABEL_MAP: Record<Sport, string> = {
   mlb: "MLB American",
 };
 
+/** Derive the active sport from the URL pathname */
+function sportFromPath(pathname: string): Sport {
+  if (pathname.startsWith("/scores/nba")) return "nba";
+  if (pathname.startsWith("/scores/nfl")) return "nfl";
+  if (pathname.startsWith("/scores/nhl")) return "nhl";
+  if (pathname.startsWith("/scores/mlb")) return "mlb";
+  if (pathname.startsWith("/scores/soccer")) return "soccer";
+  // Standings pages
+  if (pathname.includes("nba")) return "nba";
+  if (pathname.includes("nfl")) return "nfl";
+  if (pathname.includes("nhl")) return "nhl";
+  if (pathname.includes("mlb")) return "mlb";
+  return "soccer";
+}
+
 export default function Sidebar() {
-  const [activeSport, setActiveSport] = useState<Sport>("soccer");
+  const pathname = usePathname();
+  const activeSport = sportFromPath(pathname);
+
   const [news, setNews] = useState<NewsItem[]>([]);
   const [standings, setStandings] = useState<MiniStanding[]>([]);
   const [loadingNews, setLoadingNews] = useState(true);
@@ -96,25 +106,6 @@ export default function Sidebar() {
 
   return (
     <aside className="space-y-4">
-      {/* Sport tabs */}
-      <div className="flex gap-1 overflow-x-auto hide-scrollbar">
-        {SPORT_TABS.map(({ sport, label, icon }) => (
-          <button
-            key={sport}
-            onClick={() => setActiveSport(sport)}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all ${
-              activeSport === sport
-                ? "bg-white/10 text-white ring-1 ring-white/10"
-                : "text-white/40 hover:text-white/60 hover:bg-white/5"
-            }`}
-          >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={icon} alt={label} className="w-4 h-4 object-contain" />
-            {label}
-          </button>
-        ))}
-      </div>
-
       {/* News section */}
       <div className="bg-surface rounded-2xl p-4">
         <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">

@@ -13,6 +13,7 @@ import type {
   Match,
   Team,
   Sport,
+  SportDetail,
   MatchStatus,
   MatchClock,
   NBAStandingRow,
@@ -107,6 +108,59 @@ function getLeagueName(sport: Sport): { league: string; leagueShort: string } {
   }
 }
 
+/** Extract sport-specific detail from ESPN data */
+function extractSportDetail(
+  home: ESPNCompetitor,
+  away: ESPNCompetitor,
+  comp: ESPNEvent["competitions"][0],
+  sport: Sport
+): SportDetail {
+  const detail: SportDetail = {};
+
+  // Linescores (quarter/period/inning scores)
+  if (home.linescores?.length || away.linescores?.length) {
+    detail.linescores = {
+      home: (home.linescores ?? []).map((l) => l.value),
+      away: (away.linescores ?? []).map((l) => l.value),
+    };
+  }
+
+  // Records
+  const homeRec = home.records?.find((r) => r.type === "total");
+  const awayRec = away.records?.find((r) => r.type === "total");
+  if (homeRec) detail.homeRecord = homeRec.summary;
+  if (awayRec) detail.awayRecord = awayRec.summary;
+
+  // Team stats from scoreboard
+  if (home.statistics?.length && away.statistics?.length) {
+    const awayMap = Object.fromEntries(
+      (away.statistics ?? []).map((s) => [s.name, s.displayValue])
+    );
+    detail.teamStats = (home.statistics ?? [])
+      .filter((s) => awayMap[s.name] !== undefined)
+      .map((s) => ({
+        name: s.abbreviation || s.name,
+        homeValue: s.displayValue,
+        awayValue: awayMap[s.name],
+      }));
+  }
+
+  // NFL situation
+  if (sport === "nfl" && comp.situation) {
+    const sit = comp.situation;
+    detail.situation = {
+      down: sit.down,
+      distance: sit.distance,
+      yardLine: sit.yardLine,
+      possession: sit.possession === home.team.id ? "home" : "away",
+      lastPlay: sit.lastPlay?.text,
+      isRedZone: sit.isRedZone,
+    };
+  }
+
+  return detail;
+}
+
 /**
  * Normalize an ESPN event into a ScoreSpark Match
  */
@@ -135,6 +189,7 @@ export function normalizeESPNMatch(event: ESPNEvent, sport: Sport): Match {
     events: [],
     venue: comp.venue?.fullName,
     source: "live",
+    sportDetail: extractSportDetail(home, away, comp, sport),
   };
 }
 

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Match } from "@/lib/types";
 import { useFavorites } from "@/lib/favorites";
+import { useSpoilerMode } from "@/lib/spoiler-mode";
 
 function TeamBadge({ src, alt }: { src: string; alt: string }) {
   return (
@@ -58,8 +59,17 @@ function StatusBadge({ match }: { match: Match }) {
 
 export default function MatchCard({ match }: { match: Match }) {
   const { isFavorite } = useFavorites();
+  const { isRevealed, revealMatch } = useSpoilerMode();
   const homeIsFav = isFavorite(match.homeTeam.id);
   const awayIsFav = isFavorite(match.awayTeam.id);
+  const revealed = isRevealed(match.id);
+
+  const handleReveal = (e: React.MouseEvent) => {
+    if (!revealed) {
+      e.preventDefault();
+      revealMatch(match.id);
+    }
+  };
 
   const sportBorderColors: Record<string, string> = {
     soccer: "border-l-sport-soccer/40",
@@ -71,7 +81,7 @@ export default function MatchCard({ match }: { match: Match }) {
   const sportBorderColor = sportBorderColors[match.sport] ?? "border-l-sport-nfl/40";
 
   return (
-    <Link href={`/match/${match.id}`} className="block group">
+    <Link href={`/match/${match.id}`} className="block group" onClick={handleReveal}>
       <div
         className={`bg-card hover:bg-card-hover rounded-xl p-4 border border-white/5 border-l-2 ${sportBorderColor} transition-all duration-200 hover:border-white/10 hover:scale-[1.01] active:scale-[0.99]`}
       >
@@ -100,6 +110,7 @@ export default function MatchCard({ match }: { match: Match }) {
             </div>
             <span
               className={`tabular-nums text-lg font-bold ml-4 ${
+                !revealed ? "blur-sm select-none" :
                 match.status === "live"
                   ? "text-white"
                   : match.status === "finished"
@@ -107,7 +118,7 @@ export default function MatchCard({ match }: { match: Match }) {
                   : "text-white/30"
               }`}
             >
-              {match.homeScore !== null ? match.homeScore : "-"}
+              {match.homeScore !== null ? (revealed ? match.homeScore : "?") : "-"}
             </span>
           </div>
 
@@ -126,6 +137,7 @@ export default function MatchCard({ match }: { match: Match }) {
             </div>
             <span
               className={`tabular-nums text-lg font-bold ml-4 ${
+                !revealed ? "blur-sm select-none" :
                 match.status === "live"
                   ? "text-white"
                   : match.status === "finished"
@@ -133,13 +145,13 @@ export default function MatchCard({ match }: { match: Match }) {
                   : "text-white/30"
               }`}
             >
-              {match.awayScore !== null ? match.awayScore : "-"}
+              {match.awayScore !== null ? (revealed ? match.awayScore : "?") : "-"}
             </span>
           </div>
         </div>
 
-        {/* Goal scorers for live/finished soccer */}
-        {match.sport === "soccer" && match.events.length > 0 && match.status !== "upcoming" && (
+        {/* Goal scorers for live/finished soccer (hidden in spoiler mode) */}
+        {revealed && match.sport === "soccer" && match.events.length > 0 && match.status !== "upcoming" && (
           <div className="mt-3 pt-3 border-t border-white/5">
             <div className="space-y-0.5">
               {match.events

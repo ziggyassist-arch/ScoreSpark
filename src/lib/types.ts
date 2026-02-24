@@ -38,6 +38,28 @@ export interface MatchClock {
   displayValue?: string;
 }
 
+/** Sport-specific detail bag attached to Match */
+export interface SportDetail {
+  /** Quarter/period/inning scores: [Q1, Q2, Q3, Q4, ...OT] */
+  linescores?: { home: number[]; away: number[] };
+  /** Team records: "32-18", etc. */
+  homeRecord?: string;
+  awayRecord?: string;
+  /** Key leaders: [{category, playerName, value}] */
+  leaders?: { category: string; playerName: string; displayValue: string; teamSide: "home" | "away" }[];
+  /** Team stats from scoreboard: [{name, home, away}] */
+  teamStats?: { name: string; homeValue: string; awayValue: string }[];
+  /** NFL situation */
+  situation?: {
+    down?: number;
+    distance?: number;
+    yardLine?: number;
+    possession?: "home" | "away";
+    lastPlay?: string;
+    isRedZone?: boolean;
+  };
+}
+
 export interface Match {
   id: string;
   sport: Sport;
@@ -57,6 +79,8 @@ export interface Match {
   venue?: string;
   /** Source identifier: "live" for real API data, "mock" for demo data */
   source?: "live" | "mock";
+  /** Sport-specific detail (linescores, leaders, etc.) */
+  sportDetail?: SportDetail;
 }
 
 export interface Competition {

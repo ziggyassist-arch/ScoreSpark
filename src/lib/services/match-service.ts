@@ -116,10 +116,16 @@ export async function getAllMatches(date?: string): Promise<Match[]> {
 export async function getMatchDetailById(
   id: string
 ): Promise<{ match: Match; lineups: { home: Lineup; away: Lineup } | null } | null> {
-  // ESPN matches — no detail endpoint, return basic match
+  // ESPN matches — fetch from scoreboard and find matching event
   if (id.startsWith("espn-")) {
-    // Try to find it in cached results or return null
-    // ESPN doesn't have a free detail endpoint, so detail is limited
+    // Parse: espn-{sport}-{eventId}
+    const parts = id.split("-");
+    const sport = parts[1] as "nba" | "nfl" | "nhl" | "mlb";
+    if (["nba", "nfl", "nhl", "mlb"].includes(sport)) {
+      const matches = await fetchESPNMatches(sport);
+      const match = matches.find((m) => m.id === id);
+      if (match) return { match, lineups: null };
+    }
     return null;
   }
 

@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { Match, Sport } from "@/lib/types";
-import { config } from "@/lib/config";
 
 interface UseLiveScoresOptions {
   initialMatches: Match[];
@@ -14,11 +13,12 @@ export function useLiveScores({ initialMatches, sport, enabled = true }: UseLive
   const [matches, setMatches] = useState<Match[]>(initialMatches);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isPolling, setIsPolling] = useState(false);
-  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const eventSourceRef = useRef<EventSource | null>(null);
 
-  // Check if any matches are live (only poll if there are live matches)
+  // Check if any matches are live
   const hasLiveMatches = matches.some((m) => m.status === "live");
 
+  // Fallback fetch for manual refresh
   const fetchMatches = useCallback(async () => {
     try {
       setIsPolling(true);
@@ -34,35 +34,55 @@ export function useLiveScores({ initialMatches, sport, enabled = true }: UseLive
         setLastUpdated(new Date());
       }
     } catch {
-      // Silently fail on poll errors — keep showing last known data
+      // Silently fail — keep showing last known data
     } finally {
       setIsPolling(false);
     }
   }, [sport]);
 
+  // Update matches when initialMatches prop changes (route change)
   useEffect(() => {
-    // Update matches when initialMatches prop changes (e.g., route change)
     setMatches(initialMatches);
   }, [initialMatches]);
 
+  // SSE connection for live updates
   useEffect(() => {
     if (!enabled || !hasLiveMatches) {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
-      }
+      // Close existing connection
+      eventSourceRef.current?.close();
+      eventSourceRef.current = null;
       return;
     }
 
-    intervalRef.current = setInterval(fetchMatches, config.polling.intervalMs);
+    const params = new URLSearchParams();
+    if (sport) params.set("sport", sport);
 
-    return () => {
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-        intervalRef.current = null;
+    const es = new EventSource(`/api/v1/matches/stream?${params.toString()}`);
+    eventSourceRef.current = es;
+
+    es.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        if (data.matches) {
+          setMatches(data.matches);
+          setLastUpdated(new Date());
+          setIsPolling(false);
+        }
+      } catch {
+        // Ignore parse errors
       }
     };
-  }, [enabled, hasLiveMatches, fetchMatches]);
+
+    es.onerror = () => {
+      // SSE reconnects automatically, but close after too many failures
+      // Browser will auto-reconnect with exponential backoff
+    };
+
+    return () => {
+      es.close();
+      eventSourceRef.current = null;
+    };
+  }, [enabled, hasLiveMatches, sport]);
 
   return { matches, lastUpdated, isPolling, hasLiveMatches, refetch: fetchMatches };
 }

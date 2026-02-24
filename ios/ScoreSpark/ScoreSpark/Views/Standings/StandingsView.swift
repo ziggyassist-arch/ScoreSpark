@@ -6,10 +6,6 @@ struct StandingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Sport switcher
-            SportSwitcher()
-                .padding(.vertical, 8)
-
             // League selector
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
@@ -80,8 +76,6 @@ struct StandingsView: View {
             }
         }
         .background(AppColors.background)
-        .navigationTitle("Standings")
-        .toolbarTitleDisplayMode(.large)
         .onChange(of: sportSelection.current) { _, newSport in
             viewModel.updateLeagues(for: newSport)
         }

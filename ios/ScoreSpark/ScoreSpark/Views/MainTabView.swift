@@ -1,46 +1,46 @@
 import SwiftUI
 
-enum AppTab: Int, CaseIterable {
-    case matches, news, leagues, following
+/// Top-level content tabs shown above each sport's content
+enum ContentTab: Int, CaseIterable {
+    case leagues, teams, news, following, mockDraft
 
     var title: String {
         switch self {
-        case .matches: "Matches"
-        case .news: "News"
         case .leagues: "Leagues"
+        case .teams: "Teams"
+        case .news: "News"
         case .following: "Following"
+        case .mockDraft: "Mock Draft"
         }
     }
 }
 
 struct MainTabView: View {
-    @State private var selectedTab: AppTab = .matches
-    @State private var selectedDateOffset: Int = 0
+    @Environment(SportSelection.self) private var sportSelection
+    @State private var selectedContentTab: ContentTab = .leagues
     @State private var showSettings = false
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 headerBar
-                tabBar
+                contentTabBar
 
                 Group {
-                    switch selectedTab {
-                    case .matches:
-                        HomeView()
-                    case .news:
-                        newsPlaceholder
+                    switch selectedContentTab {
                     case .leagues:
-                        LeaguesListView()
+                        HomeView()
+                    case .teams:
+                        TeamsListView()
+                    case .news:
+                        NewsListView()
                     case .following:
                         FavoritesView()
+                    case .mockDraft:
+                        mockDraftPlaceholder
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-
-                if selectedTab == .matches {
-                    dateBar
-                }
             }
             .background(AppColors.background)
             .toolbar(.hidden, for: .navigationBar)
@@ -50,6 +50,9 @@ struct MainTabView: View {
             .navigationDestination(isPresented: $showSettings) {
                 SettingsView()
             }
+            .safeAreaInset(edge: .bottom) {
+                sportTabBar
+            }
         }
     }
 
@@ -57,10 +60,14 @@ struct MainTabView: View {
 
     private var headerBar: some View {
         HStack {
-            Image("Logo")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 24)
+            HStack(spacing: 2) {
+                Text("Score")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                Text("Spark")
+                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .foregroundStyle(AppColors.gold)
+            }
             Spacer()
             HStack(spacing: 16) {
                 Button {} label: {
@@ -69,7 +76,7 @@ struct MainTabView: View {
                         .foregroundStyle(AppColors.textSecondary)
                 }
                 Button { showSettings = true } label: {
-                    Image(systemName: "line.3.horizontal")
+                    Image(systemName: "gearshape")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
@@ -79,127 +86,211 @@ struct MainTabView: View {
         .frame(height: 44)
     }
 
-    // MARK: - Tab Bar (36pt, small text, colored underline)
+    // MARK: - Content Tab Bar (Leagues/Teams/News/Following/Mock Draft)
 
-    private var tabBar: some View {
+    private var contentTabBar: some View {
         HStack(spacing: 0) {
-            ForEach(AppTab.allCases, id: \.rawValue) { tab in
+            ForEach(ContentTab.allCases, id: \.rawValue) { tab in
                 Button {
                     withAnimation(.easeInOut(duration: 0.2)) {
-                        selectedTab = tab
+                        selectedContentTab = tab
                     }
                 } label: {
                     VStack(spacing: 4) {
                         Text(tab.title)
-                            .font(.system(size: 13, weight: selectedTab == tab ? .semibold : .regular))
-                            .foregroundStyle(selectedTab == tab ? .white : AppColors.textTertiary)
+                            .font(.system(size: 12, weight: selectedContentTab == tab ? .semibold : .regular))
+                            .foregroundStyle(selectedContentTab == tab ? AppColors.gold : AppColors.textTertiary)
                         Rectangle()
-                            .fill(selectedTab == tab ? Color(hex: "22C55E") : Color.clear)
+                            .fill(selectedContentTab == tab ? AppColors.gold : Color.clear)
                             .frame(height: 2)
                     }
                 }
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal, 16)
+        .padding(.horizontal, 8)
         .frame(height: 36)
-    }
-
-    // MARK: - Date Bar (bottom, 44pt)
-
-    private var dateBar: some View {
-        VStack(spacing: 0) {
-            Rectangle()
-                .fill(Color.white.opacity(0.08))
-                .frame(height: 0.33)
-            HStack(spacing: 0) {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { selectedDateOffset = -1 }
-                } label: {
-                    Image(systemName: "chevron.left")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(AppColors.textTertiary)
-                }
-                .frame(width: 32)
-
-                dateLabel("Yesterday", offset: -1)
-                dateLabel("Today", offset: 0)
-                dateLabel("Tomorrow", offset: 1)
-
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) { selectedDateOffset = 1 }
-                } label: {
-                    Image(systemName: "chevron.right")
-                        .font(.system(size: 11, weight: .medium))
-                        .foregroundStyle(AppColors.textTertiary)
-                }
-                .frame(width: 32)
-            }
-            .frame(height: 44)
-        }
         .background(AppColors.background)
     }
 
-    private func dateLabel(_ title: String, offset: Int) -> some View {
-        Button {
-            withAnimation(.easeInOut(duration: 0.2)) {
-                selectedDateOffset = offset
+    // MARK: - Sport Tab Bar (bottom, 5 sports)
+
+    private var sportTabBar: some View {
+        @Bindable var selection = sportSelection
+        return HStack(spacing: 0) {
+            ForEach(Sport.sports) { sport in
+                let isSelected = selection.current == sport
+                Button {
+                    withAnimation(.snappy(duration: 0.25)) {
+                        selection.current = sport
+                    }
+                } label: {
+                    VStack(spacing: 3) {
+                        if let url = sportLogoURL(sport) {
+                            AsyncImage(url: url) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                Text(sport.emoji)
+                                    .font(.system(size: 16))
+                            }
+                            .frame(width: 24, height: 24)
+                            .opacity(isSelected ? 1 : 0.4)
+                        }
+                        Text(sport == .soccer ? "Soccer" : sport.rawValue)
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(isSelected ? Color(hex: sport.accentColor) : AppColors.textTertiary)
+                    }
+                    .frame(maxWidth: .infinity)
+                    .padding(.vertical, 6)
+                }
             }
-        } label: {
-            Text(title)
-                .font(.system(size: 13, weight: selectedDateOffset == offset ? .bold : .regular))
-                .foregroundStyle(selectedDateOffset == offset ? .white : AppColors.textTertiary)
-                .frame(maxWidth: .infinity)
+        }
+        .padding(.horizontal, 4)
+        .padding(.bottom, 2)
+        .background(
+            Rectangle()
+                .fill(AppColors.background)
+                .shadow(color: .black.opacity(0.3), radius: 8, y: -2)
+                .ignoresSafeArea(edges: .bottom)
+        )
+    }
+
+    private func sportLogoURL(_ sport: Sport) -> URL? {
+        switch sport {
+        case .soccer: URL(string: "https://images.fotmob.com/image_resources/logo/leaguelogo/dark/47.png")
+        case .nba: URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png")
+        case .nfl: URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png")
+        case .nhl: URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png")
+        case .mlb: URL(string: "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png")
+        case .all: nil
         }
     }
 
-    // MARK: - News Placeholder
+    // MARK: - Mock Draft Placeholder
 
-    private var newsPlaceholder: some View {
+    private var mockDraftPlaceholder: some View {
         VStack(spacing: 12) {
             Spacer()
-            Image(systemName: "newspaper")
+            Image(systemName: "list.number")
                 .font(.system(size: 48))
-                .foregroundStyle(AppColors.textTertiary)
-            Text("Coming Soon")
-                .font(.system(size: 18, weight: .semibold))
+                .foregroundStyle(AppColors.gold.opacity(0.4))
+            Text("Mock Draft")
+                .font(.system(size: 18, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppColors.textSecondary)
+            Text("Coming Soon")
+                .font(.system(size: 14, design: .rounded))
+                .foregroundStyle(AppColors.textTertiary)
             Spacer()
         }
     }
 }
 
-// MARK: - Leagues List View
+// MARK: - Teams List View
 
-struct LeaguesListView: View {
+struct TeamsListView: View {
+    @Environment(SportSelection.self) private var sportSelection
+    @State private var teams: [Team] = []
+    @State private var isLoading = true
+
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 12), count: 4)
+
     var body: some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 0) {
-                ForEach(Sport.sports) { sport in
-                    HStack(spacing: 6) {
-                        Text(sport.emoji)
-                            .font(.system(size: 14))
-                        Text(sport.rawValue)
-                            .font(.system(size: 13, weight: .bold))
-                            .foregroundStyle(Color(hex: sport.accentColor))
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 8)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .background(AppColors.surface.opacity(0.3))
+            if isLoading {
+                ProgressView()
+                    .padding(.top, 60)
+            } else if teams.isEmpty {
+                ContentUnavailableView("No Teams", systemImage: "person.3",
+                    description: Text("No teams available for this sport."))
+            } else {
+                LazyVGrid(columns: columns, spacing: 16) {
+                    ForEach(teams) { team in
+                        VStack(spacing: 6) {
+                            AsyncImage(url: team.logoURL) { image in
+                                image.resizable().scaledToFit()
+                            } placeholder: {
+                                Circle()
+                                    .fill(Color(hex: team.primaryColor).opacity(0.25))
+                                    .overlay {
+                                        Text(String(team.shortName.prefix(3)))
+                                            .font(.system(size: 11, weight: .bold))
+                                            .foregroundStyle(Color(hex: team.primaryColor))
+                                    }
+                            }
+                            .frame(width: 48, height: 48)
 
-                    ForEach(MockDataService.leagues(for: sport)) { league in
-                        HStack {
-                            Text(league.name)
-                                .font(.system(size: 13))
-                                .foregroundStyle(AppColors.textPrimary)
-                            Spacer()
-                            Text(league.country)
-                                .font(.system(size: 11))
-                                .foregroundStyle(AppColors.textTertiary)
+                            Text(team.shortName)
+                                .font(.system(size: 10, weight: .medium, design: .rounded))
+                                .foregroundStyle(AppColors.textSecondary)
+                                .lineLimit(1)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
+                    }
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 12)
+            }
+        }
+        .task(id: sportSelection.current) {
+            isLoading = true
+            teams = MockDataService.allTeams(for: sportSelection.current)
+            isLoading = false
+        }
+    }
+}
+
+// MARK: - News List View
+
+struct NewsListView: View {
+    @Environment(SportSelection.self) private var sportSelection
+    @State private var articles: [NewsArticle] = []
+    @State private var isLoading = true
+
+    var body: some View {
+        ScrollView {
+            if isLoading {
+                ProgressView()
+                    .padding(.top, 60)
+            } else if articles.isEmpty {
+                ContentUnavailableView("No News", systemImage: "newspaper",
+                    description: Text("No news available right now."))
+            } else {
+                LazyVStack(spacing: 0) {
+                    ForEach(articles) { article in
+                        Link(destination: article.url) {
+                            HStack(spacing: 12) {
+                                VStack(alignment: .leading, spacing: 4) {
+                                    Text(article.title)
+                                        .font(.system(size: 14, weight: .medium, design: .rounded))
+                                        .foregroundStyle(AppColors.textPrimary)
+                                        .lineLimit(2)
+                                        .multilineTextAlignment(.leading)
+                                    HStack(spacing: 4) {
+                                        Text(article.source)
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(AppColors.textTertiary)
+                                        Text("·")
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(AppColors.textTertiary)
+                                        Text(article.timeAgo)
+                                            .font(.system(size: 11))
+                                            .foregroundStyle(AppColors.textTertiary)
+                                    }
+                                }
+                                Spacer()
+                                if let imageURL = article.imageURL {
+                                    AsyncImage(url: imageURL) { image in
+                                        image.resizable().scaledToFill()
+                                    } placeholder: {
+                                        RoundedRectangle(cornerRadius: 8)
+                                            .fill(AppColors.surface)
+                                    }
+                                    .frame(width: 80, height: 56)
+                                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                                }
+                            }
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                        }
 
                         Rectangle()
                             .fill(Color.white.opacity(0.04))
@@ -209,5 +300,43 @@ struct LeaguesListView: View {
                 }
             }
         }
+        .task(id: sportSelection.current) {
+            isLoading = true
+            articles = await fetchNews(for: sportSelection.current)
+            isLoading = false
+        }
+    }
+
+    private func fetchNews(for sport: Sport) async -> [NewsArticle] {
+        let sportParam = sport == .all ? "soccer" : sport.apiValue
+        guard let url = URL(string: "https://scorespark.vercel.app/api/v1/news?sport=\(sportParam)") else { return [] }
+
+        do {
+            let (data, _) = try await URLSession.shared.data(from: url)
+            let response = try JSONDecoder().decode(NewsResponse.self, from: data)
+            return response.articles
+        } catch {
+            return []
+        }
+    }
+}
+
+// MARK: - News Models
+
+struct NewsResponse: Codable {
+    let articles: [NewsArticle]
+}
+
+struct NewsArticle: Codable, Identifiable {
+    let id: String
+    let title: String
+    let source: String
+    let url: URL
+    let imageUrl: String?
+    let timeAgo: String
+
+    var imageURL: URL? {
+        guard let imageUrl else { return nil }
+        return URL(string: imageUrl)
     }
 }

@@ -6,23 +6,33 @@ struct HomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SportSwitcher()
+            if viewModel.isLoading && viewModel.groups.isEmpty {
+                Spacer()
+                ProgressView()
+                    .tint(AppColors.gold)
+                Spacer()
+            } else if viewModel.groups.isEmpty {
+                Spacer()
+                ContentUnavailableView("No Matches", systemImage: "sportscourt",
+                    description: Text("No matches available right now."))
+                Spacer()
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(viewModel.groups) { group in
+                            leagueHeader(group.league)
 
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.groups) { group in
-                        leagueHeader(group.league)
+                            ForEach(group.matches) { match in
+                                NavigationLink(value: match.id) {
+                                    FotMobMatchRow(match: match)
+                                }
+                                .buttonStyle(.plain)
 
-                        ForEach(group.matches) { match in
-                            NavigationLink(value: match.id) {
-                                FotMobMatchRow(match: match)
+                                Rectangle()
+                                    .fill(Color.white.opacity(0.04))
+                                    .frame(height: 0.33)
+                                    .padding(.horizontal, 12)
                             }
-                            .buttonStyle(.plain)
-
-                            Rectangle()
-                                .fill(Color.white.opacity(0.04))
-                                .frame(height: 0.33)
-                                .padding(.horizontal, 12)
                         }
                     }
                 }

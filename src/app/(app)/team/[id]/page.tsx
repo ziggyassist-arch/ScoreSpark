@@ -137,9 +137,10 @@ export default async function TeamPage({
                     </span>
                   </div>
                   {players.map((p) => (
-                    <div
+                    <Link
                       key={p.id}
-                      className="flex items-center gap-3 px-4 py-2.5 border-t border-white/5"
+                      href={`/player/fd-player-${p.id}`}
+                      className="flex items-center gap-3 px-4 py-2.5 border-t border-white/5 hover:bg-white/5 transition-colors"
                     >
                       <span className="text-xs text-white/30 w-6 text-right tabular-nums">
                         {p.shirtNumber ?? "—"}
@@ -148,7 +149,7 @@ export default async function TeamPage({
                       {p.nationality && (
                         <span className="text-[10px] text-white/30 ml-auto">{p.nationality}</span>
                       )}
-                    </div>
+                    </Link>
                   ))}
                 </div>
               );

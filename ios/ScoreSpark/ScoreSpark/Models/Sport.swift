@@ -43,6 +43,7 @@ enum Sport: String, CaseIterable, Identifiable, Sendable {
         }
     }
 
+    /// The specific sports (excluding .all)
     static var sports: [Sport] {
         allCases.filter { $0 != .all }
     }
@@ -50,5 +51,5 @@ enum Sport: String, CaseIterable, Identifiable, Sendable {
 
 @Observable
 final class SportSelection: @unchecked Sendable {
-    var current: Sport = .all
+    var current: Sport = .soccer
 }

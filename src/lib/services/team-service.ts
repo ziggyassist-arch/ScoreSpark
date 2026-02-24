@@ -28,6 +28,76 @@ export interface SquadPlayer {
   dateOfBirth?: string;
 }
 
+// ESPN sport paths
+const ESPN_SPORT_PATHS: Record<string, string> = {
+  nba: "basketball/nba",
+  nfl: "football/nfl",
+  nhl: "hockey/nhl",
+  mlb: "baseball/mlb",
+};
+
+interface TeamListItem {
+  id: string;
+  name: string;
+  shortName: string;
+  badge: string;
+  sport: Sport;
+}
+
+/**
+ * Fetch all teams for a sport (for the Teams tab)
+ */
+export async function getTeamsForSport(sport: Sport): Promise<TeamListItem[]> {
+  const cacheKey = `teams-list:${sport}`;
+  const cached = cacheGet<TeamListItem[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    if (sport === "soccer") {
+      // Use football-data.org PL teams
+      const res = await fetch(`${FD_BASE}/competitions/PL/teams`, {
+        headers: { "X-Auth-Token": FD_KEY },
+      });
+      if (!res.ok) return [];
+      const data = await res.json();
+      const teams: TeamListItem[] = (data.teams ?? []).map((t: { id: number; name: string; shortName: string; tla: string; crest: string }) => ({
+        id: `fd-${t.id}`,
+        name: t.name,
+        shortName: t.shortName || t.tla,
+        badge: t.crest,
+        sport: "soccer" as Sport,
+      }));
+      cacheSet(cacheKey, teams, 600_000);
+      return teams;
+    }
+
+    // ESPN sports
+    const path = ESPN_SPORT_PATHS[sport];
+    if (!path) return [];
+
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${path}/teams?limit=50`;
+    const res = await fetch(url, { next: { revalidate: 600 } });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    const teams: TeamListItem[] = (data.sports?.[0]?.leagues?.[0]?.teams ?? []).map(
+      (entry: { team: { id: string; displayName: string; shortDisplayName: string; abbreviation: string; logos?: { href: string }[] } }) => ({
+        id: `espn-${sport}-team-${entry.team.id}`,
+        name: entry.team.displayName,
+        shortName: entry.team.shortDisplayName || entry.team.abbreviation,
+        badge: entry.team.logos?.[0]?.href ?? "",
+        sport,
+      })
+    );
+
+    cacheSet(cacheKey, teams, 600_000);
+    return teams;
+  } catch (err) {
+    console.error(`[team-service] Error fetching ${sport} teams:`, err);
+    return [];
+  }
+}
+
 /**
  * Fetch soccer team detail from football-data.org
  */

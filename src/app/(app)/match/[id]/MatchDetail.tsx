@@ -3,8 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Match, MatchEvent, Lineup } from "@/lib/types";
+import LinescoreTable from "@/components/match-detail/LinescoreTable";
+import TeamStatsView from "@/components/match-detail/TeamStatsView";
+import NFLSituation from "@/components/match-detail/NFLSituation";
+import { generateHypePrimer } from "@/lib/hype-primers";
+import PulseReactions from "@/components/PulseReactions";
 
-type Tab = "summary" | "lineups" | "stats" | "events";
+type Tab = "summary" | "lineups" | "stats" | "events" | "boxscore";
 
 function EventIcon({ type }: { type: MatchEvent["type"] }) {
   switch (type) {
@@ -29,31 +34,15 @@ function EventIcon({ type }: { type: MatchEvent["type"] }) {
   }
 }
 
-function SummaryTab({ match }: { match: Match }) {
+// — Soccer tabs —
+
+function SoccerSummaryTab({ match }: { match: Match }) {
   if (match.status === "upcoming") {
-    return (
-      <div className="text-center py-12 text-white/30">
-        <p className="text-lg">Match hasn&apos;t started yet</p>
-        <p className="text-sm mt-2">
-          {new Date(match.startTime).toLocaleDateString(undefined, {
-            weekday: "long",
-            month: "long",
-            day: "numeric",
-          })}
-          {" at "}
-          {new Date(match.startTime).toLocaleTimeString([], {
-            hour: "2-digit",
-            minute: "2-digit",
-          })}
-        </p>
-        {match.venue && <p className="text-sm mt-1">{match.venue}</p>}
-      </div>
-    );
+    return <UpcomingMessage match={match} />;
   }
 
   return (
     <div className="space-y-4">
-      {/* Key events */}
       {match.events.length > 0 ? (
         <div className="space-y-1">
           {match.events.map((event, i) => (
@@ -88,8 +77,6 @@ function SummaryTab({ match }: { match: Match }) {
           <p>No events yet</p>
         </div>
       )}
-
-      {/* Venue */}
       {match.venue && (
         <div className="pt-4 border-t border-white/5">
           <p className="text-xs text-white/30">
@@ -101,7 +88,7 @@ function SummaryTab({ match }: { match: Match }) {
   );
 }
 
-function StatsTab({ match }: { match: Match }) {
+function SoccerStatsTab({ match }: { match: Match }) {
   if (!match.stats) {
     return (
       <div className="text-center py-12 text-white/30">
@@ -238,9 +225,7 @@ function EventsTab({ match }: { match: Match }) {
 
   return (
     <div className="relative">
-      {/* Timeline line */}
       <div className="absolute left-[39px] top-0 bottom-0 w-px bg-white/10" />
-
       <div className="space-y-0">
         {match.events.map((event, i) => (
           <div key={i} className="flex items-start gap-4 py-3 relative">
@@ -267,6 +252,93 @@ function EventsTab({ match }: { match: Match }) {
   );
 }
 
+// — American sports summary —
+
+function AmericanSportSummary({ match }: { match: Match }) {
+  if (match.status === "upcoming") {
+    return <UpcomingMessage match={match} />;
+  }
+
+  const detail = match.sportDetail;
+
+  return (
+    <div className="space-y-6">
+      {/* Linescore (quarter/period/inning scores) */}
+      {detail?.linescores && <LinescoreTable match={match} />}
+
+      {/* NFL live situation */}
+      {match.sport === "nfl" && <NFLSituation match={match} />}
+
+      {/* Records */}
+      {(detail?.homeRecord || detail?.awayRecord) && (
+        <div className="flex justify-between text-xs text-white/40 px-1">
+          <span>{match.homeTeam.shortName}: {detail?.homeRecord ?? "—"}</span>
+          <span>{match.awayTeam.shortName}: {detail?.awayRecord ?? "—"}</span>
+        </div>
+      )}
+
+      {/* Venue */}
+      {match.venue && (
+        <div className="pt-4 border-t border-white/5">
+          <p className="text-xs text-white/30">
+            <span className="text-white/50">Venue:</span> {match.venue}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// — Shared —
+
+function UpcomingMessage({ match }: { match: Match }) {
+  const hype = generateHypePrimer(match);
+
+  return (
+    <div className="text-center py-12">
+      {hype && (
+        <p className="text-sm text-white/60 italic mb-4 max-w-sm mx-auto leading-relaxed">
+          {hype}
+        </p>
+      )}
+      <p className="text-lg text-white/30">Match hasn&apos;t started yet</p>
+      <p className="text-sm text-white/30 mt-2">
+        {new Date(match.startTime).toLocaleDateString(undefined, {
+          weekday: "long",
+          month: "long",
+          day: "numeric",
+        })}
+        {" at "}
+        {new Date(match.startTime).toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}
+      </p>
+      {match.venue && <p className="text-sm text-white/30 mt-1">{match.venue}</p>}
+    </div>
+  );
+}
+
+/** Get tabs based on sport */
+function getTabsForSport(sport: string, hasStats: boolean, hasLineups: boolean): { id: Tab; label: string }[] {
+  if (sport === "soccer") {
+    return [
+      { id: "summary", label: "Summary" },
+      { id: "stats", label: "Stats" },
+      { id: "lineups", label: "Lineups" },
+      { id: "events", label: "Events" },
+    ];
+  }
+  // American sports
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "summary", label: "Summary" },
+  ];
+  if (hasStats) {
+    tabs.push({ id: "boxscore", label: "Box Score" });
+  }
+  return tabs;
+}
+
 export default function MatchDetail({
   match,
   lineups,
@@ -274,7 +346,9 @@ export default function MatchDetail({
   match: Match;
   lineups: { home: Lineup; away: Lineup } | null;
 }) {
-  const [activeTab, setActiveTab] = useState<Tab>("summary");
+  const hasTeamStats = (match.sportDetail?.teamStats?.length ?? 0) > 0;
+  const tabs = getTabsForSport(match.sport, hasTeamStats, !!lineups);
+  const [activeTab, setActiveTab] = useState<Tab>(tabs[0].id);
 
   const sportColors: Record<string, string> = {
     soccer: "text-sport-soccer",
@@ -285,18 +359,11 @@ export default function MatchDetail({
   };
   const sportColor = sportColors[match.sport] ?? "text-sport-nfl";
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "summary", label: "Summary" },
-    { id: "stats", label: "Stats" },
-    { id: "lineups", label: "Lineups" },
-    { id: "events", label: "Events" },
-  ];
-
   return (
     <div className="animate-slide-up">
       {/* Back button */}
       <Link
-        href="/scores"
+        href={`/scores/${match.sport === "soccer" ? "" : match.sport}`}
         className="inline-flex items-center gap-1.5 text-sm text-white/40 hover:text-white/70 transition-colors mb-6"
       >
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -319,20 +386,13 @@ export default function MatchDetail({
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
               </span>
               <span className="text-xs font-bold text-live-green">
-                {match.clock?.displayValue
-                  ?? (match.sport === "soccer"
-                    ? `${match.minute}'`
-                    : match.sport === "nhl"
-                    ? `P${match.minute}`
-                    : match.sport === "mlb"
-                    ? `Inn ${match.minute}`
-                    : `Q${match.minute}`)}
+                {match.clock?.displayValue ?? "LIVE"}
               </span>
             </div>
           )}
           {match.status === "finished" && (
             <span className="text-xs font-semibold text-white/40 px-2.5 py-1 bg-white/5 rounded-full">
-              Full Time
+              Final
             </span>
           )}
           {match.status === "upcoming" && (
@@ -360,6 +420,11 @@ export default function MatchDetail({
             <p className="text-sm font-semibold text-white/90 truncate">
               {match.homeTeam.name}
             </p>
+            {match.sportDetail?.homeRecord && (
+              <p className="text-[11px] text-white/30 mt-0.5">
+                {match.sportDetail.homeRecord}
+              </p>
+            )}
           </div>
 
           {/* Score */}
@@ -394,35 +459,58 @@ export default function MatchDetail({
             <p className="text-sm font-semibold text-white/90 truncate">
               {match.awayTeam.name}
             </p>
+            {match.sportDetail?.awayRecord && (
+              <p className="text-[11px] text-white/30 mt-0.5">
+                {match.sportDetail.awayRecord}
+              </p>
+            )}
           </div>
         </div>
       </div>
 
+      {/* Pulse Reactions — live & finished matches */}
+      {match.status !== "upcoming" && (
+        <div className="mb-6">
+          <PulseReactions matchId={match.id} />
+        </div>
+      )}
+
       {/* Tabs */}
-      <div className="flex gap-1 bg-surface rounded-xl p-1 mb-6">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
-              activeTab === tab.id
-                ? "bg-card text-white shadow-sm"
-                : "text-white/40 hover:text-white/60"
-            }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      {tabs.length > 1 && (
+        <div className="flex gap-1 bg-surface rounded-xl p-1 mb-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
+              className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+                activeTab === tab.id
+                  ? "bg-card text-white shadow-sm"
+                  : "text-white/40 hover:text-white/60"
+              }`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {/* Tab Content */}
       <div className="bg-card rounded-2xl p-5 border border-white/5">
-        {activeTab === "summary" && <SummaryTab match={match} />}
-        {activeTab === "stats" && <StatsTab match={match} />}
-        {activeTab === "lineups" && (
+        {/* Soccer tabs */}
+        {match.sport === "soccer" && activeTab === "summary" && <SoccerSummaryTab match={match} />}
+        {match.sport === "soccer" && activeTab === "stats" && <SoccerStatsTab match={match} />}
+        {match.sport === "soccer" && activeTab === "lineups" && (
           <LineupsTab lineups={lineups} match={match} />
         )}
-        {activeTab === "events" && <EventsTab match={match} />}
+        {match.sport === "soccer" && activeTab === "events" && <EventsTab match={match} />}
+
+        {/* American sport tabs */}
+        {match.sport !== "soccer" && activeTab === "summary" && (
+          <AmericanSportSummary match={match} />
+        )}
+        {match.sport !== "soccer" && activeTab === "boxscore" && (
+          <TeamStatsView match={match} />
+        )}
       </div>
     </div>
   );

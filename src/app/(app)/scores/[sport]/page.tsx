@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { getMatchesForSport } from "@/lib/services/match-service";
 import type { Sport } from "@/lib/types";
-import SportSwitcher from "@/components/SportSwitcher";
 import LeagueBar from "@/components/LeagueBar";
 import LiveMatchList from "@/components/LiveMatchList";
 
@@ -51,9 +50,6 @@ export default async function SportScoresPage({
             : "No live matches right now"}
         </p>
       </div>
-
-      {/* Sport Filter */}
-      <SportSwitcher />
 
       {/* Top Leagues — soccer only */}
       {sport === "soccer" && <LeagueBar />}

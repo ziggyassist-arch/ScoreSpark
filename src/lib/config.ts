@@ -12,4 +12,13 @@ export const config = {
   polling: {
     intervalMs: 30_000, // 30s live polling
   },
+  stripe: {
+    secretKey: process.env.STRIPE_SECRET_KEY ?? "",
+    publishableKey: process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? "",
+    webhookSecret: process.env.STRIPE_WEBHOOK_SECRET ?? "",
+    prices: {
+      premium: process.env.STRIPE_PRICE_PREMIUM ?? "",
+      ultra: process.env.STRIPE_PRICE_ULTRA ?? "",
+    },
+  },
 } as const;

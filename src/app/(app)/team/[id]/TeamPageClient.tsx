@@ -17,7 +17,7 @@ interface TeamMatch {
   competition: string;
 }
 
-type Tab = "overview" | "fixtures" | "squad" | "stats";
+type Tab = "overview" | "fixtures" | "squad" | "stats" | "standings";
 
 const sportColors: Record<string, string> = {
   soccer: "text-sport-soccer",
@@ -274,6 +274,57 @@ function SquadTab({ squad, sport }: { squad: SquadPlayer[]; sport: string }) {
   );
 }
 
+/** Map sport/competitions to standings league slugs */
+function getStandingsSlug(sport: string, competitions: string[]): string | null {
+  if (sport === "soccer") {
+    const compMap: Record<string, string> = {
+      "Premier League": "epl",
+      "La Liga": "laliga",
+      "Bundesliga": "bundesliga",
+      "Serie A": "seriea",
+      "Ligue 1": "ligue1",
+      "Champions League": "ucl",
+      "UEFA Champions League": "ucl",
+      "Eredivisie": "eredivisie",
+      "Championship": "championship",
+      "Primeira Liga": "ligapt",
+    };
+    for (const comp of competitions) {
+      if (compMap[comp]) return compMap[comp];
+    }
+    return "epl";
+  }
+  const sportMap: Record<string, string> = {
+    nba: "nba-east",
+    nfl: "nfl",
+    nhl: "nhl",
+    mlb: "mlb-al",
+  };
+  return sportMap[sport] ?? null;
+}
+
+function StandingsTab({ team }: { team: TeamDetail }) {
+  const slug = getStandingsSlug(team.sport, team.competitions);
+  return (
+    <div className="space-y-4">
+      <p className="text-sm text-white/50">
+        View full standings for {team.competitions[0] ?? team.sport.toUpperCase()}
+      </p>
+      {slug && (
+        <Link
+          href={`/standings/${slug}`}
+          className="inline-flex items-center gap-2 px-4 py-3 bg-card rounded-xl border border-white/5 hover:bg-white/5 hover:border-white/10 transition-all text-sm font-medium text-gold-spark"
+        >
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5M12 17.25h8.25" />
+          </svg>
+          View Standings
+        </Link>
+      )}
+    </div>
+  );
+}
+
 function StatsTab({ team, matches }: { team: TeamDetail; matches: TeamMatch[] }) {
   const finished = matches.filter((m) => m.status === "finished");
   const totalGames = finished.length;
@@ -344,6 +395,7 @@ export default function TeamPageClient({
     { id: "fixtures", label: "Fixtures" },
     { id: "squad", label: "Squad" },
     { id: "stats", label: "Stats" },
+    { id: "standings", label: "Standings" },
   ];
 
   const sportColor = sportColors[team.sport] ?? "text-sport-soccer";
@@ -406,6 +458,7 @@ export default function TeamPageClient({
       {activeTab === "fixtures" && <FixturesTab recent={recent} upcoming={upcoming} />}
       {activeTab === "squad" && <SquadTab squad={team.squad} sport={team.sport} />}
       {activeTab === "stats" && <StatsTab team={team} matches={matches} />}
+      {activeTab === "standings" && <StandingsTab team={team} />}
     </div>
   );
 }

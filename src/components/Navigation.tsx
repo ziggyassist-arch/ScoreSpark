@@ -168,14 +168,10 @@ export default function Navigation() {
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
         <Link href="/scores" className="hover:opacity-80 transition-opacity">
-          <Image
-            src="/scorespark_white_transparent_bg.png"
-            alt="ScoreSpark"
-            width={120}
-            height={34}
-            className="h-7 w-auto"
-            priority
-          />
+          <span className="text-[22px] font-bold tracking-tight">
+            <span className="text-white">Score</span>
+            <span className="text-[#F5C518]">Spark</span>
+          </span>
         </Link>
         <div className="flex items-center gap-1">
           <SpoilerToggle />
@@ -220,22 +216,11 @@ export default function Navigation() {
           href="/scores"
           className="flex items-center justify-center lg:justify-start px-4 py-5 border-b border-white/5 hover:opacity-80 transition-opacity"
         >
-          <Image
-            src="/scorespark_white_transparent_bg.png"
-            alt="ScoreSpark"
-            width={120}
-            height={34}
-            className="hidden lg:block h-7 w-auto"
-            priority
-          />
-          <Image
-            src="/scorespark_white_transparent_bg.png"
-            alt="S"
-            width={34}
-            height={34}
-            className="lg:hidden h-8 w-8 object-contain"
-            priority
-          />
+          <span className="hidden lg:block text-[20px] font-bold tracking-tight">
+            <span className="text-white">Score</span>
+            <span className="text-[#F5C518]">Spark</span>
+          </span>
+          <span className="lg:hidden text-[22px] font-black text-[#F5C518]">S</span>
         </Link>
 
         {/* Sport navigation */}

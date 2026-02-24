@@ -24,16 +24,16 @@ const ESPN_SPORT_PATHS: Record<Sport, string> = {
 // RSS feed URLs — top 10 sources per sport
 const RSS_FEEDS: Record<Sport, { name: string; url: string }[]> = {
   soccer: [
+    { name: "FotMob", url: "https://www.fotmob.com/rss" },
+    { name: "ESPN FC", url: "https://www.espn.com/espn/rss/soccer/news" },
+    { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=soccer" },
     { name: "BBC Sport", url: "https://feeds.bbci.co.uk/sport/football/rss.xml" },
     { name: "Sky Sports", url: "https://www.skysports.com/rss/12040" },
-    { name: "Guardian Football", url: "https://www.theguardian.com/football/rss" },
     { name: "Goal.com", url: "https://www.goal.com/feeds/en/news" },
-    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/soccer/" },
-    { name: "90min", url: "https://www.90min.com/posts.rss" },
-    { name: "FourFourTwo", url: "https://www.fourfourtwo.com/feeds/all" },
-    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
     { name: "Marca", url: "https://e00-marca.uecdn.es/rss/en/football.xml" },
-    { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=soccer" },
+    { name: "The Guardian", url: "https://www.theguardian.com/football/rss" },
+    { name: "Transfermarkt", url: "https://www.transfermarkt.com/rss/news" },
+    { name: "FIFA.com", url: "https://www.fifa.com/rss" },
   ],
   nba: [
     { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nba/" },

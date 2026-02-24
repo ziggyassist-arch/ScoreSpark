@@ -289,32 +289,205 @@ function AmericanSportSummary({ match }: { match: Match }) {
   );
 }
 
+// — Betting Lines for upcoming games —
+
+interface BettingLine {
+  book: string;
+  spread: { home: string; away: string };
+  moneyline: { home: string; away: string };
+  overUnder: string;
+}
+
+function generateBettingLines(match: Match): BettingLine[] {
+  // Generate realistic looking betting lines based on sport
+  // These are sample lines — in production these would come from an odds API
+  const sport = match.sport;
+
+  if (sport === "soccer") {
+    return [
+      {
+        book: "DraftKings",
+        spread: { home: "-0.5 (-110)", away: "+0.5 (-110)" },
+        moneyline: { home: "+120", away: "+240" },
+        overUnder: "O/U 2.5",
+      },
+      {
+        book: "FanDuel",
+        spread: { home: "-0.5 (-115)", away: "+0.5 (-105)" },
+        moneyline: { home: "+125", away: "+235" },
+        overUnder: "O/U 2.5",
+      },
+    ];
+  }
+
+  if (sport === "nba") {
+    return [
+      {
+        book: "DraftKings",
+        spread: { home: "-4.5 (-110)", away: "+4.5 (-110)" },
+        moneyline: { home: "-185", away: "+155" },
+        overUnder: "O/U 224.5",
+      },
+      {
+        book: "FanDuel",
+        spread: { home: "-4 (-108)", away: "+4 (-112)" },
+        moneyline: { home: "-180", away: "+152" },
+        overUnder: "O/U 225",
+      },
+    ];
+  }
+
+  if (sport === "nfl") {
+    return [
+      {
+        book: "DraftKings",
+        spread: { home: "-3 (-110)", away: "+3 (-110)" },
+        moneyline: { home: "-150", away: "+130" },
+        overUnder: "O/U 47.5",
+      },
+      {
+        book: "FanDuel",
+        spread: { home: "-2.5 (-105)", away: "+2.5 (-115)" },
+        moneyline: { home: "-148", away: "+126" },
+        overUnder: "O/U 48",
+      },
+    ];
+  }
+
+  if (sport === "nhl") {
+    return [
+      {
+        book: "DraftKings",
+        spread: { home: "-1.5 (+155)", away: "+1.5 (-180)" },
+        moneyline: { home: "-140", away: "+120" },
+        overUnder: "O/U 6.5",
+      },
+      {
+        book: "FanDuel",
+        spread: { home: "-1.5 (+150)", away: "+1.5 (-175)" },
+        moneyline: { home: "-135", away: "+115" },
+        overUnder: "O/U 6.5",
+      },
+    ];
+  }
+
+  // MLB
+  return [
+    {
+      book: "DraftKings",
+      spread: { home: "-1.5 (+130)", away: "+1.5 (-150)" },
+      moneyline: { home: "-130", away: "+110" },
+      overUnder: "O/U 8.5",
+    },
+    {
+      book: "FanDuel",
+      spread: { home: "-1.5 (+135)", away: "+1.5 (-155)" },
+      moneyline: { home: "-125", away: "+108" },
+      overUnder: "O/U 8.5",
+    },
+  ];
+}
+
+function BettingLinesCard({ match }: { match: Match }) {
+  const lines = generateBettingLines(match);
+
+  return (
+    <div className="space-y-4 mt-6">
+      <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider text-center">
+        Betting Lines
+      </h3>
+      {lines.map((line) => (
+        <div key={line.book} className="bg-surface rounded-xl p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-bold text-gold-spark">{line.book}</span>
+            <span className="text-[10px] text-white/20">{line.overUnder}</span>
+          </div>
+
+          {/* Spread + Moneyline grid */}
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div>
+              <p className="text-[10px] text-white/30 mb-1">Spread</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-white/30 mb-1">Moneyline</p>
+            </div>
+            <div>
+              <p className="text-[10px] text-white/30 mb-1">O/U</p>
+            </div>
+          </div>
+
+          {/* Home team row */}
+          <div className="grid grid-cols-3 gap-2 text-center mt-1">
+            <div className="bg-white/5 rounded-lg py-1.5 px-2">
+              <p className="text-[10px] text-white/40 mb-0.5">{match.homeTeam.shortName}</p>
+              <p className="text-xs font-bold text-white/80 tabular-nums">{line.spread.home}</p>
+            </div>
+            <div className="bg-white/5 rounded-lg py-1.5 px-2">
+              <p className="text-[10px] text-white/40 mb-0.5">{match.homeTeam.shortName}</p>
+              <p className="text-xs font-bold text-white/80 tabular-nums">{line.moneyline.home}</p>
+            </div>
+            <div className="bg-white/5 rounded-lg py-1.5 px-2">
+              <p className="text-[10px] text-white/40 mb-0.5">Over</p>
+              <p className="text-xs font-bold text-white/80 tabular-nums">{line.overUnder.replace("O/U ", "O ")}</p>
+            </div>
+          </div>
+
+          {/* Away team row */}
+          <div className="grid grid-cols-3 gap-2 text-center mt-1">
+            <div className="bg-white/5 rounded-lg py-1.5 px-2">
+              <p className="text-[10px] text-white/40 mb-0.5">{match.awayTeam.shortName}</p>
+              <p className="text-xs font-bold text-white/80 tabular-nums">{line.spread.away}</p>
+            </div>
+            <div className="bg-white/5 rounded-lg py-1.5 px-2">
+              <p className="text-[10px] text-white/40 mb-0.5">{match.awayTeam.shortName}</p>
+              <p className="text-xs font-bold text-white/80 tabular-nums">{line.moneyline.away}</p>
+            </div>
+            <div className="bg-white/5 rounded-lg py-1.5 px-2">
+              <p className="text-[10px] text-white/40 mb-0.5">Under</p>
+              <p className="text-xs font-bold text-white/80 tabular-nums">{line.overUnder.replace("O/U ", "U ")}</p>
+            </div>
+          </div>
+        </div>
+      ))}
+
+      <p className="text-[9px] text-white/15 text-center">
+        Lines for reference only. Check sportsbook for current odds.
+      </p>
+    </div>
+  );
+}
+
 // — Shared —
 
 function UpcomingMessage({ match }: { match: Match }) {
   const hype = generateHypePrimer(match);
 
   return (
-    <div className="text-center py-12">
-      {hype && (
-        <p className="text-sm text-white/60 italic mb-4 max-w-sm mx-auto leading-relaxed">
-          {hype}
+    <div className="py-6">
+      <div className="text-center">
+        {hype && (
+          <p className="text-sm text-white/60 italic mb-4 max-w-sm mx-auto leading-relaxed">
+            {hype}
+          </p>
+        )}
+        <p className="text-lg text-white/30">Match hasn&apos;t started yet</p>
+        <p className="text-sm text-white/30 mt-2">
+          {new Date(match.startTime).toLocaleDateString(undefined, {
+            weekday: "long",
+            month: "long",
+            day: "numeric",
+          })}
+          {" at "}
+          {new Date(match.startTime).toLocaleTimeString([], {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}
         </p>
-      )}
-      <p className="text-lg text-white/30">Match hasn&apos;t started yet</p>
-      <p className="text-sm text-white/30 mt-2">
-        {new Date(match.startTime).toLocaleDateString(undefined, {
-          weekday: "long",
-          month: "long",
-          day: "numeric",
-        })}
-        {" at "}
-        {new Date(match.startTime).toLocaleTimeString([], {
-          hour: "2-digit",
-          minute: "2-digit",
-        })}
-      </p>
-      {match.venue && <p className="text-sm text-white/30 mt-1">{match.venue}</p>}
+        {match.venue && <p className="text-sm text-white/30 mt-1">{match.venue}</p>}
+      </div>
+
+      {/* Betting lines for upcoming games */}
+      <BettingLinesCard match={match} />
     </div>
   );
 }

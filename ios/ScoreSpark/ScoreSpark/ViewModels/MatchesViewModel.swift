@@ -9,17 +9,16 @@ struct LeagueGroup: Identifiable, Sendable {
 @Observable @MainActor
 final class MatchesViewModel {
     var groups: [LeagueGroup] = []
-    var selectedDate = Date()
     var isLoading = false
     var error: String?
 
-    func load(sport: Sport) async {
+    func load(sport: Sport, date: String? = nil) async {
         isLoading = true
         error = nil
 
         do {
             let sportParam = sport == .all ? nil : sport.apiValue
-            let apiMatches = try await APIService.shared.fetchMatches(sport: sportParam)
+            let apiMatches = try await APIService.shared.fetchMatches(sport: sportParam, date: date)
             let matches = apiMatches.map { $0.toMatch() }
 
             // Group by league

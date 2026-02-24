@@ -232,8 +232,22 @@ struct TeamsListView: View {
         }
         .task(id: sportSelection.current) {
             isLoading = true
-            teams = MockDataService.allTeams(for: sportSelection.current)
+            teams = await fetchTeams(for: sportSelection.current)
             isLoading = false
+        }
+    }
+
+    private func fetchTeams(for sport: Sport) async -> [Team] {
+        let sportParam = sport == .all ? "soccer" : sport.apiValue
+        guard let url = URL(string: "https://scorespark.vercel.app/api/v1/standings/\(sportParam == "soccer" ? "epl" : sportParam == "nba" ? "nba-east" : sportParam == "nfl" ? "nfl-afc" : sportParam == "nhl" ? "nhl" : "mlb-al")") else {
+            return MockDataService.allTeams(for: sport)
+        }
+
+        do {
+            let response = try await APIService.shared.fetchStandings(league: sportParam == "soccer" ? "epl" : sportParam == "nba" ? "nba-east" : sportParam == "nfl" ? "nfl-afc" : sportParam == "nhl" ? "nhl" : "mlb-al")
+            return response.rows.map { $0.toStanding().team }
+        } catch {
+            return MockDataService.allTeams(for: sport)
         }
     }
 }

@@ -94,14 +94,122 @@ export async function getTeamsForSport(sport: Sport): Promise<TeamListItem[]> {
     return teams;
   } catch (err) {
     console.error(`[team-service] Error fetching ${sport} teams:`, err);
-    return [];
+    // Return hardcoded fallback data so teams page is never empty
+    return getFallbackTeams(sport);
   }
 }
 
+/** ESPN logo URL helper */
+function espnTeamLogo(sport: string, id: string): string {
+  const paths: Record<string, string> = {
+    nhl: "hockey/nhl",
+    mlb: "baseball/mlb",
+    nba: "basketball/nba",
+    nfl: "football/nfl",
+  };
+  return `https://a.espncdn.com/i/teamlogos/${paths[sport]?.split("/")[1] ?? sport}/500/${id}.png`;
+}
+
+/** Hardcoded fallback teams (used when ESPN API is unreachable) */
+function getFallbackTeams(sport: Sport): { id: string; name: string; shortName: string; badge: string; sport: Sport }[] {
+  if (sport === "nhl") {
+    const nhlTeams = [
+      { id: "24", name: "Anaheim Ducks", short: "Ducks" },
+      { id: "6", name: "Boston Bruins", short: "Bruins" },
+      { id: "7", name: "Buffalo Sabres", short: "Sabres" },
+      { id: "20", name: "Calgary Flames", short: "Flames" },
+      { id: "7", name: "Carolina Hurricanes", short: "Hurricanes" },
+      { id: "16", name: "Chicago Blackhawks", short: "Blackhawks" },
+      { id: "17", name: "Colorado Avalanche", short: "Avalanche" },
+      { id: "29", name: "Columbus Blue Jackets", short: "Blue Jackets" },
+      { id: "25", name: "Dallas Stars", short: "Stars" },
+      { id: "17", name: "Detroit Red Wings", short: "Red Wings" },
+      { id: "22", name: "Edmonton Oilers", short: "Oilers" },
+      { id: "13", name: "Florida Panthers", short: "Panthers" },
+      { id: "26", name: "Los Angeles Kings", short: "Kings" },
+      { id: "30", name: "Minnesota Wild", short: "Wild" },
+      { id: "8", name: "Montreal Canadiens", short: "Canadiens" },
+      { id: "18", name: "Nashville Predators", short: "Predators" },
+      { id: "1", name: "New Jersey Devils", short: "Devils" },
+      { id: "2", name: "New York Islanders", short: "Islanders" },
+      { id: "3", name: "New York Rangers", short: "Rangers" },
+      { id: "9", name: "Ottawa Senators", short: "Senators" },
+      { id: "4", name: "Philadelphia Flyers", short: "Flyers" },
+      { id: "5", name: "Pittsburgh Penguins", short: "Penguins" },
+      { id: "28", name: "San Jose Sharks", short: "Sharks" },
+      { id: "55", name: "Seattle Kraken", short: "Kraken" },
+      { id: "19", name: "St. Louis Blues", short: "Blues" },
+      { id: "14", name: "Tampa Bay Lightning", short: "Lightning" },
+      { id: "10", name: "Toronto Maple Leafs", short: "Maple Leafs" },
+      { id: "23", name: "Vancouver Canucks", short: "Canucks" },
+      { id: "54", name: "Vegas Golden Knights", short: "Golden Knights" },
+      { id: "15", name: "Washington Capitals", short: "Capitals" },
+      { id: "11", name: "Winnipeg Jets", short: "Jets" },
+      { id: "53", name: "Arizona Coyotes", short: "Coyotes" },
+    ];
+    return nhlTeams.map((t) => ({
+      id: `espn-nhl-team-${t.id}`,
+      name: t.name,
+      shortName: t.short,
+      badge: espnTeamLogo("nhl", t.id),
+      sport: "nhl" as Sport,
+    }));
+  }
+
+  if (sport === "mlb") {
+    const mlbTeams = [
+      { id: "29", name: "Arizona Diamondbacks", short: "D-backs" },
+      { id: "15", name: "Atlanta Braves", short: "Braves" },
+      { id: "1", name: "Baltimore Orioles", short: "Orioles" },
+      { id: "2", name: "Boston Red Sox", short: "Red Sox" },
+      { id: "16", name: "Chicago Cubs", short: "Cubs" },
+      { id: "4", name: "Chicago White Sox", short: "White Sox" },
+      { id: "17", name: "Cincinnati Reds", short: "Reds" },
+      { id: "5", name: "Cleveland Guardians", short: "Guardians" },
+      { id: "27", name: "Colorado Rockies", short: "Rockies" },
+      { id: "6", name: "Detroit Tigers", short: "Tigers" },
+      { id: "18", name: "Houston Astros", short: "Astros" },
+      { id: "7", name: "Kansas City Royals", short: "Royals" },
+      { id: "3", name: "Los Angeles Angels", short: "Angels" },
+      { id: "19", name: "Los Angeles Dodgers", short: "Dodgers" },
+      { id: "28", name: "Miami Marlins", short: "Marlins" },
+      { id: "8", name: "Milwaukee Brewers", short: "Brewers" },
+      { id: "9", name: "Minnesota Twins", short: "Twins" },
+      { id: "21", name: "New York Mets", short: "Mets" },
+      { id: "10", name: "New York Yankees", short: "Yankees" },
+      { id: "11", name: "Athletics", short: "Athletics" },
+      { id: "22", name: "Philadelphia Phillies", short: "Phillies" },
+      { id: "23", name: "Pittsburgh Pirates", short: "Pirates" },
+      { id: "25", name: "San Diego Padres", short: "Padres" },
+      { id: "26", name: "San Francisco Giants", short: "Giants" },
+      { id: "12", name: "Seattle Mariners", short: "Mariners" },
+      { id: "24", name: "St. Louis Cardinals", short: "Cardinals" },
+      { id: "30", name: "Tampa Bay Rays", short: "Rays" },
+      { id: "13", name: "Texas Rangers", short: "Rangers" },
+      { id: "14", name: "Toronto Blue Jays", short: "Blue Jays" },
+      { id: "20", name: "Washington Nationals", short: "Nationals" },
+    ];
+    return mlbTeams.map((t) => ({
+      id: `espn-mlb-team-${t.id}`,
+      name: t.name,
+      shortName: t.short,
+      badge: espnTeamLogo("mlb", t.id),
+      sport: "mlb" as Sport,
+    }));
+  }
+
+  return [];
+}
+
 /**
- * Fetch soccer team detail from football-data.org
+ * Fetch team detail from football-data.org (soccer) or ESPN (other sports)
  */
 export async function getTeamDetail(teamId: string): Promise<TeamDetail | null> {
+  // Handle ESPN team IDs: espn-{sport}-team-{id}
+  if (teamId.startsWith("espn-")) {
+    return getESPNTeamDetail(teamId);
+  }
+
   // Only handle football-data IDs (fd-<number>)
   if (!teamId.startsWith("fd-")) return null;
 
@@ -168,6 +276,11 @@ export async function getTeamMatches(teamId: string): Promise<{
   date: string;
   competition: string;
 }[]> {
+  // Handle ESPN team IDs
+  if (teamId.startsWith("espn-")) {
+    return getESPNTeamMatches(teamId);
+  }
+
   if (!teamId.startsWith("fd-")) return [];
 
   const fdId = teamId.replace("fd-", "");
@@ -218,6 +331,148 @@ export async function getTeamMatches(teamId: string): Promise<{
     return matches;
   } catch (err) {
     console.error("[team-service] Error fetching team matches:", err);
+    return [];
+  }
+}
+
+/** Parse ESPN team ID: espn-{sport}-team-{id} */
+function parseESPNTeamId(teamId: string): { sport: Sport; espnId: string } | null {
+  const match = teamId.match(/^espn-(nba|nfl|nhl|mlb)-team-(\d+)$/);
+  if (!match) return null;
+  return { sport: match[1] as Sport, espnId: match[2] };
+}
+
+/** Fetch team detail from ESPN API */
+async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
+  const parsed = parseESPNTeamId(teamId);
+  if (!parsed) return null;
+
+  const cacheKey = `team-espn:${teamId}`;
+  const cached = cacheGet<TeamDetail>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const path = ESPN_SPORT_PATHS[parsed.sport];
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${path}/teams/${parsed.espnId}`;
+    const res = await fetch(url, { next: { revalidate: 600 } });
+    if (!res.ok) return null;
+
+    const data = await res.json();
+    const team = data.team;
+    if (!team) return null;
+
+    const detail: TeamDetail = {
+      id: teamId,
+      name: team.displayName,
+      shortName: team.shortDisplayName || team.abbreviation,
+      badge: team.logos?.[0]?.href ?? "",
+      sport: parsed.sport,
+      venue: team.franchise?.venue?.fullName,
+      coach: undefined,
+      founded: undefined,
+      colors: team.color ? `#${team.color}` : undefined,
+      competitions: [team.standingSummary ?? ""].filter(Boolean),
+      squad: (team.athletes ?? []).slice(0, 30).map((p: {
+        id: string;
+        fullName: string;
+        position: { abbreviation: string };
+        jersey?: string;
+      }) => ({
+        id: `espn-p-${p.id}`,
+        name: p.fullName,
+        position: p.position?.abbreviation ?? "Unknown",
+        shirtNumber: p.jersey ? parseInt(p.jersey, 10) : null,
+      })),
+    };
+
+    cacheSet(cacheKey, detail, config.cache.teamTTL);
+    return detail;
+  } catch (err) {
+    console.error("[team-service] ESPN team detail error:", err);
+    return null;
+  }
+}
+
+/** Fetch recent/upcoming matches for an ESPN team */
+async function getESPNTeamMatches(teamId: string): Promise<{
+  id: string;
+  homeTeam: Team;
+  awayTeam: Team;
+  homeScore: number | null;
+  awayScore: number | null;
+  status: string;
+  date: string;
+  competition: string;
+}[]> {
+  const parsed = parseESPNTeamId(teamId);
+  if (!parsed) return [];
+
+  const cacheKey = `team-matches-espn:${teamId}`;
+  const cached = cacheGet<Awaited<ReturnType<typeof getESPNTeamMatches>>>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const path = ESPN_SPORT_PATHS[parsed.sport];
+    const url = `https://site.api.espn.com/apis/site/v2/sports/${path}/teams/${parsed.espnId}/schedule`;
+    const res = await fetch(url, { next: { revalidate: 300 } });
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    const events = (data.events ?? []).slice(-10);
+
+    const matches = events.map((ev: {
+      id: string;
+      date: string;
+      name: string;
+      competitions: {
+        competitors: {
+          id: string;
+          team: { id: string; displayName: string; shortDisplayName: string; logos?: { href: string }[] };
+          homeAway: string;
+          score?: { value: number };
+          winner?: boolean;
+        }[];
+        status: { type: { completed: boolean; description: string } };
+      }[];
+    }) => {
+      const comp = ev.competitions?.[0];
+      if (!comp) return null;
+
+      const homeComp = comp.competitors?.find((c: { homeAway: string }) => c.homeAway === "home");
+      const awayComp = comp.competitors?.find((c: { homeAway: string }) => c.homeAway === "away");
+      if (!homeComp || !awayComp) return null;
+
+      const isFinished = comp.status?.type?.completed ?? false;
+      const statusDesc = comp.status?.type?.description ?? "";
+
+      return {
+        id: `espn-${parsed.sport}-${ev.id}`,
+        homeTeam: {
+          id: `espn-${parsed.sport}-team-${homeComp.team.id}`,
+          name: homeComp.team.displayName,
+          shortName: homeComp.team.shortDisplayName,
+          badge: homeComp.team.logos?.[0]?.href ?? "",
+          sport: parsed.sport,
+        },
+        awayTeam: {
+          id: `espn-${parsed.sport}-team-${awayComp.team.id}`,
+          name: awayComp.team.displayName,
+          shortName: awayComp.team.shortDisplayName,
+          badge: awayComp.team.logos?.[0]?.href ?? "",
+          sport: parsed.sport,
+        },
+        homeScore: homeComp.score?.value ?? null,
+        awayScore: awayComp.score?.value ?? null,
+        status: isFinished ? "finished" : statusDesc === "In Progress" ? "live" : "upcoming",
+        date: ev.date,
+        competition: parsed.sport.toUpperCase(),
+      };
+    }).filter(Boolean);
+
+    cacheSet(cacheKey, matches, config.cache.matchesTTL);
+    return matches;
+  } catch (err) {
+    console.error("[team-service] ESPN team matches error:", err);
     return [];
   }
 }

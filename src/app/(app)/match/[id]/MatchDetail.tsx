@@ -405,20 +405,20 @@ export default function MatchDetail({
           )}
         </div>
 
-        {/* Score display */}
-        <div className="flex items-center justify-between">
+        {/* Score display — FotMob-style: home left, score center, away right */}
+        <div className="flex items-center justify-center gap-4">
           {/* Home team */}
-          <div className="flex-1 text-center">
+          <div className="flex-1 flex flex-col items-center min-w-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={match.homeTeam.badge}
               alt={match.homeTeam.name}
-              width={56}
-              height={56}
-              className="w-14 h-14 rounded-lg mx-auto mb-2"
+              width={64}
+              height={64}
+              className="w-16 h-16 object-contain mb-2"
             />
-            <p className="text-sm font-semibold text-white/90 truncate">
-              {match.homeTeam.name}
+            <p className="text-sm font-semibold text-white/90 text-center truncate w-full">
+              {match.homeTeam.shortName}
             </p>
             {match.sportDetail?.homeRecord && (
               <p className="text-[11px] text-white/30 mt-0.5">
@@ -427,19 +427,17 @@ export default function MatchDetail({
             )}
           </div>
 
-          {/* Score */}
-          <div className="flex-shrink-0 px-6">
+          {/* Score — centered */}
+          <div className="flex-shrink-0 min-w-[100px] text-center">
             {match.status === "upcoming" ? (
-              <div className="text-center">
-                <p className="text-2xl font-bold text-white/30">vs</p>
-              </div>
+              <p className="text-2xl font-bold text-white/30">vs</p>
             ) : (
-              <div className="flex items-center gap-3">
-                <span className="text-4xl font-bold text-white tabular-nums">
+              <div className="flex items-baseline justify-center gap-2">
+                <span className="text-5xl font-bold text-white tabular-nums">
                   {match.homeScore}
                 </span>
-                <span className="text-xl text-white/20">-</span>
-                <span className="text-4xl font-bold text-white tabular-nums">
+                <span className="text-2xl font-medium text-white/20">-</span>
+                <span className="text-5xl font-bold text-white tabular-nums">
                   {match.awayScore}
                 </span>
               </div>
@@ -447,17 +445,17 @@ export default function MatchDetail({
           </div>
 
           {/* Away team */}
-          <div className="flex-1 text-center">
+          <div className="flex-1 flex flex-col items-center min-w-0">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={match.awayTeam.badge}
               alt={match.awayTeam.name}
-              width={56}
-              height={56}
-              className="w-14 h-14 rounded-lg mx-auto mb-2"
+              width={64}
+              height={64}
+              className="w-16 h-16 object-contain mb-2"
             />
-            <p className="text-sm font-semibold text-white/90 truncate">
-              {match.awayTeam.name}
+            <p className="text-sm font-semibold text-white/90 text-center truncate w-full">
+              {match.awayTeam.shortName}
             </p>
             {match.sportDetail?.awayRecord && (
               <p className="text-[11px] text-white/30 mt-0.5">

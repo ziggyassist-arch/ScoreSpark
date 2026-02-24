@@ -171,6 +171,14 @@ export default function Navigation() {
         </Link>
         <div className="flex items-center gap-1">
           <SpoilerToggle />
+          <button
+            className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
+            aria-label="Menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
         </div>
       </header>
 
@@ -246,24 +254,34 @@ export default function Navigation() {
 
       {/* Desktop top tab bar */}
       <div className="hidden md:block fixed top-0 left-20 lg:left-56 right-0 h-12 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-30">
-        <div className="flex items-center h-full px-6 gap-0">
-          {topTabs.map((tab) => {
-            const href = tab.href(activeSport);
-            const active = isTabActive(href);
-            return (
-              <Link
-                key={tab.label}
-                href={href}
-                className={`px-5 h-full flex items-center text-sm font-semibold border-b-2 transition-colors ${
-                  active
-                    ? "text-gold-spark border-gold-spark"
-                    : "text-white/40 border-transparent hover:text-white/60"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            );
-          })}
+        <div className="flex items-center justify-between h-full px-6">
+          <div className="flex items-center h-full gap-0">
+            {topTabs.map((tab) => {
+              const href = tab.href(activeSport);
+              const active = isTabActive(href);
+              return (
+                <Link
+                  key={tab.label}
+                  href={href}
+                  className={`px-5 h-full flex items-center text-sm font-semibold border-b-2 transition-colors ${
+                    active
+                      ? "text-gold-spark border-gold-spark"
+                      : "text-white/40 border-transparent hover:text-white/60"
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
+          </div>
+          <button
+            className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
+            aria-label="Menu"
+          >
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+          </button>
         </div>
       </div>
 

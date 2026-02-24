@@ -36,6 +36,26 @@ export interface ESPNCompetition {
   status: ESPNStatus;
   odds?: ESPNOdds[];
   situation?: ESPNSituation;
+  leaders?: ESPNLeaderCategory[];
+}
+
+export interface ESPNLeaderCategory {
+  name: string;
+  displayName: string;
+  shortDisplayName: string;
+  abbreviation: string;
+  leaders: {
+    displayValue: string;
+    value: number;
+    athlete: {
+      id: string;
+      fullName: string;
+      displayName: string;
+      shortName: string;
+      team: { id: string };
+    };
+    team: { id: string };
+  }[];
 }
 
 export interface ESPNVenue {

@@ -254,6 +254,46 @@ function EventsTab({ match }: { match: Match }) {
 
 // — American sports summary —
 
+function PlayerLeaders({ match }: { match: Match }) {
+  const leaders = match.sportDetail?.leaders;
+  if (!leaders || leaders.length === 0) return null;
+
+  const homeLeaders = leaders.filter((l) => l.teamSide === "home");
+  const awayLeaders = leaders.filter((l) => l.teamSide === "away");
+
+  return (
+    <div className="space-y-3">
+      <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider">
+        Player Leaders
+      </h3>
+      <div className="grid grid-cols-2 gap-3">
+        {/* Home leaders */}
+        <div className="space-y-2">
+          <p className="text-[11px] font-semibold text-white/50">{match.homeTeam.shortName}</p>
+          {homeLeaders.map((l, i) => (
+            <div key={i} className="bg-white/5 rounded-lg p-2">
+              <p className="text-[10px] text-white/30 uppercase">{l.category}</p>
+              <p className="text-sm text-white/80 font-medium truncate">{l.playerName}</p>
+              <p className="text-xs text-gold-spark tabular-nums">{l.displayValue}</p>
+            </div>
+          ))}
+        </div>
+        {/* Away leaders */}
+        <div className="space-y-2">
+          <p className="text-[11px] font-semibold text-white/50">{match.awayTeam.shortName}</p>
+          {awayLeaders.map((l, i) => (
+            <div key={i} className="bg-white/5 rounded-lg p-2">
+              <p className="text-[10px] text-white/30 uppercase">{l.category}</p>
+              <p className="text-sm text-white/80 font-medium truncate">{l.playerName}</p>
+              <p className="text-xs text-gold-spark tabular-nums">{l.displayValue}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function AmericanSportSummary({ match }: { match: Match }) {
   if (match.status === "upcoming") {
     return <UpcomingMessage match={match} />;
@@ -276,6 +316,9 @@ function AmericanSportSummary({ match }: { match: Match }) {
           <span>{match.awayTeam.shortName}: {detail?.awayRecord ?? "—"}</span>
         </div>
       )}
+
+      {/* Player Leaders / Player Stats */}
+      {match.status === "finished" && <PlayerLeaders match={match} />}
 
       {/* Venue */}
       {match.venue && (

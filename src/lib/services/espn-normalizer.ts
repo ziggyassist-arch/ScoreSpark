@@ -158,6 +158,22 @@ function extractSportDetail(
     };
   }
 
+  // Player leaders (from competition.leaders)
+  if (comp.leaders?.length) {
+    detail.leaders = [];
+    for (const cat of comp.leaders) {
+      for (const leader of (cat.leaders ?? []).slice(0, 1)) {
+        const teamSide = leader.team?.id === home.team.id ? "home" as const : "away" as const;
+        detail.leaders.push({
+          category: cat.shortDisplayName || cat.displayName || cat.name,
+          playerName: leader.athlete?.displayName ?? leader.athlete?.fullName ?? "Unknown",
+          displayValue: leader.displayValue,
+          teamSide,
+        });
+      }
+    }
+  }
+
   return detail;
 }
 

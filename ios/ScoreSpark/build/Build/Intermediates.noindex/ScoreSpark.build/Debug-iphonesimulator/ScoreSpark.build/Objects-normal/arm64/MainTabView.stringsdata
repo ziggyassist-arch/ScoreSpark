@@ -4,34 +4,42 @@
     "Localizable": [
       {
         "comment": "",
-        "key": "Score",
+        "key": "Search",
         "location": {
-          "startingColumn": 22,
-          "startingLine": 64
+          "startingColumn": 30,
+          "startingLine": 116
         }
       },
       {
         "comment": "",
-        "key": "Spark",
+        "key": "Teams, leagues, matches...",
         "location": {
-          "startingColumn": 22,
-          "startingLine": 67
+          "startingColumn": 52,
+          "startingLine": 118
         }
       },
       {
         "comment": "",
-        "key": "Mock Draft",
+        "key": "Search results for \"%@\"",
         "location": {
-          "startingColumn": 18,
-          "startingLine": 177
+          "startingColumn": 26,
+          "startingLine": 107
         }
       },
       {
         "comment": "",
-        "key": "Coming Soon",
+        "key": "Search teams, leagues, or matches",
         "location": {
-          "startingColumn": 18,
-          "startingLine": 180
+          "startingColumn": 30,
+          "startingLine": 101
+        }
+      },
+      {
+        "comment": "",
+        "key": "Done",
+        "location": {
+          "startingColumn": 28,
+          "startingLine": 121
         }
       },
       {
@@ -39,7 +47,7 @@
         "key": "No teams available for this sport.",
         "location": {
           "startingColumn": 39,
-          "startingLine": 204
+          "startingLine": 228
         }
       },
       {
@@ -47,23 +55,47 @@
         "key": "No Teams",
         "location": {
           "startingColumn": 40,
-          "startingLine": 203
+          "startingLine": 227
         }
       },
       {
         "comment": "",
-        "key": "No news available right now.",
+        "key": "Couldn't Load News",
         "location": {
-          "startingColumn": 39,
-          "startingLine": 269
+          "startingColumn": 37,
+          "startingLine": 301
         }
       },
       {
         "comment": "",
         "key": "No News",
         "location": {
-          "startingColumn": 40,
-          "startingLine": 268
+          "startingColumn": 60,
+          "startingLine": 301
+        }
+      },
+      {
+        "comment": "",
+        "key": "Check your connection and try again.",
+        "location": {
+          "startingColumn": 37,
+          "startingLine": 304
+        }
+      },
+      {
+        "comment": "",
+        "key": "No news available right now.",
+        "location": {
+          "startingColumn": 78,
+          "startingLine": 304
+        }
+      },
+      {
+        "comment": "",
+        "key": "Retry",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 317
         }
       },
       {
@@ -71,7 +103,7 @@
         "key": "·",
         "location": {
           "startingColumn": 46,
-          "startingLine": 285
+          "startingLine": 342
         }
       }
     ]

@@ -15,7 +15,6 @@
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/MockDataService.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/NotificationService.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Models/Player.swift
-/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/ScoreService.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/ScoreSparkApp.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/Components/SectionHeader.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/Settings/SettingsView.swift
@@ -25,5 +24,4 @@
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/ViewModels/StandingsViewModel.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Models/Team.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Extensions/View+Extensions.swift
-/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Widgets/WidgetPlaceholder.swift
 /Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/DerivedSources/GeneratedAssetSymbols.swift

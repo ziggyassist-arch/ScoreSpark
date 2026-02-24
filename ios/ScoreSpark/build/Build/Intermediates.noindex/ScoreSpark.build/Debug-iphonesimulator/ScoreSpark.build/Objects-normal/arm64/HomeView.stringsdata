@@ -7,7 +7,7 @@
         "key": "No Matches",
         "location": {
           "startingColumn": 26,
-          "startingLine": 35
+          "startingLine": 40
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "No matches available for %@.",
         "location": {
           "startingColumn": 26,
-          "startingLine": 38
+          "startingLine": 43
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "%lld live",
         "location": {
           "startingColumn": 34,
-          "startingLine": 53
+          "startingLine": 58
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "·",
         "location": {
           "startingColumn": 22,
-          "startingLine": 150
+          "startingLine": 155
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "%lld - %lld",
         "location": {
           "startingColumn": 26,
-          "startingLine": 193
+          "startingLine": 198
         }
       }
     ]

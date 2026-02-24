@@ -116,16 +116,6 @@
     "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService.swiftdeps",
     "swiftmodule" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService~partial.swiftmodule"
   },
-  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/ScoreService.swift" : {
-    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.swiftconstvalues",
-    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.d",
-    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.dia",
-    "index-unit-output-path" : "/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.o",
-    "llvm-bc" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.bc",
-    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.o",
-    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService.swiftdeps",
-    "swiftmodule" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/ScoreService~partial.swiftmodule"
-  },
   "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Theme/AppColors.swift" : {
     "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.swiftconstvalues",
     "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.d",
@@ -275,16 +265,6 @@
     "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/StandingsView.o",
     "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/StandingsView.swiftdeps",
     "swiftmodule" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/StandingsView~partial.swiftmodule"
-  },
-  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Widgets/WidgetPlaceholder.swift" : {
-    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.swiftconstvalues",
-    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.d",
-    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.dia",
-    "index-unit-output-path" : "/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.o",
-    "llvm-bc" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.bc",
-    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.o",
-    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder.swiftdeps",
-    "swiftmodule" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/WidgetPlaceholder~partial.swiftmodule"
   },
   "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/DerivedSources/GeneratedAssetSymbols.swift" : {
     "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/GeneratedAssetSymbols.swiftconstvalues",

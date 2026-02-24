@@ -166,7 +166,7 @@ export default function Navigation() {
     <>
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
-        <Link href="/" className="hover:opacity-60 transition-opacity">
+        <Link href="/scores" className="hover:opacity-60 transition-opacity">
           <span className="text-[17px] font-bold tracking-tight text-white">Score<span className="text-gold-spark">Spark</span></span>
         </Link>
         <div className="flex items-center gap-1">
@@ -201,7 +201,7 @@ export default function Navigation() {
       <aside className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-20 lg:w-56 bg-surface border-r border-white/5 z-40">
         {/* Logo area */}
         <Link
-          href="/"
+          href="/scores"
           className="flex items-center justify-center lg:justify-start px-4 py-5 border-b border-white/5 hover:opacity-80 transition-opacity"
         >
           <span className="lg:hidden text-xl font-black text-gold-spark">S</span>

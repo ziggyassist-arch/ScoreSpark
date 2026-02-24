@@ -9,16 +9,19 @@ final class FavoritesViewModel {
     var browseSport: Sport = .soccer
     var browseTeams: [Team] = []
     var favoriteMatches: [Match] = []
+    var isLoading = false
 
-    var favoriteTeams: [Team] {
-        MockDataService.allTeams(for: .all).filter { favoriteTeamIds.contains($0.id) }
+    var resolvedFavoriteTeams: [Team] {
+        let all = MockDataService.allTeams(for: .all) + browseTeams
+        var seen = Set<String>()
+        return all.filter { favoriteTeamIds.contains($0.id) && seen.insert($0.id).inserted }
     }
 
     func load() async {
+        isLoading = true
         loadFavorites()
-        browseTeams = MockDataService.allTeams(for: browseSport)
+        await loadBrowseTeams()
 
-        // Fetch live matches and filter by favorites
         if !favoriteTeamIds.isEmpty {
             do {
                 let apiMatches = try await APIService.shared.fetchMatches()
@@ -27,16 +30,31 @@ final class FavoritesViewModel {
                     favoriteTeamIds.contains($0.homeTeam.id) || favoriteTeamIds.contains($0.awayTeam.id)
                 }
             } catch {
-                favoriteMatches = MockDataService.allMatches.filter {
-                    favoriteTeamIds.contains($0.homeTeam.id) || favoriteTeamIds.contains($0.awayTeam.id)
-                }
+                favoriteMatches = []
             }
         }
+        isLoading = false
     }
 
     func updateBrowseSport(_ sport: Sport) {
         browseSport = sport
-        browseTeams = MockDataService.allTeams(for: sport)
+        Task { await loadBrowseTeams() }
+    }
+
+    private func loadBrowseTeams() async {
+        let sportParam = browseSport.apiValue
+        let leagueKey = sportParam == "soccer" ? "epl"
+            : sportParam == "nba" ? "nba-east"
+            : sportParam == "nfl" ? "nfl-afc"
+            : sportParam == "nhl" ? "nhl"
+            : "mlb-al"
+
+        do {
+            let response = try await APIService.shared.fetchStandings(league: leagueKey)
+            browseTeams = response.rows.map { $0.toStanding().team }
+        } catch {
+            browseTeams = MockDataService.allTeams(for: browseSport)
+        }
     }
 
     func toggleFavorite(_ team: Team) {

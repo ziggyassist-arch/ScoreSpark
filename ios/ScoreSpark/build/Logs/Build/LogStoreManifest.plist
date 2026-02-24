@@ -48,7 +48,7 @@
 			<key>uniqueIdentifier</key>
 			<string>0B8190F2-D47E-47DD-85F4-C18EC004D9DA</string>
 		</dict>
-		<key>AFD192B8-0B0F-4427-8E43-1DEF37DBE222</key>
+		<key>F250F7CA-A54C-4762-816C-CCC4F1676A19</key>
 		<dict>
 			<key>className</key>
 			<string>IDECommandLineBuildLog</string>
@@ -57,21 +57,21 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>AFD192B8-0B0F-4427-8E43-1DEF37DBE222.xcactivitylog</string>
+			<string>F250F7CA-A54C-4762-816C-CCC4F1676A19.xcactivitylog</string>
 			<key>hasPrimaryLog</key>
 			<true/>
 			<key>primaryObservable</key>
 			<dict>
 				<key>highLevelStatus</key>
-				<string>E</string>
+				<string>W</string>
 				<key>totalNumberOfAnalyzerIssues</key>
 				<integer>0</integer>
 				<key>totalNumberOfErrors</key>
-				<integer>49</integer>
+				<integer>0</integer>
 				<key>totalNumberOfTestFailures</key>
 				<integer>0</integer>
 				<key>totalNumberOfWarnings</key>
-				<integer>0</integer>
+				<integer>1</integer>
 			</dict>
 			<key>schemeIdentifier-containerName</key>
 			<string>ScoreSpark project</string>
@@ -82,13 +82,13 @@
 			<key>signature</key>
 			<string>Building project ScoreSpark with scheme ScoreSpark</string>
 			<key>timeStartedRecording</key>
-			<real>793633768.10986805</real>
+			<real>793634385.64397502</real>
 			<key>timeStoppedRecording</key>
-			<real>793633789.80246794</real>
+			<real>793634395.40102398</real>
 			<key>title</key>
 			<string>Building project ScoreSpark with scheme ScoreSpark</string>
 			<key>uniqueIdentifier</key>
-			<string>AFD192B8-0B0F-4427-8E43-1DEF37DBE222</string>
+			<string>F250F7CA-A54C-4762-816C-CCC4F1676A19</string>
 		</dict>
 	</dict>
 </dict>

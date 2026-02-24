@@ -1,0 +1,80 @@
+{
+  "source": "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/MainTabView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "Score",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 64
+        }
+      },
+      {
+        "comment": "",
+        "key": "Spark",
+        "location": {
+          "startingColumn": 22,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Mock Draft",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 177
+        }
+      },
+      {
+        "comment": "",
+        "key": "Coming Soon",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 180
+        }
+      },
+      {
+        "comment": "",
+        "key": "No teams available for this sport.",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Teams",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 203
+        }
+      },
+      {
+        "comment": "",
+        "key": "No news available right now.",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 269
+        }
+      },
+      {
+        "comment": "",
+        "key": "No News",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 268
+        }
+      },
+      {
+        "comment": "",
+        "key": "·",
+        "location": {
+          "startingColumn": 46,
+          "startingLine": 285
+        }
+      }
+    ]
+  },
+  "version": 1
+}

@@ -1,0 +1,160 @@
+{
+  "source": "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/Matches/MatchDetailView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "%lld - %lld",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "vs",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 74
+        }
+      },
+      {
+        "comment": "",
+        "key": "Events will appear once the match begins.",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 205
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Events Yet",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 204
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 227
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 242
+        }
+      },
+      {
+        "comment": "",
+        "key": "KEY PLAYS",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 256
+        }
+      },
+      {
+        "comment": "",
+        "key": "Match hasn't started yet",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 277
+        }
+      },
+      {
+        "comment": "",
+        "key": "Statistics will appear during the match.",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 329
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Stats Available",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 328
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 299
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 307
+        }
+      },
+      {
+        "comment": "",
+        "key": "Lineups will be announced closer to kick-off.",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 386
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Lineups Available",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 385
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 363
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 376
+        }
+      },
+      {
+        "comment": "",
+        "key": "Events will appear as the match progresses.",
+        "location": {
+          "startingColumn": 39,
+          "startingLine": 402
+        }
+      },
+      {
+        "comment": "",
+        "key": "No Events",
+        "location": {
+          "startingColumn": 40,
+          "startingLine": 401
+        }
+      },
+      {
+        "comment": "",
+        "key": "%lld'",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 412
+        }
+      }
+    ]
+  },
+  "version": 1
+}

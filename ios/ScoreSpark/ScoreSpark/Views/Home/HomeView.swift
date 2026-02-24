@@ -192,7 +192,7 @@ struct FotMobMatchRow: View {
                 if let hs = match.homeScore, let aws = match.awayScore {
                     Text("\(hs) - \(aws)")
                         .font(.system(size: 14, weight: .bold).monospacedDigit())
-                        .foregroundStyle(match.isLive ? Color(hex: "22C55E") : .white)
+                        .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
                 } else {
                     Text(match.displayTime)
                         .font(.system(size: 13))
@@ -202,12 +202,12 @@ struct FotMobMatchRow: View {
                 if match.isLive {
                     HStack(spacing: 2) {
                         Circle()
-                            .fill(Color(hex: "22C55E"))
+                            .fill(AppColors.livePulse)
                             .frame(width: 4, height: 4)
                             .modifier(PulseModifier())
                         Text(match.displayTime)
                             .font(.system(size: 9, weight: .semibold))
-                            .foregroundStyle(Color(hex: "22C55E"))
+                            .foregroundStyle(AppColors.livePulse)
                     }
                 } else if match.status == .finished {
                     Text(match.displayTime)

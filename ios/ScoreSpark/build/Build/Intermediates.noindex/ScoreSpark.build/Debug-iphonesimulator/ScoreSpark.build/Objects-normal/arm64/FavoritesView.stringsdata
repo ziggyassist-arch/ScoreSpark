@@ -1,0 +1,24 @@
+{
+  "source": "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/Favorites/FavoritesView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "No Favorites Yet",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 79
+        }
+      },
+      {
+        "comment": "",
+        "key": "Star teams below to follow their matches",
+        "location": {
+          "startingColumn": 34,
+          "startingLine": 82
+        }
+      }
+    ]
+  },
+  "version": 1
+}

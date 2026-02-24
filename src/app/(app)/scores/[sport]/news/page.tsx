@@ -39,7 +39,7 @@ export default async function NewsPage({
     <div className="space-y-6 animate-slide-up">
       <div>
         <h1 className="text-2xl font-bold text-white">{sportLabels[sport as Sport]} News</h1>
-        <p className="text-sm text-white/40 mt-1">Latest headlines from ESPN</p>
+        <p className="text-sm text-white/40 mt-1">Aggregated from top sports news sources</p>
       </div>
 
       <div className="space-y-3">

@@ -20,6 +20,7 @@ struct MainTabView: View {
     @State private var selectedContentTab: ContentTab = .leagues
     @State private var showSettings = false
     @State private var showSearch = false
+    @State private var showMenu = false
     @State private var searchText = ""
 
     var body: some View {
@@ -78,6 +79,11 @@ struct MainTabView: View {
                 }
                 Button { showSettings = true } label: {
                     Image(systemName: "gearshape")
+                        .font(.system(size: 16, weight: .medium))
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+                Button { showMenu = true } label: {
+                    Image(systemName: "line.3.horizontal")
                         .font(.system(size: 16, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }

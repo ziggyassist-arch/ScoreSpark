@@ -25,7 +25,7 @@
 		750D1910793032F97CBB5465 /* SectionHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 52EFEB4DBF8C440300DD128B /* SectionHeader.swift */; };
 		7C48C82201C077BB678B57E3 /* StandingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0997D42B500287B4690B838C /* StandingsViewModel.swift */; };
 		7DF8D9BE5C0941A4F4E1A02D /* AppTypography.swift in Sources */ = {isa = PBXBuildFile; fileRef = E772B530928549708A30A27A /* AppTypography.swift */; };
-		81C0C3775EF6A7D925C0B50F /* SportSwitcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FECACCB772291EC773CA0EF /* SportSwitcher.swift */; };
+
 		8B1CFE4BC2AEAA1B0A182CD5 /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2BC1C6F771D2D500685840C4 /* HomeViewModel.swift */; };
 		C141A1C89DF994A146F3F62E /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 796B0900CAC4964DC72360F9 /* SettingsView.swift */; };
 		C842E25E050EFE6B46BD69EF /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 402508A45A15CC27C46236C4 /* NotificationService.swift */; };
@@ -35,7 +35,7 @@
 		DC2038572AC2B5D9EF97766D /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 103E0E21B353ECC7739181E0 /* HomeView.swift */; };
 		DEC6386AAD43D4DE5F515143 /* MatchDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FD83660C65D62D7FD7FC97 /* MatchDetailView.swift */; };
 		E82AD0D71B2E5E133791C663 /* ScoreSparkApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FD1596FEA280600A67D65D5 /* ScoreSparkApp.swift */; };
-		EFF74BC337650B6838496C53 /* MatchListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 318D1F50712A2408CB38EFD1 /* MatchListView.swift */; };
+
 		F3C4311A331A8ACACC7B901F /* CardStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = B9643B7EDF69A4434B301689 /* CardStyle.swift */; };
 		F65CEE09BCD00C59E33A0E9F /* APIService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769E12F4EC55539ABEC3EA1E /* APIService.swift */; };
 /* End PBXBuildFile section */
@@ -47,7 +47,7 @@
 		10531EE9B287A8BA7B379C89 /* FavoritesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesViewModel.swift; sourceTree = "<group>"; };
 		1AC08910C675B4F264C825F3 /* Team.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Team.swift; sourceTree = "<group>"; };
 		2BC1C6F771D2D500685840C4 /* HomeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewModel.swift; sourceTree = "<group>"; };
-		318D1F50712A2408CB38EFD1 /* MatchListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchListView.swift; sourceTree = "<group>"; };
+
 		3B1BD89361F2FF56B8E1D6B8 /* ScoreSpark.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = ScoreSpark.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		3BD15244C4B857CCAE2131F8 /* FavoritesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		3E2108F52C9CF1BCDD981373 /* League.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = League.swift; sourceTree = "<group>"; };
@@ -56,7 +56,7 @@
 		4D96921A2A3AEC366EC2F030 /* MatchCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchCard.swift; sourceTree = "<group>"; };
 		52EFEB4DBF8C440300DD128B /* SectionHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SectionHeader.swift; sourceTree = "<group>"; };
 		5EBC5AF4607E10EE10F34A2F /* Player.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Player.swift; sourceTree = "<group>"; };
-		5FECACCB772291EC773CA0EF /* SportSwitcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SportSwitcher.swift; sourceTree = "<group>"; };
+
 		6DF9637B603AFA571AD32AD4 /* MatchesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchesViewModel.swift; sourceTree = "<group>"; };
 		6FD1596FEA280600A67D65D5 /* ScoreSparkApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreSparkApp.swift; sourceTree = "<group>"; };
 		769E12F4EC55539ABEC3EA1E /* APIService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIService.swift; sourceTree = "<group>"; };
@@ -80,7 +80,6 @@
 			isa = PBXGroup;
 			children = (
 				F8FD83660C65D62D7FD7FC97 /* MatchDetailView.swift */,
-				318D1F50712A2408CB38EFD1 /* MatchListView.swift */,
 			);
 			path = Matches;
 			sourceTree = "<group>";
@@ -176,7 +175,6 @@
 			children = (
 				4D96921A2A3AEC366EC2F030 /* MatchCard.swift */,
 				52EFEB4DBF8C440300DD128B /* SectionHeader.swift */,
-				5FECACCB772291EC773CA0EF /* SportSwitcher.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -312,7 +310,7 @@
 				2F36F8419FF1AEA9EF96062B /* Match.swift in Sources */,
 				C903CB694C0303044E54BC2C /* MatchCard.swift in Sources */,
 				DEC6386AAD43D4DE5F515143 /* MatchDetailView.swift in Sources */,
-				EFF74BC337650B6838496C53 /* MatchListView.swift in Sources */,
+
 				68433CCA44BE6C8A32088A3B /* MatchesViewModel.swift in Sources */,
 				304B8A1CB203A5070F3E3EE6 /* MockDataService.swift in Sources */,
 				C842E25E050EFE6B46BD69EF /* NotificationService.swift in Sources */,
@@ -322,7 +320,7 @@
 				750D1910793032F97CBB5465 /* SectionHeader.swift in Sources */,
 				C141A1C89DF994A146F3F62E /* SettingsView.swift in Sources */,
 				15D0AD2A5EE279815B7A4B34 /* Sport.swift in Sources */,
-				81C0C3775EF6A7D925C0B50F /* SportSwitcher.swift in Sources */,
+
 				2C0A2EEB1EC59B66DA1A389B /* Standing.swift in Sources */,
 				093F48E24B263F0FA0023F22 /* StandingsView.swift in Sources */,
 				7C48C82201C077BB678B57E3 /* StandingsViewModel.swift in Sources */,

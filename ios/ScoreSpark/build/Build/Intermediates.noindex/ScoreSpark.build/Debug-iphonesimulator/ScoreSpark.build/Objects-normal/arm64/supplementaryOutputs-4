@@ -1,0 +1,23 @@
+{
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Models/Match.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Match.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Match.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Match.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Match.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Match.swiftdeps"
+  },
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/Components/MatchCard.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MatchCard.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MatchCard.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MatchCard.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MatchCard.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MatchCard.swiftdeps"
+  },
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Views/MainTabView.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MainTabView.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MainTabView.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MainTabView.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MainTabView.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MainTabView.swiftdeps"
+  }
+}

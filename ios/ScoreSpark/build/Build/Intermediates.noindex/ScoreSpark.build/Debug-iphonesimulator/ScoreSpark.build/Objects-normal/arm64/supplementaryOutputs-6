@@ -1,0 +1,23 @@
+{
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Models/Player.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Player.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Player.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Player.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Player.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/Player.swiftdeps"
+  },
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/MockDataService.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MockDataService.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MockDataService.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MockDataService.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MockDataService.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/MockDataService.swiftdeps"
+  },
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/NotificationService.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/NotificationService.swiftdeps"
+  }
+}

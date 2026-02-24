@@ -1,0 +1,23 @@
+{
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Services/APIService.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/APIService.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/APIService.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/APIService.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/APIService.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/APIService.swiftdeps"
+  },
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Theme/AppColors.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppColors.swiftdeps"
+  },
+  "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/ScoreSpark/Theme/AppTypography.swift" : {
+    "const-values" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppTypography.swiftconstvalues",
+    "dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppTypography.d",
+    "diagnostics" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppTypography.dia",
+    "object" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppTypography.o",
+    "swift-dependencies" : "/Users/ziggywalsh/Projects/ScoreSpark/ios/ScoreSpark/build/Build/Intermediates.noindex/ScoreSpark.build/Debug-iphonesimulator/ScoreSpark.build/Objects-normal/arm64/AppTypography.swiftdeps"
+  }
+}

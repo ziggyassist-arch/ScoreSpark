@@ -7,9 +7,9 @@ struct HomeView: View {
 
     private var dateLabel: String {
         switch selectedDateOffset {
-        case -1: "Yesterday"
-        case 0: "Today"
-        case 1: "Tomorrow"
+        case -1: return "Yesterday"
+        case 0: return "Today"
+        case 1: return "Tomorrow"
         default:
             let date = Calendar.current.date(byAdding: .day, value: selectedDateOffset, to: Date()) ?? Date()
             return date.formatted(.dateTime.month(.abbreviated).day())

@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import type { TeamDetail, SquadPlayer } from "@/lib/services/team-service";
 import type { Team } from "@/lib/types";
@@ -156,8 +157,9 @@ function FixturesTab({ recent, upcoming }: { recent: TeamMatch[]; upcoming: Team
 
   if (all.length === 0) {
     return (
-      <div className="text-center py-12 text-white/30">
-        <p>No fixtures available</p>
+      <div className="flex flex-col items-center py-12 gap-2">
+        <Image src="/scorespark_white_transparent_bg.png" alt="" width={32} height={32} className="h-8 w-8 object-contain opacity-15" />
+        <p className="text-sm text-white/30">No fixtures available</p>
       </div>
     );
   }
@@ -227,8 +229,9 @@ function FixturesTab({ recent, upcoming }: { recent: TeamMatch[]; upcoming: Team
 function SquadTab({ squad, sport }: { squad: SquadPlayer[]; sport: string }) {
   if (squad.length === 0) {
     return (
-      <div className="text-center py-12 text-white/30">
-        <p>Squad data not available</p>
+      <div className="flex flex-col items-center py-12 gap-2">
+        <Image src="/scorespark_white_transparent_bg.png" alt="" width={32} height={32} className="h-8 w-8 object-contain opacity-15" />
+        <p className="text-sm text-white/30">Squad data not available</p>
       </div>
     );
   }
@@ -277,8 +280,9 @@ function StatsTab({ team, matches }: { team: TeamDetail; matches: TeamMatch[] })
 
   if (totalGames === 0) {
     return (
-      <div className="text-center py-12 text-white/30">
-        <p>No stats available yet</p>
+      <div className="flex flex-col items-center py-12 gap-2">
+        <Image src="/scorespark_white_transparent_bg.png" alt="" width={32} height={32} className="h-8 w-8 object-contain opacity-15" />
+        <p className="text-sm text-white/30">No stats available yet</p>
       </div>
     );
   }

@@ -23,15 +23,20 @@ struct HomeView: View {
 
             if viewModel.isLoading && viewModel.groups.isEmpty {
                 Spacer()
-                ProgressView()
-                    .tint(AppColors.gold)
+                Image("Logo")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 40, height: 40)
+                    .opacity(0.4)
                 Spacer()
             } else if viewModel.groups.isEmpty {
                 Spacer()
                 VStack(spacing: 8) {
-                    Image(systemName: "sportscourt")
-                        .font(.system(size: 36))
-                        .foregroundStyle(AppColors.textTertiary)
+                    Image("Logo")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: 36, height: 36)
+                        .opacity(0.15)
                     Text("No Matches")
                         .font(.system(size: 16, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppColors.textSecondary)

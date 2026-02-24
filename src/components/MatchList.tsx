@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { Match } from "@/lib/types";
 import { groupMatchesByLeague } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
@@ -48,8 +49,15 @@ export default function MatchList({ matches }: { matches: Match[] }) {
 
   if (matches.length === 0) {
     return (
-      <div className="text-center py-16 text-white/30">
-        <p className="text-lg">No matches found</p>
+      <div className="flex flex-col items-center py-16 gap-3">
+        <Image
+          src="/scorespark_white_transparent_bg.png"
+          alt=""
+          width={40}
+          height={40}
+          className="h-10 w-10 object-contain opacity-15"
+        />
+        <p className="text-lg text-white/30">No matches found</p>
       </div>
     );
   }

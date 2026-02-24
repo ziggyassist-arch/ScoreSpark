@@ -1,13 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-indigo-dusk: #2D2B55;
-  --color-navy-dark: #1E1B3A;
+  --color-indigo-dusk: #2E3460;
+  --color-navy-dark: #1C2038;
   --color-blue-accent: #7EB6E6;
-  --color-gold-spark: #F5C542;
+  --color-gold-spark: #F5C518;
   --color-light-gray: #F0F0F5;
-  --color-card: #252347;
-  --color-card-hover: #2E2B56;
+  --color-card: #252D4E;
+  --color-card-hover: #2E3460;
   --color-sport-soccer: #22C55E;
   --color-sport-nba: #F97316;
   --color-sport-nfl: #3B82F6;
@@ -15,7 +15,7 @@
   --color-sport-mlb: #EF4444;
   --color-live-green: #4ADE80;
   --color-live-red: #EF4444;
-  --color-surface: #1A1835;
+  --color-surface: #1A1E35;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -77,7 +77,7 @@ html {
 }
 
 ::selection {
-  background-color: rgba(245, 197, 66, 0.3);
+  background-color: rgba(245, 197, 24, 0.3);
   color: white;
 }
 

@@ -48,7 +48,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Image
-              src="/logo.png"
+              src="/scorespark_white_transparent_bg.png"
               alt="ScoreSpark"
               width={140}
               height={40}
@@ -76,7 +76,7 @@ export default function Home() {
         <div className="relative z-10 max-w-5xl mx-auto px-6 text-center">
           <div className="animate-fade-in-up">
             <Image
-              src="/logo.png"
+              src="/scorespark_white_transparent_bg.png"
               alt="ScoreSpark"
               width={280}
               height={80}
@@ -227,7 +227,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="flex items-center gap-3">
               <Image
-                src="/logo.png"
+                src="/scorespark_white_transparent_bg.png"
                 alt="ScoreSpark"
                 width={120}
                 height={35}

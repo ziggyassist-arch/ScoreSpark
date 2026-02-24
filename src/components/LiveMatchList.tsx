@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useCallback } from "react";
+import Image from "next/image";
 import { Match, Sport } from "@/lib/types";
 import { useLiveScores } from "@/hooks/useLiveScores";
 import DatePicker from "./DatePicker";
@@ -80,8 +81,14 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
 
       {/* Loading state for non-today dates */}
       {loadingDate && (
-        <div className="flex items-center justify-center py-12">
-          <div className="w-5 h-5 border-2 border-white/20 border-t-gold-spark rounded-full animate-spin" />
+        <div className="flex flex-col items-center justify-center py-12">
+          <Image
+            src="/scorespark_white_transparent_bg.png"
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain animate-pulse-glow opacity-40"
+          />
         </div>
       )}
 

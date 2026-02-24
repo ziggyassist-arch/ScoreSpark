@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import type { Sport } from "@/lib/types";
 
@@ -112,16 +113,26 @@ export default function Sidebar() {
           Top Stories
         </h3>
         {loadingNews ? (
-          <div className="space-y-3">
-            {[1, 2, 3].map((i) => (
-              <div key={i} className="animate-pulse">
-                <div className="h-3 bg-white/5 rounded w-full mb-1.5" />
-                <div className="h-3 bg-white/5 rounded w-2/3" />
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center py-6">
+            <Image
+              src="/scorespark_white_transparent_bg.png"
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7 object-contain animate-pulse-glow opacity-40"
+            />
           </div>
         ) : news.length === 0 ? (
-          <p className="text-xs text-white/20">No stories right now</p>
+          <div className="flex flex-col items-center py-4 gap-1.5">
+            <Image
+              src="/scorespark_white_transparent_bg.png"
+              alt=""
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain opacity-15"
+            />
+            <p className="text-xs text-white/20">No stories right now</p>
+          </div>
         ) : (
           <div className="space-y-3">
             {news.slice(0, 5).map((item) => (
@@ -160,13 +171,26 @@ export default function Sidebar() {
           </Link>
         </div>
         {loadingStandings ? (
-          <div className="space-y-2">
-            {[1, 2, 3, 4, 5].map((i) => (
-              <div key={i} className="animate-pulse h-6 bg-white/5 rounded" />
-            ))}
+          <div className="flex flex-col items-center justify-center py-6">
+            <Image
+              src="/scorespark_white_transparent_bg.png"
+              alt=""
+              width={28}
+              height={28}
+              className="h-7 w-7 object-contain animate-pulse-glow opacity-40"
+            />
           </div>
         ) : standings.length === 0 ? (
-          <p className="text-xs text-white/20">No standings available</p>
+          <div className="flex flex-col items-center py-4 gap-1.5">
+            <Image
+              src="/scorespark_white_transparent_bg.png"
+              alt=""
+              width={20}
+              height={20}
+              className="h-5 w-5 object-contain opacity-15"
+            />
+            <p className="text-xs text-white/20">No standings available</p>
+          </div>
         ) : (
           <div className="space-y-1">
             {standings.map((row) => (

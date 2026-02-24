@@ -1,10 +1,15 @@
 import SwiftUI
 
 enum AppColors {
-    static let deepIndigo = Color(red: 0.176, green: 0.169, blue: 0.333)   // #2D2B55
-    static let lightBlue = Color(red: 0.494, green: 0.714, blue: 0.902)    // #7EB6E6
-    static let gold = Color(red: 0.961, green: 0.773, blue: 0.259)         // #F5C542
-    static let darkNavy = Color(red: 0.118, green: 0.106, blue: 0.227)     // #1E1B3A
+    // Brand colors (exact)
+    static let brandNavy = Color(hex: "2E3460")      // #2E3460
+    static let brandGold = Color(hex: "F5C518")       // #F5C518
+
+    // UI colors derived from brand
+    static let deepIndigo = brandNavy                                          // #2E3460
+    static let lightBlue = Color(red: 0.494, green: 0.714, blue: 0.902)       // #7EB6E6
+    static let gold = brandGold                                                // #F5C518
+    static let darkNavy = Color(hex: "1C2038")                                 // #1C2038
     static let white = Color.white
 
     // Semantic

@@ -2,6 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useState } from "react";
+import Image from "next/image";
 
 export default function SignInPage() {
   const [guestName, setGuestName] = useState("");
@@ -24,9 +25,14 @@ export default function SignInPage() {
       <div className="w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white">
-            Score<span className="text-gold-spark">Spark</span>
-          </h1>
+          <Image
+            src="/scorespark_white_transparent_bg.png"
+            alt="ScoreSpark"
+            width={180}
+            height={52}
+            className="mx-auto h-12 w-auto mb-2"
+            priority
+          />
           <p className="text-sm text-white/40 mt-2">
             Your multi-sport companion
           </p>

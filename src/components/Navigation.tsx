@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useSpoilerMode } from "@/lib/spoiler-mode";
 import { useStreak } from "@/lib/streak";
@@ -166,8 +167,15 @@ export default function Navigation() {
     <>
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
-        <Link href="/scores" className="hover:opacity-60 transition-opacity">
-          <span className="text-[17px] font-bold tracking-tight text-white">Score<span className="text-gold-spark">Spark</span></span>
+        <Link href="/scores" className="hover:opacity-80 transition-opacity">
+          <Image
+            src="/scorespark_white_transparent_bg.png"
+            alt="ScoreSpark"
+            width={120}
+            height={34}
+            className="h-7 w-auto"
+            priority
+          />
         </Link>
         <div className="flex items-center gap-1">
           <SpoilerToggle />
@@ -212,8 +220,22 @@ export default function Navigation() {
           href="/scores"
           className="flex items-center justify-center lg:justify-start px-4 py-5 border-b border-white/5 hover:opacity-80 transition-opacity"
         >
-          <span className="lg:hidden text-xl font-black text-gold-spark">S</span>
-          <span className="hidden lg:block text-[17px] font-bold tracking-tight text-white">Score<span className="text-gold-spark">Spark</span></span>
+          <Image
+            src="/scorespark_white_transparent_bg.png"
+            alt="ScoreSpark"
+            width={120}
+            height={34}
+            className="hidden lg:block h-7 w-auto"
+            priority
+          />
+          <Image
+            src="/scorespark_white_transparent_bg.png"
+            alt="S"
+            width={34}
+            height={34}
+            className="lg:hidden h-8 w-8 object-contain"
+            priority
+          />
         </Link>
 
         {/* Sport navigation */}

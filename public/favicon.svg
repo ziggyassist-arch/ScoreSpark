@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#2E3460"/>
+  <!-- Lightning bolt -->
+  <path d="M296 48L176 272h80L208 464l168-256h-96z" fill="#F5C518"/>
+  <!-- Star sparkle top-right -->
+  <path d="M380 80l8 24 24 8-24 8-8 24-8-24-24-8 24-8z" fill="#F5C518" opacity="0.9"/>
+  <!-- Small sparkle -->
+  <path d="M144 96l5 15 15 5-15 5-5 15-5-15-15-5 15-5z" fill="#FFFFFF" opacity="0.6"/>
+</svg>

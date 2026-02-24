@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
+import { useState, useEffect } from "react";
 import { useSpoilerMode } from "@/lib/spoiler-mode";
 import { useStreak } from "@/lib/streak";
 import { useSession, signIn, signOut } from "next-auth/react";
@@ -147,16 +148,20 @@ function currentSportFromPath(pathname: string): string {
 export default function Navigation() {
   const pathname = usePathname();
   const activeSport = currentSportFromPath(pathname);
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  // Close menu on route change
+  useEffect(() => {
+    setMenuOpen(false);
+  }, [pathname]);
 
   const isSportActive = (href: string) => {
-    // Extract sport from href like /scores/nfl
     const sport = href.split("/scores/")[1];
     return activeSport === sport;
   };
 
   const isTabActive = (tabHref: string) => {
     const resolved = tabHref;
-    // Exact match for sport root (Leagues tab)
     if (resolved === `/scores/${activeSport}`) {
       return pathname === resolved || pathname === `/scores/${activeSport}`;
     }
@@ -165,6 +170,57 @@ export default function Navigation() {
 
   return (
     <>
+      {/* Hamburger menu slide-out panel */}
+      {menuOpen && (
+        <div className="fixed inset-0 z-50">
+          <div className="absolute inset-0 bg-black/60" onClick={() => setMenuOpen(false)} />
+          <div className="absolute right-0 top-0 bottom-0 w-72 bg-surface border-l border-white/10 animate-slide-up flex flex-col">
+            <div className="flex items-center justify-between p-4 border-b border-white/5">
+              <span className="text-lg font-bold text-white">Menu</span>
+              <button onClick={() => setMenuOpen(false)} className="p-2 text-white/40 hover:text-white/70 transition-colors">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            <nav className="flex-1 py-3 overflow-y-auto">
+              {sportItems.map((sport) => (
+                <Link
+                  key={sport.href}
+                  href={sport.href}
+                  className={`flex items-center gap-3 px-5 py-3 transition-all ${
+                    isSportActive(sport.href)
+                      ? `${sport.activeBg} ${sport.activeColor}`
+                      : "text-white/50 hover:text-white/80 hover:bg-white/5"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={sport.logo} alt="" className="w-6 h-6 object-contain" />
+                  <span className="text-sm font-medium">{sport.label}</span>
+                </Link>
+              ))}
+              <div className="border-t border-white/5 my-3" />
+              <Link href="/favorites" className="flex items-center gap-3 px-5 py-3 text-white/50 hover:text-white/80 hover:bg-white/5 transition-all">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12z" />
+                </svg>
+                <span className="text-sm font-medium">Following</span>
+              </Link>
+              <Link href="/pricing" className="flex items-center gap-3 px-5 py-3 text-white/50 hover:text-white/80 hover:bg-white/5 transition-all">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+                </svg>
+                <span className="text-sm font-medium">Premium</span>
+              </Link>
+            </nav>
+            <div className="p-4 border-t border-white/5">
+              <UserMenu />
+              <StreakBadge />
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
         <Link href="/scores" className="hover:opacity-80 transition-opacity">
@@ -176,6 +232,7 @@ export default function Navigation() {
         <div className="flex items-center gap-1">
           <SpoilerToggle />
           <button
+            onClick={() => setMenuOpen(true)}
             className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
             aria-label="Menu"
           >
@@ -282,6 +339,7 @@ export default function Navigation() {
             })}
           </div>
           <button
+            onClick={() => setMenuOpen(true)}
             className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
             aria-label="Menu"
           >

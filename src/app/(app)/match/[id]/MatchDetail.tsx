@@ -202,11 +202,8 @@ function LineupsTab({
       </div>
 
       {showFormation ? (
-        /* Formation pitch view */
-        <div className="grid grid-cols-2 gap-2">
-          <FormationPitch lineup={lineups.home} teamName={match.homeTeam.shortName} side="home" />
-          <FormationPitch lineup={lineups.away} teamName={match.awayTeam.shortName} side="away" />
-        </div>
+        /* Full pitch formation — FotMob style */
+        <FullPitchFormation lineups={lineups} match={match} />
       ) : (
         /* List view */
         <div className="grid grid-cols-2 gap-4">
@@ -286,40 +283,114 @@ function EventsTab({ match }: { match: Match }) {
   );
 }
 
-// — Formation Pitch Visualization —
+// — Full Pitch Formation Visualization (FotMob-style) —
 
-function FormationPitch({ lineup, teamName, side }: { lineup: Lineup; teamName: string; side: "home" | "away" }) {
-  // Parse formation string like "4-3-3" into rows
-  const formationParts = lineup.formation?.split("-").map(Number).filter(Boolean) ?? [];
-  if (formationParts.length === 0 || lineup.starters.length === 0) return null;
+function FormationRow({ players, color }: { players: { number: number; name: string }[]; color: string }) {
+  return (
+    <div className="flex justify-center gap-1 sm:gap-3">
+      {players.map((p) => (
+        <div key={p.number} className="flex flex-col items-center w-11 sm:w-14">
+          <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full ${color} flex items-center justify-center shadow-md`}>
+            <span className="text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+          </div>
+          <span className="text-[8px] sm:text-[9px] text-white/70 text-center leading-tight mt-0.5 truncate w-full">
+            {p.name.split(" ").pop()}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
+}
 
-  // Build rows: GK (1) + formation parts
-  const rows: number[] = [1, ...formationParts];
-  let playerIndex = 0;
+function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away: Lineup }; match: Match }) {
+  function buildRows(lineup: Lineup): { number: number; name: string }[][] {
+    const parts = lineup.formation?.split("-").map(Number).filter(Boolean) ?? [];
+    if (parts.length === 0) return [];
+    const rowSizes = [1, ...parts]; // GK + formation
+    const rows: { number: number; name: string }[][] = [];
+    let idx = 0;
+    for (const size of rowSizes) {
+      const row: { number: number; name: string }[] = [];
+      for (let i = 0; i < size && idx < lineup.starters.length; i++) {
+        row.push(lineup.starters[idx]);
+        idx++;
+      }
+      rows.push(row);
+    }
+    return rows;
+  }
 
-  // For away team, reverse the visual order
-  const displayRows = side === "away" ? [...rows].reverse() : rows;
+  const homeRows = buildRows(lineups.home);
+  const awayRows = buildRows(lineups.away);
 
   return (
-    <div className={`relative bg-gradient-to-b ${side === "home" ? "from-emerald-900/40 to-emerald-800/20" : "from-emerald-800/20 to-emerald-900/40"} rounded-xl p-3 min-h-[200px]`}>
-      <p className="text-[10px] font-semibold text-white/40 text-center mb-2">{teamName} ({lineup.formation})</p>
-      <div className="flex flex-col gap-2">
-        {displayRows.map((count, rowIdx) => {
-          const players = [];
-          for (let i = 0; i < count && playerIndex < lineup.starters.length; i++) {
-            players.push(lineup.starters[playerIndex]);
-            playerIndex++;
-          }
+    <div className="space-y-4">
+      {/* Full pitch */}
+      <div className="relative bg-gradient-to-b from-emerald-900/50 via-emerald-800/30 to-emerald-900/50 rounded-2xl overflow-hidden">
+        {/* Pitch markings */}
+        <div className="absolute inset-0 pointer-events-none">
+          {/* Center line */}
+          <div className="absolute left-4 right-4 top-1/2 h-px bg-white/10" />
+          {/* Center circle */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-28 sm:h-28 rounded-full border border-white/10" />
+          {/* Center dot */}
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/15" />
+          {/* Top box */}
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 sm:w-48 h-12 sm:h-16 border-b border-l border-r border-white/10 rounded-b-sm" />
+          {/* Bottom box */}
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-36 sm:w-48 h-12 sm:h-16 border-t border-l border-r border-white/10 rounded-t-sm" />
+        </div>
+
+        {/* Home team — top half */}
+        <div className="relative z-10 px-3 pt-4 pb-2">
+          <div className="flex items-center justify-center gap-2 mb-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={match.homeTeam.badge} alt="" className="w-4 h-4 object-contain" />
+            <span className="text-[10px] font-bold text-white/50">{match.homeTeam.shortName} ({lineups.home.formation})</span>
+          </div>
+          <div className="flex flex-col gap-3 sm:gap-4">
+            {homeRows.map((row, i) => (
+              <FormationRow key={i} players={row} color="bg-blue-accent/80" />
+            ))}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-3 sm:h-4" />
+
+        {/* Away team — bottom half (reversed) */}
+        <div className="relative z-10 px-3 pt-2 pb-4">
+          <div className="flex flex-col-reverse gap-3 sm:gap-4">
+            {awayRows.map((row, i) => (
+              <FormationRow key={i} players={row} color="bg-live-red/70" />
+            ))}
+          </div>
+          <div className="flex items-center justify-center gap-2 mt-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={match.awayTeam.badge} alt="" className="w-4 h-4 object-contain" />
+            <span className="text-[10px] font-bold text-white/50">{match.awayTeam.shortName} ({lineups.away.formation})</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Substitutes — side by side */}
+      <div className="grid grid-cols-2 gap-4">
+        {(["home", "away"] as const).map((side) => {
+          const lineup = lineups[side];
+          const team = side === "home" ? match.homeTeam : match.awayTeam;
           return (
-            <div key={rowIdx} className="flex justify-center gap-1">
-              {players.map((p) => (
-                <div key={p.number} className="flex flex-col items-center w-12">
-                  <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center">
-                    <span className="text-[10px] font-bold text-white tabular-nums">{p.number}</span>
+            <div key={side}>
+              <p className="text-[10px] text-white/30 uppercase tracking-wider mb-2 font-bold">
+                {team.shortName} Subs
+              </p>
+              <div className="space-y-0.5">
+                {lineup.substitutes.map((player) => (
+                  <div key={player.number} className="flex items-center gap-1.5 py-0.5">
+                    <span className="text-[10px] text-white/20 w-4 tabular-nums text-right">{player.number}</span>
+                    <span className="text-[11px] text-white/40 truncate">{player.name}</span>
                   </div>
-                  <span className="text-[8px] text-white/60 text-center leading-tight mt-0.5 truncate w-full">{p.name.split(" ").pop()}</span>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           );
         })}

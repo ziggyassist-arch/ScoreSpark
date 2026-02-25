@@ -7,7 +7,7 @@
         "key": "%lld - %lld",
         "location": {
           "startingColumn": 30,
-          "startingLine": 70
+          "startingLine": 67
         }
       },
       {
@@ -15,7 +15,7 @@
         "key": "vs",
         "location": {
           "startingColumn": 30,
-          "startingLine": 74
+          "startingLine": 71
         }
       },
       {
@@ -23,7 +23,7 @@
         "key": "Events will appear once the match begins.",
         "location": {
           "startingColumn": 39,
-          "startingLine": 205
+          "startingLine": 201
         }
       },
       {
@@ -31,7 +31,7 @@
         "key": "No Events Yet",
         "location": {
           "startingColumn": 40,
-          "startingLine": 204
+          "startingLine": 200
         }
       },
       {
@@ -39,7 +39,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 34,
-          "startingLine": 227
+          "startingLine": 222
         }
       },
       {
@@ -47,7 +47,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 34,
-          "startingLine": 242
+          "startingLine": 237
         }
       },
       {
@@ -55,7 +55,7 @@
         "key": "KEY PLAYS",
         "location": {
           "startingColumn": 30,
-          "startingLine": 256
+          "startingLine": 250
         }
       },
       {
@@ -63,7 +63,7 @@
         "key": "Match hasn't started yet",
         "location": {
           "startingColumn": 18,
-          "startingLine": 277
+          "startingLine": 271
         }
       },
       {
@@ -71,7 +71,7 @@
         "key": "Statistics will appear during the match.",
         "location": {
           "startingColumn": 39,
-          "startingLine": 329
+          "startingLine": 323
         }
       },
       {
@@ -79,7 +79,7 @@
         "key": "No Stats Available",
         "location": {
           "startingColumn": 40,
-          "startingLine": 328
+          "startingLine": 322
         }
       },
       {
@@ -87,7 +87,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 34,
-          "startingLine": 299
+          "startingLine": 293
         }
       },
       {
@@ -95,7 +95,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 34,
-          "startingLine": 307
+          "startingLine": 301
         }
       },
       {
@@ -103,7 +103,7 @@
         "key": "Lineups will be announced closer to kick-off.",
         "location": {
           "startingColumn": 39,
-          "startingLine": 386
+          "startingLine": 380
         }
       },
       {
@@ -111,7 +111,7 @@
         "key": "No Lineups Available",
         "location": {
           "startingColumn": 40,
-          "startingLine": 385
+          "startingLine": 379
         }
       },
       {
@@ -119,7 +119,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 34,
-          "startingLine": 363
+          "startingLine": 357
         }
       },
       {
@@ -127,7 +127,7 @@
         "key": "%lld",
         "location": {
           "startingColumn": 34,
-          "startingLine": 376
+          "startingLine": 370
         }
       },
       {
@@ -135,7 +135,7 @@
         "key": "Events will appear as the match progresses.",
         "location": {
           "startingColumn": 39,
-          "startingLine": 402
+          "startingLine": 396
         }
       },
       {
@@ -143,7 +143,7 @@
         "key": "No Events",
         "location": {
           "startingColumn": 40,
-          "startingLine": 401
+          "startingLine": 395
         }
       },
       {
@@ -151,7 +151,7 @@
         "key": "%lld'",
         "location": {
           "startingColumn": 18,
-          "startingLine": 412
+          "startingLine": 406
         }
       }
     ]

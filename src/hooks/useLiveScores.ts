@@ -9,11 +9,82 @@ interface UseLiveScoresOptions {
   enabled?: boolean;
 }
 
+/** Check notification preferences from localStorage and fire browser notifications */
+function fireMatchNotifications(prevMatches: Match[], newMatches: Match[]) {
+  if (typeof window === "undefined" || !("Notification" in window)) return;
+  if (Notification.permission !== "granted") return;
+
+  let prefs: { enabled?: boolean; goals?: boolean; matchStart?: boolean; finalScore?: boolean; redCards?: boolean } = {};
+  try {
+    const stored = localStorage.getItem("scorespark-notifications");
+    if (stored) prefs = JSON.parse(stored);
+  } catch { return; }
+
+  if (!prefs.enabled) return;
+
+  const prevMap = new Map(prevMatches.map((m) => [m.id, m]));
+
+  for (const m of newMatches) {
+    const prev = prevMap.get(m.id);
+    if (!prev) continue;
+
+    // Match just started (was upcoming → now live)
+    if (prefs.matchStart && prev.status === "upcoming" && m.status === "live") {
+      try {
+        new Notification(`${m.homeTeam.shortName} vs ${m.awayTeam.shortName}`, {
+          body: `Match has kicked off! ${m.league}`,
+          icon: "/icon-192.png",
+          tag: `start-${m.id}`,
+        });
+      } catch {}
+    }
+
+    // Match just finished
+    if (prefs.finalScore && prev.status === "live" && m.status === "finished") {
+      try {
+        new Notification("Full Time", {
+          body: `${m.homeTeam.shortName} ${m.homeScore} - ${m.awayScore} ${m.awayTeam.shortName}`,
+          icon: "/icon-192.png",
+          tag: `ft-${m.id}`,
+        });
+      } catch {}
+    }
+
+    // New goal scored
+    if (prefs.goals && m.events.length > prev.events.length) {
+      const newEvents = m.events.slice(prev.events.length);
+      for (const ev of newEvents) {
+        if (ev.type === "goal" || ev.type === "penalty") {
+          const team = ev.team === "home" ? m.homeTeam.shortName : m.awayTeam.shortName;
+          try {
+            new Notification(`GOAL! ${team}`, {
+              body: `${ev.player} ${ev.minute}' — ${m.homeTeam.shortName} ${m.homeScore} - ${m.awayScore} ${m.awayTeam.shortName}`,
+              icon: "/icon-192.png",
+              tag: `goal-${m.id}-${ev.minute}`,
+            });
+          } catch {}
+        }
+        if (prefs.redCards && ev.type === "red-card") {
+          const team = ev.team === "home" ? m.homeTeam.shortName : m.awayTeam.shortName;
+          try {
+            new Notification(`Red Card — ${team}`, {
+              body: `${ev.player} sent off at ${ev.minute}'`,
+              icon: "/icon-192.png",
+              tag: `red-${m.id}-${ev.minute}`,
+            });
+          } catch {}
+        }
+      }
+    }
+  }
+}
+
 export function useLiveScores({ initialMatches, sport, enabled = true }: UseLiveScoresOptions) {
   const [matches, setMatches] = useState<Match[]>(initialMatches);
   const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
   const [isPolling, setIsPolling] = useState(false);
   const eventSourceRef = useRef<EventSource | null>(null);
+  const prevMatchesRef = useRef<Match[]>(initialMatches);
 
   // Check if any matches are live
   const hasLiveMatches = matches.some((m) => m.status === "live");
@@ -30,6 +101,8 @@ export function useLiveScores({ initialMatches, sport, enabled = true }: UseLive
 
       const data = await res.json();
       if (data.matches) {
+        fireMatchNotifications(prevMatchesRef.current, data.matches);
+        prevMatchesRef.current = data.matches;
         setMatches(data.matches);
         setLastUpdated(new Date());
       }
@@ -43,6 +116,7 @@ export function useLiveScores({ initialMatches, sport, enabled = true }: UseLive
   // Update matches when initialMatches prop changes (route change)
   useEffect(() => {
     setMatches(initialMatches);
+    prevMatchesRef.current = initialMatches;
   }, [initialMatches]);
 
   // SSE connection for live updates
@@ -64,6 +138,8 @@ export function useLiveScores({ initialMatches, sport, enabled = true }: UseLive
       try {
         const data = JSON.parse(event.data);
         if (data.matches) {
+          fireMatchNotifications(prevMatchesRef.current, data.matches);
+          prevMatchesRef.current = data.matches;
           setMatches(data.matches);
           setLastUpdated(new Date());
           setIsPolling(false);

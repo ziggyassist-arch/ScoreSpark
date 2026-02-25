@@ -7,11 +7,13 @@ import { FavoritesProvider } from "@/lib/favorites";
 import { SpoilerModeProvider } from "@/lib/spoiler-mode";
 import { StreakProvider } from "@/lib/streak";
 import { ThemeProvider } from "@/lib/theme";
+import { NotificationProvider } from "@/lib/notifications";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
     <ThemeProvider>
+    <NotificationProvider>
     <FavoritesProvider>
     <StreakProvider>
     <SpoilerModeProvider>
@@ -32,6 +34,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </SpoilerModeProvider>
     </StreakProvider>
     </FavoritesProvider>
+    </NotificationProvider>
     </ThemeProvider>
     </AuthProvider>
   );

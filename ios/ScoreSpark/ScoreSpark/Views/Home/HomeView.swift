@@ -132,7 +132,7 @@ struct HomeView: View {
             }
             .frame(width: 28)
         }
-        .frame(height: 28)
+        .frame(height: 26)
         .background(AppColors.surface.opacity(0.3))
     }
 
@@ -147,20 +147,20 @@ struct HomeView: View {
                 .frame(width: 12, height: 12)
             }
             Text(league.name)
-                .font(.system(size: 11, weight: .medium))
+                .font(.system(size: 10, weight: .medium))
                 .foregroundStyle(AppColors.textSecondary)
             if !league.country.isEmpty {
                 Text("·")
-                    .font(.system(size: 9))
+                    .font(.system(size: 8))
                     .foregroundStyle(AppColors.textTertiary)
                 Text(league.country)
-                    .font(.system(size: 10))
+                    .font(.system(size: 9))
                     .foregroundStyle(AppColors.textTertiary)
             }
             Spacer()
         }
-        .padding(.horizontal, 6)
-        .frame(height: 18)
+        .padding(.horizontal, 4)
+        .frame(height: 16)
         .background(AppColors.surface.opacity(0.15))
     }
 
@@ -175,30 +175,30 @@ struct HomeView: View {
     }
 }
 
-// MARK: - FotMob Match Row (compact 40pt)
+// MARK: - FotMob Match Row (compact 34pt — edge to edge)
 
 struct FotMobMatchRow: View {
     let match: Match
 
     var body: some View {
         HStack(spacing: 0) {
-            HStack(spacing: 5) {
-                Text(match.homeTeam.name)
-                    .font(.system(size: 13))
+            HStack(spacing: 4) {
+                Text(match.homeTeam.shortName)
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 teamBadge(match.homeTeam)
             }
 
-            VStack(spacing: 1) {
+            VStack(spacing: 0) {
                 if let hs = match.homeScore, let aws = match.awayScore {
                     Text("\(hs) - \(aws)")
-                        .font(.system(size: 14, weight: .bold).monospacedDigit())
+                        .font(.system(size: 13, weight: .bold).monospacedDigit())
                         .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
                 } else {
                     Text(match.displayTime)
-                        .font(.system(size: 12))
+                        .font(.system(size: 11))
                         .foregroundStyle(AppColors.textTertiary)
                 }
 
@@ -209,28 +209,28 @@ struct FotMobMatchRow: View {
                             .frame(width: 3, height: 3)
                             .modifier(PulseModifier())
                         Text(match.displayTime)
-                            .font(.system(size: 9, weight: .semibold))
+                            .font(.system(size: 8, weight: .semibold))
                             .foregroundStyle(AppColors.livePulse)
                     }
                 } else if match.status == .finished {
                     Text(match.displayTime)
-                        .font(.system(size: 9))
+                        .font(.system(size: 8))
                         .foregroundStyle(AppColors.textTertiary)
                 }
             }
-            .frame(width: 52)
+            .frame(width: 48)
 
-            HStack(spacing: 5) {
+            HStack(spacing: 4) {
                 teamBadge(match.awayTeam)
-                Text(match.awayTeam.name)
-                    .font(.system(size: 13))
+                Text(match.awayTeam.shortName)
+                    .font(.system(size: 12, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 6)
-        .frame(height: 36)
+        .padding(.horizontal, 4)
+        .frame(height: 34)
     }
 
     private func teamBadge(_ team: Team) -> some View {
@@ -241,10 +241,10 @@ struct FotMobMatchRow: View {
                 .fill(Color(hex: team.primaryColor).opacity(0.3))
                 .overlay {
                     Text(String(team.shortName.prefix(2)))
-                        .font(.system(size: 7, weight: .bold))
+                        .font(.system(size: 6, weight: .bold))
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: 16, height: 16)
+        .frame(width: 15, height: 15)
     }
 }

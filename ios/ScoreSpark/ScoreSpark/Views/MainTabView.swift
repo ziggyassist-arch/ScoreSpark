@@ -112,8 +112,8 @@ struct MainTabView: View {
                 }
             }
         }
-        .padding(.horizontal, 8)
-        .frame(height: 32)
+        .padding(.horizontal, 6)
+        .frame(height: 28)
     }
 
     // MARK: - Search Sheet
@@ -265,8 +265,8 @@ struct MainTabView: View {
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal, 4)
-        .frame(height: 26)
+        .padding(.horizontal, 2)
+        .frame(height: 24)
         .background(AppColors.background)
     }
 
@@ -298,7 +298,7 @@ struct MainTabView: View {
                             .foregroundStyle(isSelected ? Color(hex: sport.accentColor) : AppColors.textTertiary)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 3)
+                    .padding(.vertical, 2)
                 }
             }
         }

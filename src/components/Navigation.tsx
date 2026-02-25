@@ -70,7 +70,7 @@ const topTabs: TabItem[] = [
   { label: "Playoffs", href: (sport) => `/scores/${sport}/playoffs`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Transactions", href: (sport) => `/scores/${sport}/transactions`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Depth Charts", href: (sport) => `/scores/${sport}/depth-chart`, sports: ["nfl"] },
-  { label: "Mock Draft", href: (sport) => `/scores/${sport}/mock-draft`, sports: ["nfl"] },
+  { label: "Mock Draft", href: (sport) => `/scores/${sport}/mock-draft`, sports: ["soccer", "nba", "nfl", "nhl", "mlb"] },
   { label: "Fantasy", href: (sport) => `/scores/${sport}/fantasy`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Following", href: () => "/favorites" },
 ];

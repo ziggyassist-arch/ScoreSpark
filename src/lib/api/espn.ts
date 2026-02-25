@@ -44,7 +44,8 @@ async function fetchESPN<T>(url: string): Promise<T> {
   });
 
   if (!res.ok) {
-    throw new Error(`ESPN API error: ${res.status} ${res.statusText} for ${url}`);
+    console.warn(`[ESPN] ${res.status} ${res.statusText} for ${url}`);
+    return { events: [], leagues: [], season: {} } as unknown as T;
   }
 
   return res.json() as Promise<T>;

@@ -668,23 +668,49 @@ interface H2HData {
 
 function Head2HeadTab({ match }: { match: Match }) {
   const [h2h, setH2h] = useState<H2HData | null>(null);
+  const [espnSeries, setEspnSeries] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!match.id.startsWith("fd-")) {
+    if (match.id.startsWith("fd-")) {
+      const matchId = match.id.replace("fd-", "");
+      fetch(`/api/v1/h2h?matchId=${matchId}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => setH2h(data))
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    } else if (match.id.startsWith("espn-")) {
+      // Try ESPN summary for season series
+      const parts = match.id.split("-");
+      const sport = parts[1];
+      const eventId = parts.slice(2).join("-");
+      fetch(`/api/v1/summary?sport=${sport}&eventId=${eventId}`)
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          const series = data?.seasonseries?.[0];
+          if (series?.summary) {
+            setEspnSeries(series.summary);
+          }
+        })
+        .catch(() => {})
+        .finally(() => setLoading(false));
+    } else {
       setLoading(false);
-      return;
     }
-    const matchId = match.id.replace("fd-", "");
-    fetch(`/api/v1/h2h?matchId=${matchId}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((data) => setH2h(data))
-      .catch(() => {})
-      .finally(() => setLoading(false));
   }, [match.id]);
 
   if (loading) {
     return <div className="text-center py-12 text-white/30 animate-pulse">Loading head-to-head...</div>;
+  }
+
+  // ESPN season series (simple display)
+  if (espnSeries) {
+    return (
+      <div className="text-center py-12">
+        <p className="text-xs text-white/40 uppercase tracking-wider mb-3">Season Series</p>
+        <p className="text-lg font-bold text-white/90">{espnSeries}</p>
+      </div>
+    );
   }
 
   if (!h2h || !h2h.aggregates) {

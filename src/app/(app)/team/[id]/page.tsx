@@ -14,13 +14,26 @@ export default async function TeamPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const team = await getTeamDetail(id);
+
+  let team;
+  try {
+    team = await getTeamDetail(id);
+  } catch (err) {
+    console.error("[team page] getTeamDetail error:", err);
+    notFound();
+  }
 
   if (!team) {
     notFound();
   }
 
-  const matches = await getTeamMatches(id);
+  let matches: Awaited<ReturnType<typeof getTeamMatches>> = [];
+  try {
+    matches = await getTeamMatches(id);
+  } catch (err) {
+    console.error("[team page] getTeamMatches error:", err);
+    matches = [];
+  }
 
   return <TeamPageClient team={team} matches={matches} />;
 }

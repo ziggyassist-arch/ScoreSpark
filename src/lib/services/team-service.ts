@@ -34,6 +34,7 @@ const ESPN_SPORT_PATHS: Record<string, string> = {
   nfl: "football/nfl",
   nhl: "hockey/nhl",
   mlb: "baseball/mlb",
+  soccer: "soccer/eng.1",
 };
 
 interface TeamListItem {
@@ -365,7 +366,8 @@ export async function getTeamMatches(teamId: string): Promise<{
 
 /** Parse ESPN team ID: espn-{sport}-team-{id} */
 function parseESPNTeamId(teamId: string): { sport: Sport; espnId: string } | null {
-  const match = teamId.match(/^espn-(nba|nfl|nhl|mlb)-team-(\d+)$/);
+  // Support both formats: espn-{sport}-team-{id} and espn-{sport}-{id}
+  const match = teamId.match(/^espn-(nba|nfl|nhl|mlb|soccer)-(?:team-)?(\d+)$/);
   if (!match) return null;
   return { sport: match[1] as Sport, espnId: match[2] };
 }

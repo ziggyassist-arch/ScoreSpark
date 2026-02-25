@@ -82,6 +82,9 @@ function normalizeSubstitutions(subs: FDSubstitution[], homeTeamId: number): Mat
 }
 
 export function normalizeMatch(fd: FDMatch): Match {
+  // Extract main referee
+  const mainRef = fd.referees?.find((r) => r.type === "REFEREE");
+
   return {
     id: `fd-${fd.id}`,
     sport: "soccer",
@@ -96,6 +99,8 @@ export function normalizeMatch(fd: FDMatch): Match {
     startTime: fd.utcDate,
     events: [],
     venue: fd.venue ?? undefined,
+    referee: mainRef ? { name: mainRef.name, nationality: mainRef.nationality } : undefined,
+    matchday: fd.matchday ?? undefined,
   };
 }
 

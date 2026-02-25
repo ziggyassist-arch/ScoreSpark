@@ -60,6 +60,11 @@ export interface SportDetail {
   };
 }
 
+export interface Referee {
+  name: string;
+  nationality?: string;
+}
+
 export interface Match {
   id: string;
   sport: Sport;
@@ -81,6 +86,10 @@ export interface Match {
   source?: "live" | "mock";
   /** Sport-specific detail (linescores, leaders, etc.) */
   sportDetail?: SportDetail;
+  /** Referee info (soccer) */
+  referee?: Referee;
+  /** Matchday number (soccer) */
+  matchday?: number;
 }
 
 export interface Competition {

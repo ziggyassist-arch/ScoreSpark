@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Match, MatchEvent, Lineup } from "@/lib/types";
 import LinescoreTable from "@/components/match-detail/LinescoreTable";
 import TeamStatsView from "@/components/match-detail/TeamStatsView";
@@ -9,7 +9,7 @@ import NFLSituation from "@/components/match-detail/NFLSituation";
 import { generateHypePrimer } from "@/lib/hype-primers";
 import PulseReactions from "@/components/PulseReactions";
 
-type Tab = "summary" | "lineups" | "stats" | "events" | "boxscore";
+type Tab = "summary" | "lineups" | "stats" | "events" | "boxscore" | "h2h";
 
 function EventIcon({ type }: { type: MatchEvent["type"] }) {
   switch (type) {
@@ -77,13 +77,25 @@ function SoccerSummaryTab({ match }: { match: Match }) {
           <p>No events yet</p>
         </div>
       )}
-      {match.venue && (
-        <div className="pt-4 border-t border-white/5">
+      {/* Match Info footer */}
+      <div className="pt-4 border-t border-white/5 space-y-1">
+        {match.venue && (
           <p className="text-xs text-white/30">
             <span className="text-white/50">Venue:</span> {match.venue}
           </p>
-        </div>
-      )}
+        )}
+        {match.referee && (
+          <p className="text-xs text-white/30">
+            <span className="text-white/50">Referee:</span> {match.referee.name}
+            {match.referee.nationality && ` (${match.referee.nationality})`}
+          </p>
+        )}
+        {match.matchday && (
+          <p className="text-xs text-white/30">
+            <span className="text-white/50">Matchday:</span> {match.matchday}
+          </p>
+        )}
+      </div>
     </div>
   );
 }
@@ -155,6 +167,8 @@ function LineupsTab({
   lineups: { home: Lineup; away: Lineup } | null;
   match: Match;
 }) {
+  const [showFormation, setShowFormation] = useState(true);
+
   if (!lineups) {
     return (
       <div className="text-center py-12 text-white/30">
@@ -164,52 +178,70 @@ function LineupsTab({
   }
 
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {(["home", "away"] as const).map((side) => {
-        const lineup = lineups[side];
-        const team = side === "home" ? match.homeTeam : match.awayTeam;
-        return (
-          <div key={side}>
-            <div className="mb-3">
-              <p className="text-sm font-semibold text-white/80">{team.shortName}</p>
-              <p className="text-[11px] text-white/40">{lineup.formation}</p>
-            </div>
-            <div className="space-y-1">
-              {lineup.starters.map((player) => (
-                <div
-                  key={player.number}
-                  className="flex items-center gap-2 py-1"
-                >
-                  <span className="text-[11px] text-white/30 w-5 tabular-nums">
-                    {player.number}
-                  </span>
-                  <span className="text-xs text-white/70 truncate">
-                    {player.name}
-                  </span>
+    <div className="space-y-4">
+      {/* Toggle: Formation / List */}
+      <div className="flex justify-center gap-2">
+        <button
+          onClick={() => setShowFormation(true)}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+            showFormation ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"
+          }`}
+        >
+          Formation
+        </button>
+        <button
+          onClick={() => setShowFormation(false)}
+          className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all ${
+            !showFormation ? "bg-white/10 text-white" : "text-white/40 hover:text-white/60"
+          }`}
+        >
+          List
+        </button>
+      </div>
+
+      {showFormation ? (
+        /* Formation pitch view */
+        <div className="grid grid-cols-2 gap-2">
+          <FormationPitch lineup={lineups.home} teamName={match.homeTeam.shortName} side="home" />
+          <FormationPitch lineup={lineups.away} teamName={match.awayTeam.shortName} side="away" />
+        </div>
+      ) : (
+        /* List view */
+        <div className="grid grid-cols-2 gap-4">
+          {(["home", "away"] as const).map((side) => {
+            const lineup = lineups[side];
+            const team = side === "home" ? match.homeTeam : match.awayTeam;
+            return (
+              <div key={side}>
+                <div className="mb-3">
+                  <p className="text-sm font-semibold text-white/80">{team.shortName}</p>
+                  <p className="text-[11px] text-white/40">{lineup.formation}</p>
                 </div>
-              ))}
-            </div>
-            <div className="mt-3 pt-3 border-t border-white/5">
-              <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">
-                Subs
-              </p>
-              {lineup.substitutes.map((player) => (
-                <div
-                  key={player.number}
-                  className="flex items-center gap-2 py-0.5"
-                >
-                  <span className="text-[10px] text-white/20 w-5 tabular-nums">
-                    {player.number}
-                  </span>
-                  <span className="text-[11px] text-white/40 truncate">
-                    {player.name}
-                  </span>
+                <div className="space-y-1">
+                  {lineup.starters.map((player) => (
+                    <div key={player.number} className="flex items-center gap-2 py-1">
+                      <span className="text-[11px] text-white/30 w-5 tabular-nums">{player.number}</span>
+                      <span className="text-xs text-white/70 truncate">{player.name}</span>
+                      {player.position && (
+                        <span className="text-[9px] text-white/20 ml-auto">{player.position}</span>
+                      )}
+                    </div>
+                  ))}
                 </div>
-              ))}
-            </div>
-          </div>
-        );
-      })}
+                <div className="mt-3 pt-3 border-t border-white/5">
+                  <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Subs</p>
+                  {lineup.substitutes.map((player) => (
+                    <div key={player.number} className="flex items-center gap-2 py-0.5">
+                      <span className="text-[10px] text-white/20 w-5 tabular-nums">{player.number}</span>
+                      <span className="text-[11px] text-white/40 truncate">{player.name}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }
@@ -247,6 +279,151 @@ function EventsTab({ match }: { match: Match }) {
             </div>
           </div>
         ))}
+      </div>
+    </div>
+  );
+}
+
+// — Formation Pitch Visualization —
+
+function FormationPitch({ lineup, teamName, side }: { lineup: Lineup; teamName: string; side: "home" | "away" }) {
+  // Parse formation string like "4-3-3" into rows
+  const formationParts = lineup.formation?.split("-").map(Number).filter(Boolean) ?? [];
+  if (formationParts.length === 0 || lineup.starters.length === 0) return null;
+
+  // Build rows: GK (1) + formation parts
+  const rows: number[] = [1, ...formationParts];
+  let playerIndex = 0;
+
+  // For away team, reverse the visual order
+  const displayRows = side === "away" ? [...rows].reverse() : rows;
+
+  return (
+    <div className={`relative bg-gradient-to-b ${side === "home" ? "from-emerald-900/40 to-emerald-800/20" : "from-emerald-800/20 to-emerald-900/40"} rounded-xl p-3 min-h-[200px]`}>
+      <p className="text-[10px] font-semibold text-white/40 text-center mb-2">{teamName} ({lineup.formation})</p>
+      <div className="flex flex-col gap-2">
+        {displayRows.map((count, rowIdx) => {
+          const players = [];
+          for (let i = 0; i < count && playerIndex < lineup.starters.length; i++) {
+            players.push(lineup.starters[playerIndex]);
+            playerIndex++;
+          }
+          return (
+            <div key={rowIdx} className="flex justify-center gap-1">
+              {players.map((p) => (
+                <div key={p.number} className="flex flex-col items-center w-12">
+                  <div className="w-7 h-7 rounded-full bg-white/15 flex items-center justify-center">
+                    <span className="text-[10px] font-bold text-white tabular-nums">{p.number}</span>
+                  </div>
+                  <span className="text-[8px] text-white/60 text-center leading-tight mt-0.5 truncate w-full">{p.name.split(" ").pop()}</span>
+                </div>
+              ))}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+// — Head-to-Head —
+
+interface H2HData {
+  aggregates: {
+    numberOfMatches: number;
+    totalGoals: number;
+    homeTeam: { name: string; wins: number; draws: number; losses: number };
+    awayTeam: { name: string; wins: number; draws: number; losses: number };
+  };
+  matches: {
+    utcDate: string;
+    homeTeam: { name: string; shortName: string };
+    awayTeam: { name: string; shortName: string };
+    score: { fullTime: { home: number | null; away: number | null } };
+  }[];
+}
+
+function Head2HeadTab({ match }: { match: Match }) {
+  const [h2h, setH2h] = useState<H2HData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (!match.id.startsWith("fd-")) {
+      setLoading(false);
+      return;
+    }
+    const matchId = match.id.replace("fd-", "");
+    fetch(`/api/v1/h2h?matchId=${matchId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => setH2h(data))
+      .catch(() => {})
+      .finally(() => setLoading(false));
+  }, [match.id]);
+
+  if (loading) {
+    return <div className="text-center py-12 text-white/30 animate-pulse">Loading head-to-head...</div>;
+  }
+
+  if (!h2h || !h2h.aggregates) {
+    return <div className="text-center py-12 text-white/30">Head-to-head data not available</div>;
+  }
+
+  const agg = h2h.aggregates;
+  const totalMatches = agg.numberOfMatches;
+  const homeWins = agg.homeTeam.wins;
+  const draws = agg.homeTeam.draws;
+  const awayWins = agg.awayTeam.wins;
+
+  return (
+    <div className="space-y-6">
+      {/* Summary bar */}
+      <div>
+        <p className="text-xs text-white/40 text-center mb-3">{totalMatches} previous meetings</p>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-bold text-blue-accent tabular-nums w-8 text-right">{homeWins}</span>
+          <div className="flex-1 flex h-3 rounded-full overflow-hidden gap-0.5">
+            {homeWins > 0 && <div className="bg-blue-accent/60 rounded-full" style={{ width: `${(homeWins / totalMatches) * 100}%` }} />}
+            {draws > 0 && <div className="bg-white/20 rounded-full" style={{ width: `${(draws / totalMatches) * 100}%` }} />}
+            {awayWins > 0 && <div className="bg-gold-spark/60 rounded-full" style={{ width: `${(awayWins / totalMatches) * 100}%` }} />}
+          </div>
+          <span className="text-sm font-bold text-gold-spark tabular-nums w-8">{awayWins}</span>
+        </div>
+        <div className="flex justify-between text-[10px] text-white/30 mt-1">
+          <span>{match.homeTeam.shortName} wins</span>
+          <span>{draws} draws</span>
+          <span>{match.awayTeam.shortName} wins</span>
+        </div>
+      </div>
+
+      {/* Recent matches */}
+      {h2h.matches.length > 0 && (
+        <div>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">Recent Matches</h3>
+          <div className="space-y-2">
+            {h2h.matches.slice(0, 5).map((m, i) => (
+              <div key={i} className="flex items-center justify-between py-2 px-3 bg-white/[0.02] rounded-lg">
+                <span className="text-[10px] text-white/30 w-20">
+                  {new Date(m.utcDate).toLocaleDateString(undefined, { month: "short", day: "numeric", year: "2-digit" })}
+                </span>
+                <div className="flex items-center gap-2 flex-1 justify-center">
+                  <span className="text-xs text-white/70 text-right flex-1 truncate">{m.homeTeam.shortName}</span>
+                  <span className="text-sm font-bold text-white tabular-nums px-2">
+                    {m.score.fullTime.home ?? "-"} - {m.score.fullTime.away ?? "-"}
+                  </span>
+                  <span className="text-xs text-white/70 text-left flex-1 truncate">{m.awayTeam.shortName}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Goals stat */}
+      <div className="text-center">
+        <p className="text-xs text-white/30">
+          Total goals in H2H: <span className="text-white/60 font-medium">{agg.totalGoals}</span>
+          <span className="text-white/20"> ({(agg.totalGoals / Math.max(totalMatches, 1)).toFixed(1)} per match)</span>
+        </p>
       </div>
     </div>
   );
@@ -536,14 +713,18 @@ function UpcomingMessage({ match }: { match: Match }) {
 }
 
 /** Get tabs based on sport */
-function getTabsForSport(sport: string, hasStats: boolean, hasLineups: boolean): { id: Tab; label: string }[] {
+function getTabsForSport(sport: string, hasStats: boolean, hasLineups: boolean, isFDMatch: boolean): { id: Tab; label: string }[] {
   if (sport === "soccer") {
-    return [
+    const tabs: { id: Tab; label: string }[] = [
       { id: "summary", label: "Summary" },
       { id: "stats", label: "Stats" },
       { id: "lineups", label: "Lineups" },
       { id: "events", label: "Events" },
     ];
+    if (isFDMatch) {
+      tabs.push({ id: "h2h", label: "H2H" });
+    }
+    return tabs;
   }
   // American sports
   const tabs: { id: Tab; label: string }[] = [
@@ -563,7 +744,8 @@ export default function MatchDetail({
   lineups: { home: Lineup; away: Lineup } | null;
 }) {
   const hasTeamStats = (match.sportDetail?.teamStats?.length ?? 0) > 0;
-  const tabs = getTabsForSport(match.sport, hasTeamStats, !!lineups);
+  const isFDMatch = match.id.startsWith("fd-");
+  const tabs = getTabsForSport(match.sport, hasTeamStats, !!lineups, isFDMatch);
   const [activeTab, setActiveTab] = useState<Tab>(tabs[0].id);
 
   const sportColors: Record<string, string> = {
@@ -717,6 +899,7 @@ export default function MatchDetail({
           <LineupsTab lineups={lineups} match={match} />
         )}
         {match.sport === "soccer" && activeTab === "events" && <EventsTab match={match} />}
+        {match.sport === "soccer" && activeTab === "h2h" && <Head2HeadTab match={match} />}
 
         {/* American sport tabs */}
         {match.sport !== "soccer" && activeTab === "summary" && (

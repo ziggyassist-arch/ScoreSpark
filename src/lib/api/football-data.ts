@@ -84,6 +84,32 @@ export async function getMatchDetail(matchId: number): Promise<FDHead2HeadMatch>
   return fdFetch<FDHead2HeadMatch>(`/matches/${matchId}`);
 }
 
+/** Head-to-head response from football-data.org */
+export interface FDHead2HeadResponse {
+  aggregates: {
+    numberOfMatches: number;
+    totalGoals: number;
+    homeTeam: { id: number; name: string; wins: number; draws: number; losses: number };
+    awayTeam: { id: number; name: string; wins: number; draws: number; losses: number };
+  };
+  matches: FDHead2HeadMatch[];
+}
+
+/**
+ * Get head-to-head data for a match
+ */
+export async function getHead2Head(
+  matchId: number,
+  limit?: number
+): Promise<FDHead2HeadResponse> {
+  const params = new URLSearchParams();
+  if (limit) params.set("limit", String(limit));
+  const query = params.toString();
+  return fdFetch<FDHead2HeadResponse>(
+    `/matches/${matchId}/head2head${query ? `?${query}` : ""}`
+  );
+}
+
 /**
  * Get standings for a competition
  */

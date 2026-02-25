@@ -245,40 +245,120 @@ function LineupsTab({
   );
 }
 
+function commentaryText(event: MatchEvent, match: Match): { headline: string; detail: string } {
+  const teamName = event.team === "home" ? match.homeTeam.shortName : match.awayTeam.shortName;
+  switch (event.type) {
+    case "goal":
+      return {
+        headline: `GOAL! ${event.player} scores for ${teamName}!`,
+        detail: event.assistedBy ? `Assisted by ${event.assistedBy}` : "Unassisted",
+      };
+    case "penalty":
+      return {
+        headline: `PENALTY GOAL! ${event.player} converts from the spot!`,
+        detail: `${teamName} awarded a penalty`,
+      };
+    case "own-goal":
+      return {
+        headline: `OWN GOAL! ${event.player} puts it into his own net`,
+        detail: `Unfortunate for ${teamName}`,
+      };
+    case "yellow-card":
+      return {
+        headline: `Yellow card shown to ${event.player}`,
+        detail: `${teamName} player booked by the referee`,
+      };
+    case "red-card":
+      return {
+        headline: `RED CARD! ${event.player} is sent off!`,
+        detail: `${teamName} reduced to 10 men`,
+      };
+    case "substitution":
+      return {
+        headline: `Substitution for ${teamName}`,
+        detail: `${event.player} comes on${event.playerOut ? ` for ${event.playerOut}` : ""}`,
+      };
+    default:
+      return { headline: event.player, detail: teamName };
+  }
+}
+
+function eventAccentColor(type: MatchEvent["type"]): string {
+  switch (type) {
+    case "goal":
+    case "penalty":
+      return "border-l-live-green bg-live-green/5";
+    case "own-goal":
+    case "red-card":
+      return "border-l-live-red bg-live-red/5";
+    case "yellow-card":
+      return "border-l-yellow-400 bg-yellow-400/5";
+    case "substitution":
+      return "border-l-blue-accent bg-blue-accent/5";
+    default:
+      return "border-l-white/20";
+  }
+}
+
 function EventsTab({ match }: { match: Match }) {
   if (match.events.length === 0) {
     return (
       <div className="text-center py-12 text-white/30">
-        <p>No events to display</p>
+        <p>No commentary available</p>
+        {match.status === "upcoming" && <p className="text-xs mt-2">Commentary will appear once the match starts</p>}
       </div>
     );
   }
 
   return (
-    <div className="relative">
-      <div className="absolute left-[39px] top-0 bottom-0 w-px bg-white/10" />
-      <div className="space-y-0">
-        {match.events.map((event, i) => (
-          <div key={i} className="flex items-start gap-4 py-3 relative">
-            <span className="text-xs text-white/40 w-8 tabular-nums text-right flex-shrink-0 pt-0.5">
-              {event.minute}&apos;
-            </span>
-            <div className="w-3 h-3 rounded-full bg-card border-2 border-white/20 flex-shrink-0 mt-0.5 z-10" />
-            <div className="flex items-center gap-2 min-w-0">
-              <EventIcon type={event.type} />
-              <div>
-                <p className="text-sm text-white/80">{event.player}</p>
-                <p className="text-[11px] text-white/30">
-                  {event.team === "home"
-                    ? match.homeTeam.shortName
-                    : match.awayTeam.shortName}
-                  {event.assistedBy && ` \u00B7 Assist: ${event.assistedBy}`}
-                </p>
+    <div className="space-y-2">
+      <div className="flex items-center gap-2 mb-3">
+        <svg className="w-4 h-4 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+        <span className="text-xs font-semibold text-white/30 uppercase tracking-wider">Match Commentary</span>
+      </div>
+      {[...match.events].reverse().map((event, i) => {
+        const { headline, detail } = commentaryText(event, match);
+        const accent = eventAccentColor(event.type);
+        return (
+          <div
+            key={i}
+            className={`flex gap-3 p-3 rounded-lg border-l-[3px] ${accent}`}
+          >
+            <div className="flex-shrink-0 w-10 text-right">
+              <span className="text-xs font-bold text-white/50 tabular-nums">{event.minute}&apos;</span>
+            </div>
+            <div className="flex items-start gap-2 min-w-0 flex-1">
+              <div className="flex-shrink-0 mt-0.5">
+                <EventIcon type={event.type} />
+              </div>
+              <div className="min-w-0">
+                <p className="text-sm font-medium text-white/90">{headline}</p>
+                <p className="text-[11px] text-white/40 mt-0.5">{detail}</p>
               </div>
             </div>
           </div>
-        ))}
-      </div>
+        );
+      })}
+
+      {/* Match period markers */}
+      {match.status === "finished" && (
+        <div className="text-center pt-3">
+          <span className="text-[10px] text-white/20 uppercase tracking-wider">Full Time</span>
+        </div>
+      )}
+      {match.status === "live" && (
+        <div className="text-center pt-3">
+          <div className="flex items-center justify-center gap-2">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-live-pulse absolute inline-flex h-full w-full rounded-full bg-live-red opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
+            </span>
+            <span className="text-[10px] text-live-green font-bold uppercase tracking-wider">Live</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -792,7 +872,7 @@ function getTabsForSport(sport: string, hasStats: boolean, hasLineups: boolean, 
       { id: "summary", label: "Summary" },
       { id: "stats", label: "Stats" },
       { id: "lineups", label: "Lineups" },
-      { id: "events", label: "Events" },
+      { id: "events", label: "Commentary" },
     ];
     if (isFDMatch) {
       tabs.push({ id: "h2h", label: "H2H" });

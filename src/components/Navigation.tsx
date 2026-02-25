@@ -8,6 +8,7 @@ import { useSpoilerMode } from "@/lib/spoiler-mode";
 import { useStreak } from "@/lib/streak";
 import { useFavorites } from "@/lib/favorites";
 import { useSession, signIn, signOut } from "next-auth/react";
+import SearchBar from "./SearchBar";
 
 // Sport items for the left sidebar
 const sportItems = [
@@ -415,6 +416,7 @@ export default function Navigation() {
   const pathname = usePathname();
   const activeSport = currentSportFromPath(pathname);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Close menu on route change
   useEffect(() => {
@@ -514,27 +516,44 @@ export default function Navigation() {
 
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-11 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-3">
-        <Link href="/scores" className="hover:opacity-80 transition-opacity">
-          <span className="text-lg font-bold tracking-tight inline-flex items-center">
-            <span className="text-white">Score</span>
-            <svg className="w-4 h-4 mx-[1px] -mt-[1px]" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg">
-              <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" />
-            </svg>
-            <span className="text-[#9DCAED]">Spark</span>
-          </span>
-        </Link>
-        <div className="flex items-center gap-1">
-          <SpoilerToggle />
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
-            aria-label="Menu"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
-        </div>
+        {searchOpen ? (
+          <div className="flex-1">
+            <SearchBar onClose={() => setSearchOpen(false)} />
+          </div>
+        ) : (
+          <>
+            <Link href="/scores" className="hover:opacity-80 transition-opacity">
+              <span className="text-lg font-bold tracking-tight inline-flex items-center">
+                <span className="text-white">Score</span>
+                <svg className="w-4 h-4 mx-[1px] -mt-[1px]" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" />
+                </svg>
+                <span className="text-[#9DCAED]">Spark</span>
+              </span>
+            </Link>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setSearchOpen(true)}
+                className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
+                aria-label="Search"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                </svg>
+              </button>
+              <SpoilerToggle />
+              <button
+                onClick={() => setMenuOpen(true)}
+                className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
+                aria-label="Menu"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+                </svg>
+              </button>
+            </div>
+          </>
+        )}
       </header>
 
       {/* Mobile top tabs — below header */}
@@ -639,15 +658,20 @@ export default function Navigation() {
                 );
               })}
           </div>
-          <button
-            onClick={() => setMenuOpen(true)}
-            className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
-            aria-label="Menu"
-          >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-            </svg>
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="w-56 lg:w-72">
+              <SearchBar />
+            </div>
+            <button
+              onClick={() => setMenuOpen(true)}
+              className="p-2 rounded-lg text-white/40 hover:text-white/70 hover:bg-white/5 transition-all"
+              aria-label="Menu"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          </div>
         </div>
       </div>
 

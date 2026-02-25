@@ -48,13 +48,23 @@ const sportItems = [
   },
 ];
 
-// Top tab bar items
-const topTabs = [
-  { label: "Leagues", href: (sport: string) => `/scores/${sport}` },
-  { label: "Teams", href: (sport: string) => `/scores/${sport}/teams` },
-  { label: "News", href: (sport: string) => `/scores/${sport}/news` },
+// Top tab bar items — sport-aware tabs
+interface TabItem {
+  label: string;
+  href: (sport: string) => string;
+  /** Show only for these sports; undefined = show for all */
+  sports?: string[];
+}
+
+const topTabs: TabItem[] = [
+  { label: "Scores", href: (sport) => `/scores/${sport}` },
+  { label: "Teams", href: (sport) => `/scores/${sport}/teams` },
+  { label: "News", href: (sport) => `/scores/${sport}/news` },
+  { label: "Top Scorers", href: (sport) => `/scores/${sport}/scorers`, sports: ["soccer"] },
+  { label: "Leaders", href: (sport) => `/scores/${sport}/leaders`, sports: ["nba", "nfl", "nhl", "mlb"] },
+  { label: "Injuries", href: (sport) => `/scores/${sport}/injuries`, sports: ["nba", "nfl", "nhl", "mlb"] },
+  { label: "Rankings", href: (sport) => `/scores/${sport}/rankings`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Following", href: () => "/favorites" },
-  { label: "Mock Draft", href: (sport: string) => `/scores/${sport}/mock-draft` },
 ];
 
 function SpoilerToggle() {
@@ -526,23 +536,25 @@ export default function Navigation() {
       {/* Mobile top tabs — below header */}
       <div className="md:hidden fixed top-14 left-0 right-0 h-10 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-30">
         <div className="flex items-center h-full px-2 gap-0 overflow-x-auto hide-scrollbar">
-          {topTabs.map((tab) => {
-            const href = tab.href(activeSport);
-            const active = isTabActive(href);
-            return (
-              <Link
-                key={tab.label}
-                href={href}
-                className={`px-3 h-full flex items-center text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
-                  active
-                    ? "text-gold-spark border-gold-spark"
-                    : "text-white/40 border-transparent hover:text-white/60"
-                }`}
-              >
-                {tab.label}
-              </Link>
-            );
-          })}
+          {topTabs
+            .filter((tab) => !tab.sports || tab.sports.includes(activeSport))
+            .map((tab) => {
+              const href = tab.href(activeSport);
+              const active = isTabActive(href);
+              return (
+                <Link
+                  key={tab.label}
+                  href={href}
+                  className={`px-3 h-full flex items-center text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                    active
+                      ? "text-gold-spark border-gold-spark"
+                      : "text-white/40 border-transparent hover:text-white/60"
+                  }`}
+                >
+                  {tab.label}
+                </Link>
+              );
+            })}
         </div>
       </div>
 
@@ -603,23 +615,25 @@ export default function Navigation() {
       <div className="hidden md:block fixed top-0 left-20 lg:left-56 right-0 h-12 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-30">
         <div className="flex items-center justify-between h-full px-6">
           <div className="flex items-center h-full gap-0">
-            {topTabs.map((tab) => {
-              const href = tab.href(activeSport);
-              const active = isTabActive(href);
-              return (
-                <Link
-                  key={tab.label}
-                  href={href}
-                  className={`px-5 h-full flex items-center text-sm font-semibold border-b-2 transition-colors ${
-                    active
-                      ? "text-gold-spark border-gold-spark"
-                      : "text-white/40 border-transparent hover:text-white/60"
-                  }`}
-                >
-                  {tab.label}
-                </Link>
-              );
-            })}
+            {topTabs
+              .filter((tab) => !tab.sports || tab.sports.includes(activeSport))
+              .map((tab) => {
+                const href = tab.href(activeSport);
+                const active = isTabActive(href);
+                return (
+                  <Link
+                    key={tab.label}
+                    href={href}
+                    className={`px-5 h-full flex items-center text-sm font-semibold border-b-2 transition-colors ${
+                      active
+                        ? "text-gold-spark border-gold-spark"
+                        : "text-white/40 border-transparent hover:text-white/60"
+                    }`}
+                  >
+                    {tab.label}
+                  </Link>
+                );
+              })}
           </div>
           <button
             onClick={() => setMenuOpen(true)}

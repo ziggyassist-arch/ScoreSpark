@@ -148,6 +148,96 @@ export interface ESPNSituation {
   awayTimeouts?: number;
 }
 
+// Injury types
+export interface ESPNInjuryResponse {
+  injuries: ESPNTeamInjuries[];
+}
+
+export interface ESPNTeamInjuries {
+  id: string;
+  displayName: string;
+  injuries: ESPNInjury[];
+}
+
+export interface ESPNInjury {
+  id: string;
+  athlete: {
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    shortName: string;
+    headshot?: string;
+    position?: { abbreviation: string };
+    team?: { id: string };
+  };
+  status: string;
+  type: string;
+  date: string;
+  details?: {
+    type: string;
+    location: string;
+    side?: string;
+    returnDate?: string;
+    fantasyStatus?: string;
+  };
+  shortComment?: string;
+  longComment?: string;
+}
+
+// Stats Leaders types
+export interface ESPNLeadersResponse {
+  categories: ESPNLeaderCategoryV3[];
+}
+
+export interface ESPNLeaderCategoryV3 {
+  name: string;
+  displayName: string;
+  shortDisplayName: string;
+  abbreviation: string;
+  leaders: ESPNLeaderEntry[];
+}
+
+export interface ESPNLeaderEntry {
+  displayValue: string;
+  value: number;
+  athlete: {
+    id: string;
+    firstName: string;
+    lastName: string;
+    displayName: string;
+    shortName: string;
+    jersey?: string;
+    headshot?: string;
+    position?: { abbreviation: string };
+  };
+  team: {
+    id: string;
+    name: string;
+    abbreviation: string;
+    displayName: string;
+    logos?: { href: string }[];
+  };
+}
+
+// Power Rankings types
+export interface ESPNPowerIndexResponse {
+  teams: ESPNPowerIndexTeam[];
+}
+
+export interface ESPNPowerIndexTeam {
+  id: string;
+  name: string;
+  displayName: string;
+  abbreviation: string;
+  logos?: { href: string }[];
+  categories: ESPNPowerIndexCategory[];
+}
+
+export interface ESPNPowerIndexCategory {
+  name: string;
+  values: Record<string, number>;
+}
+
 // Standings types
 export interface ESPNStandingsResponse {
   children: ESPNStandingsGroup[];

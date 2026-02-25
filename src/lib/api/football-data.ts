@@ -97,3 +97,49 @@ export async function getStandings(competition: CompetitionCode): Promise<FDStan
 export async function getCompetitions(): Promise<FDCompetitionsResponse> {
   return fdFetch<FDCompetitionsResponse>("/competitions");
 }
+
+/** Top scorers response from football-data.org */
+export interface FDScorersResponse {
+  count: number;
+  competition: { id: number; name: string; code: string; emblem: string };
+  season: { id: number; startDate: string; endDate: string; currentMatchday: number };
+  scorers: FDScorer[];
+}
+
+export interface FDScorer {
+  player: {
+    id: number;
+    name: string;
+    firstName: string | null;
+    lastName: string | null;
+    dateOfBirth: string | null;
+    nationality: string | null;
+    position: string | null;
+  };
+  team: {
+    id: number;
+    name: string;
+    shortName: string;
+    tla: string;
+    crest: string;
+  };
+  playedMatches: number;
+  goals: number;
+  assists: number | null;
+  penalties: number | null;
+}
+
+/**
+ * Get top scorers for a competition
+ */
+export async function getTopScorers(
+  competition: CompetitionCode,
+  limit?: number
+): Promise<FDScorersResponse> {
+  const params = new URLSearchParams();
+  if (limit) params.set("limit", String(limit));
+  const query = params.toString();
+  return fdFetch<FDScorersResponse>(
+    `/competitions/${competition}/scorers${query ? `?${query}` : ""}`
+  );
+}

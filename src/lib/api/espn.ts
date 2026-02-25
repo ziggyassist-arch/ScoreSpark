@@ -6,9 +6,13 @@
 import type {
   ESPNScoreboardResponse,
   ESPNStandingsResponse,
+  ESPNInjuryResponse,
+  ESPNLeadersResponse,
+  ESPNPowerIndexResponse,
 } from "./types/espn";
 
 const BASE_URL = "https://site.api.espn.com/apis";
+const WEB_BASE_URL = "https://site.web.api.espn.com/apis";
 
 /** ESPN sport/league path mapping */
 const SPORT_PATHS: Record<string, { sport: string; league: string }> = {
@@ -59,4 +63,41 @@ export async function getESPNStandings(
   const paths = SPORT_PATHS[sport];
   const url = `${BASE_URL}/v2/sports/${paths.sport}/${paths.league}/standings`;
   return fetchESPN<ESPNStandingsResponse>(url);
+}
+
+/**
+ * Get league-wide injury reports
+ */
+export async function getInjuries(
+  sport: "nfl" | "nba" | "nhl" | "mlb"
+): Promise<ESPNInjuryResponse> {
+  const paths = SPORT_PATHS[sport];
+  const url = `${BASE_URL}/site/v2/sports/${paths.sport}/${paths.league}/injuries`;
+  return fetchESPN<ESPNInjuryResponse>(url);
+}
+
+/**
+ * Get stats leaders for a sport (v3 endpoint — rich inline data)
+ */
+export async function getLeaders(
+  sport: "nfl" | "nba" | "nhl" | "mlb"
+): Promise<ESPNLeadersResponse> {
+  const paths = SPORT_PATHS[sport];
+  const url = `${BASE_URL}/site/v3/sports/${paths.sport}/${paths.league}/leaders`;
+  return fetchESPN<ESPNLeadersResponse>(url);
+}
+
+/**
+ * Get power rankings (FPI for NFL, BPI for NBA)
+ * NHL and MLB use generic power index
+ */
+export async function getPowerIndex(
+  sport: "nfl" | "nba" | "nhl" | "mlb"
+): Promise<ESPNPowerIndexResponse> {
+  const paths = SPORT_PATHS[sport];
+  const year = new Date().getFullYear();
+  const sortField = sport === "nfl" ? "fpi.fpi" : sport === "nba" ? "bpi.bpi" : "record.wins";
+  const limit = sport === "nfl" ? 32 : 30;
+  const url = `${WEB_BASE_URL}/fitt/v3/sports/${paths.sport}/${paths.league}/powerindex?region=us&lang=en&season=${year}&sort=${sortField}%3Adesc&limit=${limit}`;
+  return fetchESPN<ESPNPowerIndexResponse>(url);
 }

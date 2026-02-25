@@ -31,16 +31,29 @@ function getTeamIndex(team: ESPNPowerIndexTeam, sport: string): number | null {
   const field = getIndexField(sport);
   const cat = team.categories?.find((c) => c.name === field);
   if (!cat) return null;
-  return cat.values?.[field] ?? cat.values?.wins ?? null;
+  // ESPN returns values as array — first element is the main index value
+  const vals = cat.values;
+  if (Array.isArray(vals)) return typeof vals[0] === "number" ? vals[0] : null;
+  // Fallback for dict format
+  return (vals as Record<string, number>)?.[field] ?? null;
 }
 
 function getTeamProjections(team: ESPNPowerIndexTeam): { projW?: number; projL?: number; playoffProb?: number } {
   const proj = team.categories?.find((c) => c.name === "projections");
   if (!proj) return {};
+  const vals = proj.values;
+  // ESPN returns values as array: [projW, projL, playoffProb, ...]
+  if (Array.isArray(vals)) {
+    return {
+      projW: typeof vals[0] === "number" ? vals[0] : undefined,
+      projL: typeof vals[1] === "number" ? vals[1] : undefined,
+      playoffProb: typeof vals[2] === "number" ? vals[2] : undefined,
+    };
+  }
   return {
-    projW: proj.values?.projW,
-    projL: proj.values?.projL,
-    playoffProb: proj.values?.playoffProb,
+    projW: (vals as Record<string, number>)?.projW,
+    projL: (vals as Record<string, number>)?.projL,
+    playoffProb: (vals as Record<string, number>)?.playoffProb,
   };
 }
 

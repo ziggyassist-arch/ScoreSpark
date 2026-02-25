@@ -26,7 +26,9 @@ export default function StatsLeadersPage() {
         return r.json();
       })
       .then((d) => {
-        setData(d);
+        // ESPN wraps categories under d.leaders.categories
+        const categories = d?.leaders?.categories ?? d?.categories ?? [];
+        setData({ categories });
         setActiveCategory(0);
       })
       .catch(() => setError("Failed to load stats leaders"))

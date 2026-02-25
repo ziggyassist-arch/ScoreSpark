@@ -47,12 +47,12 @@ async function fetchESPNSoccerLeague(
 }
 
 /**
- * Fetch soccer matches from football-data.org with cache + mock fallback.
- * Also fetches from ESPN for expanded leagues (MLS, Liga MX, etc.)
- * When no specific date is given, fetches a 3-day window (yesterday → tomorrow)
- * so there's always content even on lighter match days.
+ * Fetch soccer matches from football-data.org + ESPN expanded leagues.
+ * When no specific date is given, fetches a 3-day window (yesterday → tomorrow).
+ * When a specific date is given, fetches only that date (real results, no mock fallback).
  */
 async function fetchSoccerMatches(date?: string): Promise<Match[]> {
+  const isSpecificDate = !!date;
   const dateFrom = date ?? dateRangeStr(-1);
   const dateTo = date ?? dateRangeStr(1);
   const cacheKey = `matches:soccer:${dateFrom}:${dateTo}`;
@@ -77,19 +77,26 @@ async function fetchSoccerMatches(date?: string): Promise<Match[]> {
   );
 
   const matches = [...fdMatches, ...espnMatches];
-  if (matches.length > 0) {
-    cacheSet(cacheKey, matches, config.cache.matchesTTL);
+  // Cache even empty results for specific dates to avoid repeated API calls
+  cacheSet(cacheKey, matches, config.cache.matchesTTL);
+
+  // Only fall back to mock data for today's view (no specific date), never for past/future dates
+  if (matches.length === 0 && !isSpecificDate) {
+    return mockMatches.filter((m) => m.sport === "soccer");
   }
-  return matches.length > 0 ? matches : mockMatches.filter((m) => m.sport === "soccer");
+  return matches;
 }
 
 /**
- * Fetch matches from ESPN API for a given American sport
+ * Fetch matches from ESPN API for a given American sport.
+ * Uses the dates query param (YYYYMMDD format) for specific dates.
+ * Only falls back to mock data for today's view, not for past/future dates.
  */
 async function fetchESPNMatches(
   sport: "nba" | "nfl" | "nhl" | "mlb",
   date?: string
 ): Promise<Match[]> {
+  const isSpecificDate = !!date;
   // ESPN date format: YYYYMMDD
   const espnDate = date ? date.replace(/-/g, "") : undefined;
   const cacheKey = `matches:${sport}:${espnDate ?? "today"}`;
@@ -100,10 +107,13 @@ async function fetchESPNMatches(
   try {
     const resp = await getScoreboard(sport, espnDate);
     const matches = resp.events.map((e) => normalizeESPNMatch(e, sport));
+    // Cache even empty results for specific dates
     cacheSet(cacheKey, matches, config.cache.matchesTTL);
     return matches;
   } catch (err) {
-    console.error(`[match-service] ESPN ${sport} error, using mock data:`, err);
+    console.error(`[match-service] ESPN ${sport} error:`, err);
+    // Only use mock data for today's view, never for specific past/future dates
+    if (isSpecificDate) return [];
     return mockMatches
       .filter((m) => m.sport === sport)
       .map((m) => ({ ...m, league: `${m.league} (Demo)` }));

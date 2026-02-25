@@ -18,7 +18,6 @@ struct HomeView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // Date picker strip
             datePickerBar
 
             if viewModel.isLoading && viewModel.groups.isEmpty {
@@ -26,22 +25,22 @@ struct HomeView: View {
                 Image("Logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 40, height: 40)
+                    .frame(width: 32, height: 32)
                     .opacity(0.4)
                 Spacer()
             } else if viewModel.groups.isEmpty {
                 Spacer()
-                VStack(spacing: 8) {
+                VStack(spacing: 6) {
                     Image("Logo")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 36, height: 36)
+                        .frame(width: 28, height: 28)
                         .opacity(0.15)
                     Text("No Matches")
-                        .font(.system(size: 16, weight: .semibold, design: .rounded))
+                        .font(.system(size: 14, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppColors.textSecondary)
                     Text("No matches available for \(dateLabel.lowercased()).")
-                        .font(.system(size: 13, design: .rounded))
+                        .font(.system(size: 12, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                 }
                 Spacer()
@@ -50,17 +49,17 @@ struct HomeView: View {
                     // Live count banner
                     let liveCount = viewModel.groups.flatMap(\.matches).filter(\.isLive).count
                     if liveCount > 0 && selectedDateOffset == 0 {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Circle()
                                 .fill(AppColors.livePulse)
-                                .frame(width: 6, height: 6)
+                                .frame(width: 5, height: 5)
                                 .modifier(PulseModifier())
                             Text("\(liveCount) live")
-                                .font(.system(size: 12, weight: .semibold, design: .rounded))
+                                .font(.system(size: 11, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.livePulse)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 4)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
@@ -77,7 +76,7 @@ struct HomeView: View {
                                 Rectangle()
                                     .fill(Color.white.opacity(0.04))
                                     .frame(height: 0.33)
-                                    .padding(.horizontal, 12)
+                                    .padding(.horizontal, 8)
                             }
                         }
                     }
@@ -95,7 +94,7 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Date Picker Bar
+    // MARK: - Date Picker Bar (compact 28pt)
 
     private var datePickerBar: some View {
         HStack(spacing: 0) {
@@ -103,10 +102,10 @@ struct HomeView: View {
                 withAnimation(.snappy) { selectedDateOffset -= 1 }
             } label: {
                 Image(systemName: "chevron.left")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(AppColors.textTertiary)
             }
-            .frame(width: 36)
+            .frame(width: 28)
 
             ForEach([-1, 0, 1], id: \.self) { offset in
                 let label: String = switch offset {
@@ -119,7 +118,7 @@ struct HomeView: View {
                     withAnimation(.snappy) { selectedDateOffset = offset }
                 } label: {
                     Text(label)
-                        .font(.system(size: 12, weight: selectedDateOffset == offset ? .bold : .regular, design: .rounded))
+                        .font(.system(size: 11, weight: selectedDateOffset == offset ? .bold : .regular, design: .rounded))
                         .foregroundStyle(selectedDateOffset == offset ? .white : AppColors.textTertiary)
                         .frame(maxWidth: .infinity)
                 }
@@ -129,40 +128,40 @@ struct HomeView: View {
                 withAnimation(.snappy) { selectedDateOffset += 1 }
             } label: {
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(AppColors.textTertiary)
             }
-            .frame(width: 36)
+            .frame(width: 28)
         }
-        .frame(height: 36)
+        .frame(height: 28)
         .background(AppColors.surface.opacity(0.3))
     }
 
     private func leagueHeader(_ league: League) -> some View {
-        HStack(spacing: 6) {
+        HStack(spacing: 5) {
             if let url = leagueLogoURL(for: league) {
                 AsyncImage(url: url) { image in
                     image.resizable().scaledToFit()
                 } placeholder: {
                     EmptyView()
                 }
-                .frame(width: 14, height: 14)
+                .frame(width: 12, height: 12)
             }
             Text(league.name)
-                .font(.system(size: 12, weight: .medium))
+                .font(.system(size: 11, weight: .medium))
                 .foregroundStyle(AppColors.textSecondary)
             if !league.country.isEmpty {
                 Text("·")
-                    .font(.system(size: 10))
+                    .font(.system(size: 9))
                     .foregroundStyle(AppColors.textTertiary)
                 Text(league.country)
-                    .font(.system(size: 11))
+                    .font(.system(size: 10))
                     .foregroundStyle(AppColors.textTertiary)
             }
             Spacer()
         }
-        .padding(.horizontal, 16)
-        .frame(height: 28)
+        .padding(.horizontal, 12)
+        .frame(height: 24)
         .background(AppColors.surface.opacity(0.25))
     }
 
@@ -177,14 +176,14 @@ struct HomeView: View {
     }
 }
 
-// MARK: - FotMob Match Row (44pt height)
+// MARK: - FotMob Match Row (compact 40pt)
 
 struct FotMobMatchRow: View {
     let match: Match
 
     var body: some View {
         HStack(spacing: 0) {
-            HStack(spacing: 6) {
+            HStack(spacing: 5) {
                 Text(match.homeTeam.name)
                     .font(.system(size: 13))
                     .foregroundStyle(.white)
@@ -200,7 +199,7 @@ struct FotMobMatchRow: View {
                         .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
                 } else {
                     Text(match.displayTime)
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(AppColors.textTertiary)
                 }
 
@@ -208,7 +207,7 @@ struct FotMobMatchRow: View {
                     HStack(spacing: 2) {
                         Circle()
                             .fill(AppColors.livePulse)
-                            .frame(width: 4, height: 4)
+                            .frame(width: 3, height: 3)
                             .modifier(PulseModifier())
                         Text(match.displayTime)
                             .font(.system(size: 9, weight: .semibold))
@@ -220,9 +219,9 @@ struct FotMobMatchRow: View {
                         .foregroundStyle(AppColors.textTertiary)
                 }
             }
-            .frame(width: 56)
+            .frame(width: 52)
 
-            HStack(spacing: 6) {
+            HStack(spacing: 5) {
                 teamBadge(match.awayTeam)
                 Text(match.awayTeam.name)
                     .font(.system(size: 13))
@@ -231,8 +230,8 @@ struct FotMobMatchRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 12)
-        .frame(height: 44)
+        .padding(.horizontal, 8)
+        .frame(height: 40)
     }
 
     private func teamBadge(_ team: Team) -> some View {

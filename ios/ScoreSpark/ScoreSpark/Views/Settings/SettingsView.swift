@@ -16,18 +16,18 @@ struct SettingsView: View {
     var body: some View {
         List {
             Section {
-                HStack(spacing: 16) {
+                HStack(spacing: 12) {
                     HStack(spacing: 2) {
                         Text("Score")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                         Text("Spark")
-                            .font(.system(size: 22, weight: .bold, design: .rounded))
+                            .font(.system(size: 18, weight: .bold, design: .rounded))
                             .foregroundStyle(AppColors.gold)
                     }
                     Spacer()
                     Text("v1.0.0")
-                        .font(AppTypography.caption)
+                        .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                 }
                 .listRowBackground(AppColors.surface)
@@ -36,22 +36,21 @@ struct SettingsView: View {
             Section("Preferences") {
                 Picker("Default Sport", selection: $defaultSport) {
                     ForEach(Sport.sports) { sport in
-                        HStack(spacing: 8) {
+                        HStack(spacing: 6) {
                             Text(sport.emoji)
                             Text(sport.rawValue)
                         }
                         .tag(sport)
                     }
                 }
-                .onChange(of: defaultSport) { _, newValue in
-                    UserDefaults.standard.set(newValue.rawValue, forKey: "defaultSport")
-                }
+                .font(.system(size: 14, design: .rounded))
 
                 Toggle(isOn: $spoilerFreeMode) {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 1) {
                         Text("Spoiler-Free Mode")
+                            .font(.system(size: 14, design: .rounded))
                         Text("Hide scores until you tap to reveal")
-                            .font(.system(size: 12, design: .rounded))
+                            .font(.system(size: 11, design: .rounded))
                             .foregroundStyle(AppColors.textTertiary)
                     }
                 }
@@ -63,7 +62,9 @@ struct SettingsView: View {
 
             Section("Notifications") {
                 Toggle("Match Alerts", isOn: $notificationsEnabled)
+                    .font(.system(size: 14, design: .rounded))
                 Toggle("Live Activities", isOn: $liveActivitiesEnabled)
+                    .font(.system(size: 14, design: .rounded))
             }
             .listRowBackground(AppColors.surface)
 
@@ -71,18 +72,20 @@ struct SettingsView: View {
                 Link(destination: URL(string: "https://scorespark.vercel.app")!) {
                     HStack {
                         Text("Website")
+                            .font(.system(size: 14, design: .rounded))
                         Spacer()
                         Image(systemName: "arrow.up.right")
-                            .font(.system(size: 12))
+                            .font(.system(size: 11))
                             .foregroundStyle(AppColors.textTertiary)
                     }
                 }
                 Link(destination: URL(string: "https://scorespark.vercel.app/pricing")!) {
                     HStack {
                         Text("Upgrade to Premium")
+                            .font(.system(size: 14, design: .rounded))
                         Spacer()
                         Image(systemName: "star.fill")
-                            .font(.system(size: 12))
+                            .font(.system(size: 11))
                             .foregroundStyle(AppColors.gold)
                     }
                 }
@@ -90,12 +93,12 @@ struct SettingsView: View {
             .listRowBackground(AppColors.surface)
 
             Section {
-                VStack(spacing: 4) {
+                VStack(spacing: 2) {
                     Text("Made with ⚡ by ScoreSpark")
-                        .font(.system(size: 12, design: .rounded))
+                        .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                     Text("Data provided by football-data.org & ESPN")
-                        .font(.system(size: 11, design: .rounded))
+                        .font(.system(size: 10, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary.opacity(0.6))
                 }
                 .frame(maxWidth: .infinity)
@@ -107,6 +110,6 @@ struct SettingsView: View {
         .foregroundStyle(AppColors.textPrimary)
         .tint(AppColors.gold)
         .navigationTitle("Settings")
-        .toolbarTitleDisplayMode(.large)
+        .toolbarTitleDisplayMode(.inline)
     }
 }

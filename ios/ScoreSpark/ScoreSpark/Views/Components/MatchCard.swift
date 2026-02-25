@@ -4,7 +4,7 @@ struct MatchCard: View {
     let match: Match
 
     var body: some View {
-        VStack(spacing: 12) {
+        VStack(spacing: 8) {
             // Status badge
             HStack {
                 if match.isLive {
@@ -12,7 +12,7 @@ struct MatchCard: View {
                 }
                 Spacer()
                 Text(match.displayTime)
-                    .font(AppTypography.caption)
+                    .font(.system(size: 11, design: .rounded))
                     .foregroundStyle(match.isLive ? AppColors.livePulse : AppColors.textSecondary)
             }
 
@@ -29,25 +29,25 @@ struct MatchCard: View {
     }
 
     private var liveBadge: some View {
-        HStack(spacing: 4) {
+        HStack(spacing: 3) {
             Circle()
                 .fill(AppColors.livePulse)
-                .frame(width: 8, height: 8)
+                .frame(width: 6, height: 6)
                 .modifier(PulseModifier())
             Text("LIVE")
-                .font(.system(size: 10, weight: .black, design: .rounded))
+                .font(.system(size: 9, weight: .black, design: .rounded))
                 .foregroundStyle(AppColors.livePulse)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 3)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 2)
         .background(AppColors.livePulse.opacity(0.15), in: Capsule())
     }
 
     private func teamColumn(_ team: Team, alignment: HorizontalAlignment) -> some View {
-        VStack(alignment: alignment, spacing: 6) {
-            teamLogo(team, size: 40)
+        VStack(alignment: alignment, spacing: 4) {
+            teamLogo(team, size: 32)
             Text(team.shortName)
-                .font(AppTypography.caption)
+                .font(.system(size: 10, design: .rounded))
                 .foregroundStyle(AppColors.textSecondary)
         }
     }
@@ -70,17 +70,17 @@ struct MatchCard: View {
     private var scoreView: some View {
         Group {
             if let home = match.homeScore, let away = match.awayScore {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     Text("\(home)")
                     Text("-")
                         .foregroundStyle(AppColors.textTertiary)
                     Text("\(away)")
                 }
-                .font(AppTypography.score)
+                .font(AppTypography.scoreMedium)
                 .foregroundStyle(AppColors.textPrimary)
             } else {
                 Text("vs")
-                    .font(AppTypography.scoreMedium)
+                    .font(AppTypography.scoreCompact)
                     .foregroundStyle(AppColors.textTertiary)
             }
         }

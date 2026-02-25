@@ -6,9 +6,9 @@ struct StandingsView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            // League selector
+            // League selector (compact)
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 8) {
+                HStack(spacing: 6) {
                     ForEach(viewModel.leagues) { league in
                         Button {
                             withAnimation(.snappy) {
@@ -16,14 +16,14 @@ struct StandingsView: View {
                             }
                         } label: {
                             Text(league.name)
-                                .font(AppTypography.subheadline)
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
                                 .foregroundStyle(
                                     viewModel.selectedLeague.id == league.id
                                         ? AppColors.darkNavy
                                         : AppColors.textSecondary
                                 )
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 5)
                                 .background(
                                     viewModel.selectedLeague.id == league.id
                                         ? AppColors.gold
@@ -33,8 +33,8 @@ struct StandingsView: View {
                         }
                     }
                 }
-                .padding(.horizontal)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
             }
 
             if viewModel.standings.isEmpty && !viewModel.isLoading {
@@ -43,26 +43,28 @@ struct StandingsView: View {
                     .frame(maxHeight: .infinity)
             } else {
                 // Table header
-                HStack {
+                HStack(spacing: 0) {
                     Text("#")
-                        .frame(width: 24, alignment: .center)
+                        .frame(width: 22, alignment: .center)
+                    // Team logo + name column
                     Text("Team")
+                        .padding(.leading, 4)
                     Spacer()
                     Group {
-                        Text("P").frame(width: 26)
-                        Text("W").frame(width: 26)
-                        Text("D").frame(width: 26)
-                        Text("L").frame(width: 26)
-                        Text("GD").frame(width: 30)
-                        Text("Pts").frame(width: 30)
+                        Text("P").frame(width: 24)
+                        Text("W").frame(width: 24)
+                        Text("D").frame(width: 24)
+                        Text("L").frame(width: 24)
+                        Text("GD").frame(width: 28)
+                        Text("Pts").frame(width: 28)
                     }
                     // Form guide
-                    Text("Form").frame(width: 60)
+                    Text("Form").frame(width: 52)
                 }
                 .font(.system(size: 10, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppColors.textTertiary)
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 6)
 
                 // Rows
                 ScrollView {
@@ -92,45 +94,61 @@ struct StandingRow: View {
     let standing: Standing
 
     var body: some View {
-        HStack {
+        HStack(spacing: 0) {
             Text("\(standing.position)")
-                .font(.system(size: 12, weight: .bold, design: .rounded))
+                .font(.system(size: 11, weight: .bold, design: .rounded))
                 .foregroundStyle(positionColor)
-                .frame(width: 24, alignment: .center)
+                .frame(width: 22, alignment: .center)
+
+            // Team logo
+            AsyncImage(url: standing.team.logoURL) { image in
+                image.resizable().scaledToFit()
+            } placeholder: {
+                Circle()
+                    .fill(Color(hex: standing.team.primaryColor).opacity(0.3))
+                    .overlay {
+                        Text(String(standing.team.shortName.prefix(2)))
+                            .font(.system(size: 6, weight: .bold))
+                            .foregroundStyle(.white)
+                    }
+            }
+            .frame(width: 20, height: 20)
+            .padding(.leading, 4)
 
             Text(standing.team.name)
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(AppColors.textPrimary)
                 .lineLimit(1)
+                .padding(.leading, 6)
 
             Spacer()
 
             Group {
-                Text("\(standing.played)").frame(width: 26)
-                Text("\(standing.won)").frame(width: 26)
-                Text("\(standing.drawn)").frame(width: 26)
-                Text("\(standing.lost)").frame(width: 26)
-                Text("\(standing.goalDifference > 0 ? "+" : "")\(standing.goalDifference)").frame(width: 30)
+                Text("\(standing.played)").frame(width: 24)
+                Text("\(standing.won)").frame(width: 24)
+                Text("\(standing.drawn)").frame(width: 24)
+                Text("\(standing.lost)").frame(width: 24)
+                Text("\(standing.goalDifference > 0 ? "+" : "")\(standing.goalDifference)").frame(width: 28)
                 Text("\(standing.points)")
                     .fontWeight(.bold)
                     .foregroundStyle(AppColors.gold)
-                    .frame(width: 30)
+                    .frame(width: 28)
             }
             .font(.system(size: 11, weight: .medium, design: .rounded))
             .foregroundStyle(AppColors.textSecondary)
 
             // Form guide dots
-            HStack(spacing: 3) {
+            HStack(spacing: 2) {
                 ForEach(Array(standing.form.enumerated()), id: \.offset) { _, result in
                     Circle()
                         .fill(formColor(result))
-                        .frame(width: 8, height: 8)
+                        .frame(width: 7, height: 7)
                 }
             }
-            .frame(width: 60)
+            .frame(width: 52)
         }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 10)
+        .padding(.horizontal, 8)
+        .padding(.vertical, 7)
     }
 
     private var positionColor: Color {

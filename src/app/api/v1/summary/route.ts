@@ -6,20 +6,23 @@ const SPORT_PATHS: Record<string, { sport: string; league: string }> = {
   nba: { sport: "basketball", league: "nba" },
   nhl: { sport: "hockey", league: "nhl" },
   mlb: { sport: "baseball", league: "mlb" },
+  soccer: { sport: "soccer", league: "eng.1" }, // default league, ESPN resolves by eventId
 };
 
 export async function GET(request: NextRequest) {
   const sport = request.nextUrl.searchParams.get("sport");
   const eventId = request.nextUrl.searchParams.get("eventId");
+  const league = request.nextUrl.searchParams.get("league"); // optional override
 
   if (!sport || !eventId || !SPORT_PATHS[sport]) {
     return NextResponse.json(
-      { error: "sport and eventId are required. sport must be nfl, nba, nhl, or mlb." },
+      { error: "sport and eventId are required. sport must be nfl, nba, nhl, mlb, or soccer." },
       { status: 400 }
     );
   }
 
-  const paths = SPORT_PATHS[sport];
+  const paths = { ...SPORT_PATHS[sport] };
+  if (league) paths.league = league;
 
   try {
     const data = await getESPNEventSummary(paths.sport, paths.league, eventId);

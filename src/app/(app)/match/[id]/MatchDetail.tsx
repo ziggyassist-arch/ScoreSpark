@@ -171,12 +171,55 @@ function LineupsTab({
 }) {
   const [showFormation, setShowFormation] = useState(true);
   const [predictedLineups, setPredictedLineups] = useState<{ home: Lineup; away: Lineup } | null>(null);
+  const [espnLineups, setEspnLineups] = useState<{ home: Lineup; away: Lineup } | null>(null);
   const [predictedLoading, setPredictedLoading] = useState(false);
-  const isPredicted = !lineups && !!predictedLineups;
+  const isPredicted = !lineups && !espnLineups && !!predictedLineups;
+
+  // Fetch ESPN lineups from summary API for ESPN soccer matches
+  useEffect(() => {
+    if (lineups || !match.id.startsWith("espn-soccer-")) return;
+    const eventId = match.id.replace("espn-soccer-", "");
+    setPredictedLoading(true);
+    fetch(`/api/v1/summary?sport=soccer&eventId=${eventId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.rosters && data.rosters.length >= 2) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const parseRoster = (roster: any): Lineup => {
+            const starters = (roster.roster || [])
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((p: any) => p.starter)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .map((p: any) => ({
+                name: p.athlete?.displayName ?? "Unknown",
+                number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
+                position: p.position?.abbreviation ?? "?",
+              }));
+            const subs = (roster.roster || [])
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .filter((p: any) => !p.starter)
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              .map((p: any) => ({
+                name: p.athlete?.displayName ?? "Unknown",
+                number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
+                position: p.position?.abbreviation ?? "?",
+              }));
+            return { formation: roster.formation ?? "", startingXI: starters, substitutes: subs };
+          };
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const homeRoster = data.rosters.find((r: any) => r.homeAway === "home") ?? data.rosters[0];
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          const awayRoster = data.rosters.find((r: any) => r.homeAway === "away") ?? data.rosters[1];
+          setEspnLineups({ home: parseRoster(homeRoster), away: parseRoster(awayRoster) });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setPredictedLoading(false));
+  }, [lineups, match.id]);
 
   // Fetch predicted lineups for upcoming FD soccer matches when no actual lineups
   useEffect(() => {
-    if (lineups || match.status !== "upcoming" || !match.id.startsWith("fd-")) return;
+    if (lineups || espnLineups || match.status !== "upcoming" || !match.id.startsWith("fd-")) return;
 
     // Extract numeric team IDs from fd-prefixed IDs
     const homeId = match.homeTeam.id.replace("fd-", "");
@@ -193,9 +236,9 @@ function LineupsTab({
       })
       .catch(() => {})
       .finally(() => setPredictedLoading(false));
-  }, [lineups, match.status, match.id, match.homeTeam.id, match.awayTeam.id]);
+  }, [lineups, espnLineups, match.status, match.id, match.homeTeam.id, match.awayTeam.id]);
 
-  const displayLineups = lineups ?? predictedLineups;
+  const displayLineups = lineups ?? espnLineups ?? predictedLineups;
 
   if (predictedLoading) {
     return (

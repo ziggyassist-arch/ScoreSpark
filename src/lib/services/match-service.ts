@@ -2,8 +2,8 @@ import { config } from "@/lib/config";
 import { cacheGet, cacheSet } from "./cache";
 import { getMatches, getMatchDetail, type CompetitionCode } from "@/lib/api/football-data";
 import { normalizeMatch, normalizeMatchDetail, normalizeMatchLineups } from "./soccer-normalizer";
-import { getScoreboard } from "@/lib/api/espn";
-import { normalizeESPNMatch } from "./espn-normalizer";
+import { getScoreboard, getESPNSoccerScoreboard, ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
+import { normalizeESPNMatch, normalizeESPNSoccerMatch } from "./espn-normalizer";
 import { allMatches as mockMatches, sampleLineups as mockLineups } from "@/lib/mock-data";
 import type { Match, Sport, Lineup } from "@/lib/types";
 
@@ -18,7 +18,37 @@ function dateRangeStr(offset: number): string {
 }
 
 /**
+ * Fetch soccer matches from ESPN for a specific league
+ */
+async function fetchESPNSoccerLeague(
+  leagueCode: string,
+  date?: string
+): Promise<Match[]> {
+  const league = ESPN_SOCCER_LEAGUES[leagueCode];
+  if (!league) return [];
+
+  const espnDate = date ? date.replace(/-/g, "") : undefined;
+  const cacheKey = `matches:soccer:espn:${leagueCode}:${espnDate ?? "today"}`;
+
+  const cached = cacheGet<Match[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const resp = await getESPNSoccerScoreboard(league.slug, espnDate);
+    const matches = resp.events.map((e) =>
+      normalizeESPNSoccerMatch(e, league.name, leagueCode)
+    );
+    cacheSet(cacheKey, matches, config.cache.matchesTTL);
+    return matches;
+  } catch (err) {
+    console.error(`[match-service] ESPN soccer ${leagueCode} error:`, err);
+    return [];
+  }
+}
+
+/**
  * Fetch soccer matches from football-data.org with cache + mock fallback.
+ * Also fetches from ESPN for expanded leagues (MLS, Liga MX, etc.)
  * When no specific date is given, fetches a 3-day window (yesterday → tomorrow)
  * so there's always content even on lighter match days.
  */
@@ -30,15 +60,27 @@ async function fetchSoccerMatches(date?: string): Promise<Match[]> {
   const cached = cacheGet<Match[]>(cacheKey);
   if (cached) return cached;
 
-  try {
-    const resp = await getMatches({ dateFrom, dateTo });
-    const matches = resp.matches.map(normalizeMatch);
-    cacheSet(cacheKey, matches, config.cache.matchesTTL);
-    return matches;
-  } catch (err) {
-    console.error("[match-service] football-data.org error, using mock data:", err);
-    return mockMatches.filter((m) => m.sport === "soccer");
+  // Fetch from football-data.org (primary) + ESPN soccer leagues (expanded) concurrently
+  const espnLeagueCodes = Object.keys(ESPN_SOCCER_LEAGUES);
+  const [fdResult, ...espnResults] = await Promise.allSettled([
+    getMatches({ dateFrom, dateTo }).then((resp) => resp.matches.map(normalizeMatch)),
+    ...espnLeagueCodes.map((code) => fetchESPNSoccerLeague(code, date)),
+  ]);
+
+  const fdMatches = fdResult.status === "fulfilled" ? fdResult.value : [];
+  if (fdResult.status === "rejected") {
+    console.error("[match-service] football-data.org error:", fdResult.reason);
   }
+
+  const espnMatches = espnResults.flatMap((r) =>
+    r.status === "fulfilled" ? r.value : []
+  );
+
+  const matches = [...fdMatches, ...espnMatches];
+  if (matches.length > 0) {
+    cacheSet(cacheKey, matches, config.cache.matchesTTL);
+  }
+  return matches.length > 0 ? matches : mockMatches.filter((m) => m.sport === "soccer");
 }
 
 /**
@@ -120,10 +162,18 @@ export async function getMatchDetailById(
   if (id.startsWith("espn-")) {
     // Parse: espn-{sport}-{eventId}
     const parts = id.split("-");
-    const sport = parts[1] as "nba" | "nfl" | "nhl" | "mlb";
+    const sport = parts[1] as "nba" | "nfl" | "nhl" | "mlb" | "soccer";
     if (["nba", "nfl", "nhl", "mlb"].includes(sport)) {
-      const matches = await fetchESPNMatches(sport);
+      const matches = await fetchESPNMatches(sport as "nba" | "nfl" | "nhl" | "mlb");
       const match = matches.find((m) => m.id === id);
+      if (match) return { match, lineups: null };
+    }
+    if (sport === "soccer") {
+      // ESPN soccer match — search across all ESPN soccer leagues
+      const allESPNSoccer = await Promise.all(
+        Object.keys(ESPN_SOCCER_LEAGUES).map((code) => fetchESPNSoccerLeague(code))
+      );
+      const match = allESPNSoccer.flat().find((m) => m.id === id);
       if (match) return { match, lineups: null };
     }
     return null;

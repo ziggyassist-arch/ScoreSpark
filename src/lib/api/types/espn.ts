@@ -267,3 +267,86 @@ export interface ESPNStandingStat {
   value?: number;
   displayValue: string;
 }
+
+// Event Summary types (box score, play-by-play, etc.)
+export interface ESPNEventSummaryResponse {
+  boxscore?: ESPNBoxscore;
+  plays?: ESPNPlay[];
+  leaders?: ESPNLeaderCategory[];
+  header?: {
+    id: string;
+    competitions: {
+      id: string;
+      date: string;
+      competitors: ESPNCompetitor[];
+      status: ESPNStatus;
+    }[];
+  };
+  drives?: ESPNDrive[];
+  scoringPlays?: ESPNPlay[];
+}
+
+export interface ESPNBoxscore {
+  teams: ESPNBoxscoreTeam[];
+  players: ESPNBoxscorePlayerGroup[];
+}
+
+export interface ESPNBoxscoreTeam {
+  team: ESPNTeam;
+  statistics: { name: string; displayValue: string; label: string }[];
+}
+
+export interface ESPNBoxscorePlayerGroup {
+  team: ESPNTeam;
+  statistics: ESPNBoxscoreStatCategory[];
+}
+
+export interface ESPNBoxscoreStatCategory {
+  name: string;
+  labels: string[];
+  descriptions: string[];
+  athletes: ESPNBoxscoreAthlete[];
+}
+
+export interface ESPNBoxscoreAthlete {
+  athlete: {
+    id: string;
+    displayName: string;
+    shortName: string;
+    jersey?: string;
+    position?: { abbreviation: string };
+    headshot?: { href: string };
+  };
+  stats: string[];
+  starter: boolean;
+  didNotPlay?: boolean;
+}
+
+export interface ESPNPlay {
+  id: string;
+  sequenceNumber?: number;
+  type: { id: string; text: string };
+  text: string;
+  shortText?: string;
+  period: { number: number; displayValue: string };
+  clock: { displayValue: string };
+  team?: { id: string };
+  scoringPlay?: boolean;
+  scoreValue?: number;
+  wallclock?: string;
+  homeScore?: string;
+  awayScore?: string;
+}
+
+export interface ESPNDrive {
+  id: string;
+  description: string;
+  team: { id: string; displayName: string; abbreviation: string; logo: string };
+  start: { period: { number: number }; clock: { displayValue: string }; yardLine: number; text: string };
+  end: { period: { number: number }; clock: { displayValue: string }; yardLine: number; text: string };
+  timeElapsed: { displayValue: string };
+  yards: number;
+  result: string;
+  isScore: boolean;
+  plays: ESPNPlay[];
+}

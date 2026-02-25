@@ -2,7 +2,7 @@ import { config } from "@/lib/config";
 import { cacheGet, cacheSet } from "./cache";
 import { getStandings, type CompetitionCode } from "@/lib/api/football-data";
 import { normalizeStandings } from "./soccer-normalizer";
-import { getESPNStandings } from "@/lib/api/espn";
+import { getESPNStandings, getESPNSoccerStandings, ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
 import { normalizeNBAStandings, normalizeNHLStandings } from "./espn-normalizer";
 import {
   eplStandings as mockEplStandings,
@@ -32,7 +32,69 @@ const SOCCER_LEAGUE_MAP: Record<string, CompetitionCode> = {
   ligapt: "PPL",
 };
 
-// Europa League is not on the free tier — standings will fall back to mock data
+// Map our league IDs to ESPN soccer league codes
+const ESPN_SOCCER_LEAGUE_MAP: Record<string, string> = {
+  mls: "MLS",
+  ligamx: "LMX",
+  scottish: "SPL",
+  superlig: "TSL",
+  jupiler: "JPL",
+  brasileirao: "BSA",
+  argentina: "ASL",
+  saudipro: "SAL",
+  jleague: "JL",
+  aleague: "AL",
+};
+
+/**
+ * Fetch soccer standings from ESPN for expanded leagues
+ */
+async function fetchESPNSoccerStandings(leagueId: string): Promise<StandingRow[]> {
+  const espnCode = ESPN_SOCCER_LEAGUE_MAP[leagueId];
+  const league = espnCode ? ESPN_SOCCER_LEAGUES[espnCode] : null;
+  if (!league) return [];
+
+  const cacheKey = `standings:soccer:espn:${espnCode}`;
+  const cached = cacheGet<StandingRow[]>(cacheKey);
+  if (cached) return cached;
+
+  try {
+    const resp = await getESPNSoccerStandings(league.slug);
+    // ESPN soccer standings: flatten all groups/conferences
+    const allEntries = resp.children?.flatMap((group) =>
+      group.standings?.entries ?? group.children?.flatMap((d) => d.standings.entries) ?? []
+    ) ?? [];
+
+    const rows: StandingRow[] = allEntries.map((entry, i) => {
+      const stats = Object.fromEntries(entry.stats.map((s) => [s.name, s]));
+      return {
+        position: i + 1,
+        team: {
+          id: `espn-soccer-${entry.team.id}`,
+          name: entry.team.displayName,
+          shortName: entry.team.abbreviation,
+          badge: entry.team.logo || "",
+          sport: "soccer" as const,
+        },
+        played: stats.gamesPlayed?.value ?? 0,
+        won: stats.wins?.value ?? 0,
+        drawn: stats.ties?.value ?? stats.draws?.value ?? 0,
+        lost: stats.losses?.value ?? 0,
+        goalsFor: stats.pointsFor?.value ?? 0,
+        goalsAgainst: stats.pointsAgainst?.value ?? 0,
+        goalDifference: (stats.pointsFor?.value ?? 0) - (stats.pointsAgainst?.value ?? 0),
+        points: stats.points?.value ?? 0,
+        form: [],
+      };
+    });
+
+    cacheSet(cacheKey, rows, config.cache.standingsTTL);
+    return rows;
+  } catch (err) {
+    console.error(`[standings-service] ESPN soccer ${leagueId} error:`, err);
+    return [];
+  }
+}
 
 /**
  * Fetch real soccer standings from football-data.org
@@ -180,6 +242,19 @@ export async function getStandingsForLeague(leagueId: string): Promise<Standings
     case "championship":
     case "ligapt":
       return { type: "soccer", rows: await fetchSoccerStandings(leagueId) };
+
+    // ESPN soccer leagues (expanded)
+    case "mls":
+    case "ligamx":
+    case "scottish":
+    case "superlig":
+    case "jupiler":
+    case "brasileirao":
+    case "argentina":
+    case "saudipro":
+    case "jleague":
+    case "aleague":
+      return { type: "soccer", rows: await fetchESPNSoccerStandings(leagueId) };
 
     // NBA
     case "nba-east":

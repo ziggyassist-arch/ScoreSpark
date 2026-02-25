@@ -9,6 +9,7 @@ import type {
   ESPNInjuryResponse,
   ESPNLeadersResponse,
   ESPNPowerIndexResponse,
+  ESPNEventSummaryResponse,
 } from "./types/espn";
 
 const BASE_URL = "https://site.api.espn.com/apis";
@@ -20,6 +21,20 @@ const SPORT_PATHS: Record<string, { sport: string; league: string }> = {
   nba: { sport: "basketball", league: "nba" },
   nhl: { sport: "hockey", league: "nhl" },
   mlb: { sport: "baseball", league: "mlb" },
+};
+
+/** ESPN soccer league slugs for leagues beyond football-data.org free tier */
+export const ESPN_SOCCER_LEAGUES: Record<string, { slug: string; name: string; country: string }> = {
+  MLS: { slug: "usa.1", name: "MLS", country: "USA" },
+  LMX: { slug: "mex.1", name: "Liga MX", country: "Mexico" },
+  SPL: { slug: "sco.1", name: "Scottish Premiership", country: "Scotland" },
+  TSL: { slug: "tur.1", name: "Super Lig", country: "Turkey" },
+  JPL: { slug: "bel.1", name: "Jupiler Pro League", country: "Belgium" },
+  BSA: { slug: "bra.1", name: "Brasileirao Serie A", country: "Brazil" },
+  ASL: { slug: "arg.1", name: "Argentine Primera", country: "Argentina" },
+  SAL: { slug: "sau.1", name: "Saudi Pro League", country: "Saudi Arabia" },
+  JL: { slug: "jpn.1", name: "J1 League", country: "Japan" },
+  AL: { slug: "aus.1", name: "A-League", country: "Australia" },
 };
 
 async function fetchESPN<T>(url: string): Promise<T> {
@@ -91,6 +106,43 @@ export async function getLeaders(
  * Get power rankings (FPI for NFL, BPI for NBA)
  * NHL and MLB use generic power index
  */
+/**
+ * Get soccer scoreboard from ESPN for leagues not covered by football-data.org
+ */
+export async function getESPNSoccerScoreboard(
+  leagueSlug: string,
+  date?: string
+): Promise<ESPNScoreboardResponse> {
+  const params = new URLSearchParams();
+  if (date) params.set("dates", date);
+  const url = `${BASE_URL}/site/v2/sports/soccer/${leagueSlug}/scoreboard${
+    params.toString() ? `?${params}` : ""
+  }`;
+  return fetchESPN<ESPNScoreboardResponse>(url);
+}
+
+/**
+ * Get soccer standings from ESPN
+ */
+export async function getESPNSoccerStandings(
+  leagueSlug: string
+): Promise<ESPNStandingsResponse> {
+  const url = `${BASE_URL}/v2/sports/soccer/${leagueSlug}/standings`;
+  return fetchESPN<ESPNStandingsResponse>(url);
+}
+
+/**
+ * Get event summary (box score, play-by-play, etc.) from ESPN
+ */
+export async function getESPNEventSummary(
+  sport: string,
+  league: string,
+  eventId: string
+): Promise<ESPNEventSummaryResponse> {
+  const url = `${BASE_URL}/site/v2/sports/${sport}/${league}/summary?event=${eventId}`;
+  return fetchESPN<ESPNEventSummaryResponse>(url);
+}
+
 export async function getPowerIndex(
   sport: "nfl" | "nba" | "nhl" | "mlb"
 ): Promise<ESPNPowerIndexResponse> {

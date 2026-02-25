@@ -1,6 +1,6 @@
 /**
  * Normalizes ESPN API responses into ScoreSpark unified types
- * Handles NFL, NBA, NHL, and MLB
+ * Handles NFL, NBA, NHL, MLB, and ESPN-sourced soccer leagues
  */
 
 import type {
@@ -180,7 +180,11 @@ function extractSportDetail(
 /**
  * Normalize an ESPN event into a ScoreSpark Match
  */
-export function normalizeESPNMatch(event: ESPNEvent, sport: Sport): Match {
+export function normalizeESPNMatch(
+  event: ESPNEvent,
+  sport: Sport,
+  leagueOverride?: { league: string; leagueShort: string }
+): Match {
   const comp = event.competitions[0];
   const status = comp.status || event.status;
 
@@ -188,7 +192,7 @@ export function normalizeESPNMatch(event: ESPNEvent, sport: Sport): Match {
   const away = comp.competitors.find((c) => c.homeAway === "away")!;
 
   const matchStatus = normalizeStatus(status);
-  const { league, leagueShort } = getLeagueName(sport);
+  const { league, leagueShort } = leagueOverride ?? getLeagueName(sport);
 
   return {
     id: `espn-${sport}-${event.id}`,
@@ -206,6 +210,60 @@ export function normalizeESPNMatch(event: ESPNEvent, sport: Sport): Match {
     venue: comp.venue?.fullName,
     source: "live",
     sportDetail: extractSportDetail(home, away, comp, sport),
+  };
+}
+
+/**
+ * Normalize an ESPN soccer event into a ScoreSpark Match.
+ * ESPN soccer matches use sport="soccer" but come from ESPN instead of football-data.org.
+ */
+export function normalizeESPNSoccerMatch(
+  event: ESPNEvent,
+  leagueName: string,
+  leagueShort: string
+): Match {
+  const comp = event.competitions[0];
+  const status = comp.status || event.status;
+
+  const home = comp.competitors.find((c) => c.homeAway === "home")!;
+  const away = comp.competitors.find((c) => c.homeAway === "away")!;
+
+  const matchStatus = normalizeStatus(status);
+
+  // Soccer-specific clock display
+  const clock: MatchClock = status.type.state === "in"
+    ? { value: status.period, displayValue: status.displayClock ? `${status.displayClock}'` : `${status.period}'` }
+    : status.type.state === "post"
+    ? { displayValue: "FT" }
+    : { displayValue: status.type.shortDetail };
+
+  return {
+    id: `espn-soccer-${event.id}`,
+    sport: "soccer",
+    league: leagueName,
+    leagueShort,
+    homeTeam: {
+      id: `espn-soccer-${home.team.id}`,
+      name: home.team.displayName,
+      shortName: home.team.abbreviation,
+      badge: home.team.logo || `https://a.espncdn.com/i/teamlogos/soccer/500/${home.team.id}.png`,
+      sport: "soccer",
+    },
+    awayTeam: {
+      id: `espn-soccer-${away.team.id}`,
+      name: away.team.displayName,
+      shortName: away.team.abbreviation,
+      badge: away.team.logo || `https://a.espncdn.com/i/teamlogos/soccer/500/${away.team.id}.png`,
+      sport: "soccer",
+    },
+    homeScore: matchStatus === "upcoming" ? null : parseInt(home.score) || 0,
+    awayScore: matchStatus === "upcoming" ? null : parseInt(away.score) || 0,
+    status: matchStatus,
+    clock,
+    startTime: event.date,
+    events: [],
+    venue: comp.venue?.fullName,
+    source: "live",
   };
 }
 

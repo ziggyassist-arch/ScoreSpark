@@ -21,10 +21,11 @@ const TOP_LEAGUES: LeagueItem[] = [
   { code: "BL1", name: "Bundesliga", short: "Bund.", crest: "/leagues/bl1.png", standingsId: "bundesliga" },
   { code: "SA", name: "Serie A", short: "Serie A", crest: "/leagues/seriea.png", standingsId: "seriea" },
   { code: "FL1", name: "Ligue 1", short: "Ligue 1", crest: "/leagues/ligue1.png", standingsId: "ligue1" },
-  { code: "EC", name: "Europa League", short: "UEL", crest: "/leagues/uel.png", standingsId: "uel" },
+  { code: "MLS", name: "MLS", short: "MLS", crest: "/leagues/mls.png", standingsId: "mls" },
   { code: "ELC", name: "Championship", short: "Champ.", crest: "/leagues/championship.png", standingsId: "championship" },
   { code: "DED", name: "Eredivisie", short: "Erev.", crest: "/leagues/eredivisie.png", standingsId: "eredivisie" },
   { code: "PPL", name: "Primeira Liga", short: "Liga PT", crest: "/leagues/ligapt.png", standingsId: "ligapt" },
+  { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "/leagues/ligamx.png", standingsId: "ligamx" },
 ];
 
 // Full list of leagues organized by region (FotMob-level coverage)
@@ -95,9 +96,9 @@ const ALL_LEAGUES: { region: string; leagues: LeagueItem[] }[] = [
   {
     region: "Other Europe",
     leagues: [
-      { code: "TSL", name: "Super Lig (Turkey)", short: "Super Lig", crest: "", standingsId: "" },
-      { code: "SPL", name: "Premiership (Scotland)", short: "SPFL", crest: "", standingsId: "" },
-      { code: "JPL", name: "Jupiler Pro League (Belgium)", short: "JPL", crest: "", standingsId: "" },
+      { code: "TSL", name: "Super Lig (Turkey)", short: "Super Lig", crest: "", standingsId: "superlig" },
+      { code: "SPL", name: "Premiership (Scotland)", short: "SPFL", crest: "", standingsId: "scottish" },
+      { code: "JPL", name: "Jupiler Pro League (Belgium)", short: "JPL", crest: "", standingsId: "jupiler" },
       { code: "RPL", name: "Russian Premier League", short: "RPL", crest: "", standingsId: "" },
       { code: "UPL", name: "Ukrainian Premier League", short: "UPL", crest: "", standingsId: "" },
       { code: "GRL", name: "Super League (Greece)", short: "Greece", crest: "", standingsId: "" },
@@ -115,8 +116,8 @@ const ALL_LEAGUES: { region: string; leagues: LeagueItem[] }[] = [
   {
     region: "South America",
     leagues: [
-      { code: "BSA", name: "Brasileirao Serie A", short: "Brazil", crest: "", standingsId: "" },
-      { code: "ASL", name: "Argentine Primera", short: "Argentina", crest: "", standingsId: "" },
+      { code: "BSA", name: "Brasileirao Serie A", short: "Brazil", crest: "", standingsId: "brasileirao" },
+      { code: "ASL", name: "Argentine Primera", short: "Argentina", crest: "", standingsId: "argentina" },
       { code: "CL-SA", name: "Copa Libertadores", short: "Libert.", crest: "", standingsId: "" },
       { code: "CSA", name: "Copa Sudamericana", short: "Sudam.", crest: "", standingsId: "" },
     ],
@@ -124,19 +125,19 @@ const ALL_LEAGUES: { region: string; leagues: LeagueItem[] }[] = [
   {
     region: "North America",
     leagues: [
-      { code: "MLS", name: "MLS", short: "MLS", crest: "", standingsId: "" },
-      { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "", standingsId: "" },
+      { code: "MLS", name: "MLS", short: "MLS", crest: "/leagues/mls.png", standingsId: "mls" },
+      { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "/leagues/ligamx.png", standingsId: "ligamx" },
       { code: "CONCACAF", name: "CONCACAF Champions Cup", short: "CCL", crest: "", standingsId: "" },
     ],
   },
   {
     region: "Asia & Middle East",
     leagues: [
-      { code: "JL", name: "J1 League (Japan)", short: "J-League", crest: "", standingsId: "" },
+      { code: "JL", name: "J1 League (Japan)", short: "J-League", crest: "", standingsId: "jleague" },
       { code: "KL", name: "K League 1 (Korea)", short: "K-League", crest: "", standingsId: "" },
       { code: "CSL", name: "Chinese Super League", short: "CSL", crest: "", standingsId: "" },
       { code: "ISL", name: "Indian Super League", short: "ISL", crest: "", standingsId: "" },
-      { code: "SAL", name: "Saudi Pro League", short: "SPL", crest: "", standingsId: "" },
+      { code: "SAL", name: "Saudi Pro League", short: "SPL", crest: "", standingsId: "saudipro" },
       { code: "ACL", name: "AFC Champions League", short: "ACL", crest: "", standingsId: "" },
     ],
   },
@@ -145,7 +146,7 @@ const ALL_LEAGUES: { region: string; leagues: LeagueItem[] }[] = [
     leagues: [
       { code: "PSL", name: "Premier Soccer League (S. Africa)", short: "PSL", crest: "", standingsId: "" },
       { code: "EPL-EGY", name: "Egyptian Premier League", short: "Egypt", crest: "", standingsId: "" },
-      { code: "AL", name: "A-League (Australia)", short: "A-League", crest: "", standingsId: "" },
+      { code: "AL", name: "A-League (Australia)", short: "A-League", crest: "", standingsId: "aleague" },
     ],
   },
   {

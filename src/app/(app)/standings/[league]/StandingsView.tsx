@@ -25,17 +25,19 @@ const leagueTabs = [
   { id: "mlb-nl", label: "MLB NL", href: "/standings/mlb-nl" },
 ];
 
-function FormDot({ result }: { result: FormResult }) {
-  const colors: Record<FormResult, string> = {
-    W: "bg-live-green",
-    D: "bg-yellow-400",
-    L: "bg-live-red",
+function FormBadge({ result }: { result: FormResult }) {
+  const styles: Record<FormResult, string> = {
+    W: "bg-live-green/20 text-live-green",
+    D: "bg-yellow-400/20 text-yellow-400",
+    L: "bg-live-red/20 text-live-red",
   };
   return (
     <span
-      className={`inline-block w-2 h-2 rounded-full ${colors[result]}`}
-      title={result}
-    />
+      className={`inline-flex items-center justify-center w-5 h-5 rounded text-[10px] font-bold ${styles[result]}`}
+      title={result === "W" ? "Win" : result === "D" ? "Draw" : "Loss"}
+    >
+      {result}
+    </span>
   );
 }
 
@@ -55,7 +57,7 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
             <th className="text-center py-3 px-1 w-10 hidden sm:table-cell">GA</th>
             <th className="text-center py-3 px-1 w-10">GD</th>
             <th className="text-center py-3 px-1 w-10 font-bold text-white/50">Pts</th>
-            <th className="text-center py-3 px-2 hidden sm:table-cell">Form</th>
+            <th className="text-center py-3 px-2">Form</th>
           </tr>
         </thead>
         <tbody>
@@ -129,11 +131,14 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
                 <td className="text-center py-3 px-1 text-white font-bold tabular-nums">
                   {row.points}
                 </td>
-                <td className="text-center py-3 px-2 hidden sm:table-cell">
-                  <div className="flex items-center justify-center gap-1">
-                    {(row.form ?? []).map((f, j) => (
-                      <FormDot key={j} result={f} />
+                <td className="text-center py-3 px-2">
+                  <div className="flex items-center justify-center gap-0.5">
+                    {(row.form ?? []).slice(-5).map((f, j) => (
+                      <FormBadge key={j} result={f} />
                     ))}
+                    {(row.form ?? []).length === 0 && (
+                      <span className="text-[10px] text-white/15">—</span>
+                    )}
                   </div>
                 </td>
               </tr>

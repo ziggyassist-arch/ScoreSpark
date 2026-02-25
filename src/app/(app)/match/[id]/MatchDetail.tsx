@@ -6,10 +6,12 @@ import { Match, MatchEvent, Lineup } from "@/lib/types";
 import LinescoreTable from "@/components/match-detail/LinescoreTable";
 import TeamStatsView from "@/components/match-detail/TeamStatsView";
 import NFLSituation from "@/components/match-detail/NFLSituation";
+import BoxScore from "@/components/match-detail/BoxScore";
+import PlayByPlay from "@/components/match-detail/PlayByPlay";
 import { generateHypePrimer } from "@/lib/hype-primers";
 import PulseReactions from "@/components/PulseReactions";
 
-type Tab = "summary" | "lineups" | "stats" | "events" | "boxscore" | "h2h";
+type Tab = "summary" | "lineups" | "stats" | "events" | "boxscore" | "h2h" | "plays";
 
 function EventIcon({ type }: { type: MatchEvent["type"] }) {
   switch (type) {
@@ -729,10 +731,9 @@ function getTabsForSport(sport: string, hasStats: boolean, hasLineups: boolean, 
   // American sports
   const tabs: { id: Tab; label: string }[] = [
     { id: "summary", label: "Summary" },
+    { id: "boxscore", label: "Box Score" },
+    { id: "plays", label: "Plays" },
   ];
-  if (hasStats) {
-    tabs.push({ id: "boxscore", label: "Box Score" });
-  }
   return tabs;
 }
 
@@ -906,7 +907,10 @@ export default function MatchDetail({
           <AmericanSportSummary match={match} />
         )}
         {match.sport !== "soccer" && activeTab === "boxscore" && (
-          <TeamStatsView match={match} />
+          <BoxScore match={match} />
+        )}
+        {match.sport !== "soccer" && activeTab === "plays" && (
+          <PlayByPlay match={match} />
         )}
       </div>
     </div>

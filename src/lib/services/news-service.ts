@@ -21,67 +21,47 @@ const ESPN_SPORT_PATHS: Record<Sport, string> = {
   mlb: "baseball/mlb",
 };
 
-// RSS feed URLs — top 10 sources per sport
+// RSS feed URLs — top sources per sport (all fetched concurrently)
 const RSS_FEEDS: Record<Sport, { name: string; url: string }[]> = {
   soccer: [
     { name: "FotMob", url: "https://www.fotmob.com/rss" },
     { name: "ESPN FC", url: "https://www.espn.com/espn/rss/soccer/news" },
-    { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=soccer" },
     { name: "BBC Sport", url: "https://feeds.bbci.co.uk/sport/football/rss.xml" },
     { name: "Sky Sports", url: "https://www.skysports.com/rss/12040" },
+    { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=soccer" },
     { name: "Goal.com", url: "https://www.goal.com/feeds/en/news" },
-    { name: "Marca", url: "https://e00-marca.uecdn.es/rss/en/football.xml" },
     { name: "The Guardian", url: "https://www.theguardian.com/football/rss" },
-    { name: "Transfermarkt", url: "https://www.transfermarkt.com/rss/news" },
-    { name: "FIFA.com", url: "https://www.fifa.com/rss" },
+    { name: "Marca", url: "https://e00-marca.uecdn.es/rss/en/football.xml" },
   ],
   nba: [
-    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nba/" },
-    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
-    { name: "Hoops Hype", url: "https://hoopshype.com/feed/" },
-    { name: "SB Nation", url: "https://www.sbnation.com/nba/rss/current" },
-    { name: "Sporting News", url: "https://www.sportingnews.com/us/nba/rss" },
-    { name: "ClutchPoints", url: "https://clutchpoints.com/feed" },
-    { name: "The Ringer", url: "https://www.theringer.com/rss/index.xml" },
-    { name: "Yahoo Sports", url: "https://sports.yahoo.com/nba/rss" },
-    { name: "NBC Sports", url: "https://nba.nbcsports.com/feed/" },
     { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=basketball" },
+    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
+    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nba/" },
+    { name: "Yahoo Sports", url: "https://sports.yahoo.com/nba/rss" },
+    { name: "NBA.com", url: "https://www.nba.com/feeds/promopage/rss" },
+    { name: "The Ringer", url: "https://www.theringer.com/rss/index.xml" },
   ],
   nfl: [
+    { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=football" },
+    { name: "NFL.com", url: "https://www.nfl.com/feeds-rs/headlines.rss" },
     { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nfl/" },
     { name: "Pro Football Talk", url: "https://profootballtalk.nbcsports.com/feed/" },
     { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
-    { name: "SB Nation", url: "https://www.sbnation.com/nfl/rss/current" },
     { name: "Yahoo Sports", url: "https://sports.yahoo.com/nfl/rss" },
-    { name: "Sporting News", url: "https://www.sportingnews.com/us/nfl/rss" },
-    { name: "Fox Sports", url: "https://api.foxsports.com/v2/content/optimized-rss?partnerKey=MB0Wehpmng&size=30&tags=fs/nfl" },
-    { name: "The Ringer", url: "https://www.theringer.com/rss/index.xml" },
-    { name: "NBC Sports", url: "https://profootballtalk.nbcsports.com/feed/" },
-    { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=football" },
   ],
   nhl: [
-    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nhl/" },
-    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
-    { name: "SB Nation", url: "https://www.sbnation.com/nhl/rss/current" },
-    { name: "The Hockey News", url: "https://thehockeynews.com/feed" },
-    { name: "Sporting News", url: "https://www.sportingnews.com/us/nhl/rss" },
-    { name: "NBC Sports", url: "https://nhl.nbcsports.com/feed/" },
-    { name: "Yahoo Sports", url: "https://sports.yahoo.com/nhl/rss" },
-    { name: "Daily Faceoff", url: "https://www.dailyfaceoff.com/feed/" },
-    { name: "Sportsnet", url: "https://www.sportsnet.ca/hockey/nhl/feed/" },
     { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=hockey" },
+    { name: "NHL.com", url: "https://www.nhl.com/feeds/news/rss" },
+    { name: "TSN", url: "https://www.tsn.ca/rss/nhl" },
+    { name: "Sportsnet", url: "https://www.sportsnet.ca/hockey/nhl/feed/" },
+    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nhl/" },
   ],
   mlb: [
-    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/mlb/" },
-    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
-    { name: "SB Nation", url: "https://www.sbnation.com/mlb/rss/current" },
-    { name: "MLB Trade Rumors", url: "https://www.mlbtraderumors.com/feed" },
-    { name: "Sporting News", url: "https://www.sportingnews.com/us/mlb/rss" },
-    { name: "FanGraphs", url: "https://blogs.fangraphs.com/feed/" },
-    { name: "Yahoo Sports", url: "https://sports.yahoo.com/mlb/rss" },
-    { name: "NBC Sports", url: "https://mlb.nbcsports.com/feed/" },
-    { name: "Just Baseball", url: "https://www.justbaseball.com/feed/" },
     { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=baseball" },
+    { name: "MLB.com", url: "https://www.mlb.com/feeds/news/rss.xml" },
+    { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/mlb/" },
+    { name: "Yahoo Sports", url: "https://sports.yahoo.com/mlb/rss" },
+    { name: "Baseball America", url: "https://www.baseballamerica.com/feed/" },
   ],
 };
 
@@ -197,21 +177,19 @@ async function fetchESPNNews(sport: Sport): Promise<NewsArticle[]> {
 
 /**
  * Fetch news from multiple sources per sport.
- * ESPN API (reliable) + rotating subset of RSS feeds from top 10 sources.
+ * ESPN API (reliable) + ALL RSS feeds from top 5-10 sources fetched concurrently.
  */
 export async function getNewsForSport(sport: Sport): Promise<NewsArticle[]> {
   const cacheKey = `news-multi:${sport}`;
   const cached = cacheGet<NewsArticle[]>(cacheKey);
   if (cached) return cached;
 
-  // Pick a rotating subset of RSS feeds to avoid hammering all 10 at once
+  // Fetch ESPN + ALL RSS feeds concurrently
   const feeds = RSS_FEEDS[sport] ?? [];
-  const hour = new Date().getHours();
-  const feedSubset = feeds.filter((_, i) => i % 3 === (hour % 3)).slice(0, 4);
 
   const [espnArticles, ...rssResults] = await Promise.all([
     fetchESPNNews(sport),
-    ...feedSubset.map((feed) => fetchRSSFeed(feed.url, feed.name, sport)),
+    ...feeds.map((feed) => fetchRSSFeed(feed.url, feed.name, sport)),
   ]);
 
   // Merge and deduplicate by title similarity
@@ -234,7 +212,7 @@ export async function getNewsForSport(sport: Sport): Promise<NewsArticle[]> {
     return 0;
   });
 
-  const result = deduped.slice(0, 20);
+  const result = deduped.slice(0, 30);
   cacheSet(cacheKey, result, 300_000);
   return result;
 }

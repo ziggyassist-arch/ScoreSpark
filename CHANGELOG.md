@@ -132,19 +132,21 @@
 
 ## 🔧 IN PROGRESS / KNOWN ISSUES
 
-### Bugs to Fix
-- [ ] **Search API returns 400** — src/app/api/v1/search/route.ts broken
-- [ ] **Match detail (past dates)** — shows "?" for team names, missing teamStats
-- [ ] **iOS hamburger menu** — icon visible but not functional (no slide-out menu)
-- [ ] **iOS soccer logos** — some broken on certain pages
-- [ ] **Intermittent 404 on /scores/soccer** — rare but happens
+### Recently Fixed
+- [x] **Leaders page** — ESPN wraps data in `leaders.categories`
+- [x] **Rankings page** — ESPN returns values as arrays, not dicts
+- [x] **iOS hamburger menu** — working slide-out drawer
+- [x] **iOS density** — 34px match rows, 16px headers, 28px header bar
+- [x] **Bottom nav highlight** — now correctly shows active sport on match/team detail pages
+- [x] **Play-by-play** — NFL drives parsing fixed (ESPN wraps in `drives.previous`)
+- [x] **Pulse reactions** — sport-contextual emojis (🏈 for NFL, 🏀 for NBA, etc.)
+- [x] **Mock drafts expanded** — NFL 32, NBA 58 (2 rounds), NHL 32, MLB 20, MLS 26
 
-### iOS UI — Needs More Work
-- [ ] Still more blank space than FotMob — needs another density pass
-- [ ] FotMob uses ~every pixel; our SwiftUI spacing still has gaps
-- [ ] Team logos in standings need to be more consistent
-- [ ] Bottom tab bar could be tighter
-- [ ] Consider ignoring top safe area for truly edge-to-edge content
+### Remaining Minor Issues
+- [ ] **Lineups "not available"** for most ESPN-sourced soccer matches (ESPN doesn't provide lineup data; only football-data.org matches have lineups)
+- [ ] **H2H endpoint** returns 400 — needs investigation
+- [ ] **3 off-season leagues** return empty standings (Saudi, Czech, Finnish)
+- [ ] iOS could still be tighter in standings/news views
 
 ---
 

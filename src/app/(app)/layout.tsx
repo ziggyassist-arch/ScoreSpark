@@ -16,8 +16,8 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       <div className="min-h-screen bg-navy-dark">
         <Navigation />
         {/* Main content area - offset for left sidebar + top tab bar on desktop, header+tabs+bottom bar on mobile */}
-        <div className="md:ml-20 lg:ml-56 pb-20 md:pb-0 pt-24 md:pt-12">
-          <div className="max-w-[1200px] mx-auto px-4 py-6 flex gap-6">
+        <div className="md:ml-20 lg:ml-56 pb-16 md:pb-0 pt-20 md:pt-12">
+          <div className="max-w-[1200px] mx-auto px-2.5 py-3 md:px-4 md:py-6 flex gap-4">
             {/* Primary content */}
             <main className="flex-1 min-w-0">{children}</main>
             {/* Right sidebar — desktop only */}

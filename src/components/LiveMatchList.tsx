@@ -107,13 +107,13 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
 
       {/* Date context header for non-today */}
       {dateHeader && !loadingDate && (
-        <div className="flex items-center gap-2 mt-3 mb-1">
-          <span className="text-xs font-semibold text-white/50">{dateHeader}</span>
-          <span className="text-[10px] text-white/20 px-1.5 py-0.5 bg-white/5 rounded-full">
+        <div className="flex items-center gap-1.5 mt-2 mb-1">
+          <span className="text-[11px] font-semibold text-white/50">{dateHeader}</span>
+          <span className="text-[9px] text-white/20 px-1.5 py-0.5 bg-white/5 rounded-full">
             {isPast ? "Results" : isFuture ? "Schedule" : ""}
           </span>
           {displayMatches.length > 0 && (
-            <span className="text-[10px] text-white/20 ml-auto">
+            <span className="text-[9px] text-white/20 ml-auto">
               {displayMatches.length} game{displayMatches.length !== 1 ? "s" : ""}
             </span>
           )}
@@ -122,11 +122,11 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
 
       {/* Live indicator */}
       {isToday && hasLiveMatches && (
-        <div className="flex items-center gap-2 mt-3 mb-4">
+        <div className="flex items-center gap-1.5 mt-2 mb-2">
           <div
-            className={`w-2 h-2 rounded-full ${isPolling ? "bg-gold-spark" : "bg-live-green"} transition-colors`}
+            className={`w-1.5 h-1.5 rounded-full ${isPolling ? "bg-gold-spark" : "bg-live-green"} transition-colors`}
           />
-          <span className="text-[11px] text-white/30">
+          <span className="text-[10px] text-white/30">
             {isPolling ? "Updating..." : "Auto-updating every 30s"}
           </span>
         </div>
@@ -134,13 +134,13 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
 
       {/* Loading state for non-today dates */}
       {loadingDate && (
-        <div className="flex flex-col items-center justify-center py-12">
+        <div className="flex flex-col items-center justify-center py-8">
           <Image
             src="/scorespark_white_transparent_bg.png"
             alt=""
-            width={40}
-            height={40}
-            className="h-10 w-10 object-contain animate-pulse-glow opacity-40"
+            width={32}
+            height={32}
+            className="h-8 w-8 object-contain animate-pulse-glow opacity-40"
           />
         </div>
       )}
@@ -148,15 +148,15 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
       {/* Match list or contextual empty state */}
       {!loadingDate && displayMatches.length > 0 && <MatchList matches={displayMatches} />}
       {!loadingDate && displayMatches.length === 0 && !isToday && (
-        <div className="flex flex-col items-center py-16 gap-3">
+        <div className="flex flex-col items-center py-10 gap-2">
           <Image
             src="/scorespark_white_transparent_bg.png"
             alt=""
-            width={40}
-            height={40}
-            className="h-10 w-10 object-contain opacity-15"
+            width={32}
+            height={32}
+            className="h-8 w-8 object-contain opacity-15"
           />
-          <p className="text-sm text-white/30 text-center max-w-[280px]">
+          <p className="text-xs text-white/30 text-center max-w-[280px]">
             {getEmptyDateMessage(sport, selectedDate)}
           </p>
         </div>

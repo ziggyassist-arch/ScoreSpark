@@ -513,9 +513,9 @@ export default function Navigation() {
       )}
 
       {/* Mobile top header */}
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
+      <header className="md:hidden fixed top-0 left-0 right-0 h-11 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-3">
         <Link href="/scores" className="hover:opacity-80 transition-opacity">
-          <span className="text-[22px] font-bold tracking-tight inline-flex items-center">
+          <span className="text-lg font-bold tracking-tight inline-flex items-center">
             <span className="text-white">Score</span>
             <svg className="w-4 h-4 mx-[1px] -mt-[1px]" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg">
               <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" />
@@ -538,8 +538,8 @@ export default function Navigation() {
       </header>
 
       {/* Mobile top tabs — below header */}
-      <div className="md:hidden fixed top-14 left-0 right-0 h-10 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-30">
-        <div className="flex items-center h-full px-2 gap-0 overflow-x-auto hide-scrollbar">
+      <div className="md:hidden fixed top-11 left-0 right-0 h-9 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-30">
+        <div className="flex items-center h-full px-1.5 gap-0 overflow-x-auto hide-scrollbar">
           {topTabs
             .filter((tab) => !tab.sports || tab.sports.includes(activeSport))
             .map((tab) => {
@@ -549,7 +549,7 @@ export default function Navigation() {
                 <Link
                   key={tab.label}
                   href={href}
-                  className={`px-3 h-full flex items-center text-xs font-semibold whitespace-nowrap border-b-2 transition-colors ${
+                  className={`px-2.5 h-full flex items-center text-[11px] font-semibold whitespace-nowrap border-b-2 transition-colors ${
                     active
                       ? "text-gold-spark border-gold-spark"
                       : "text-white/40 border-transparent hover:text-white/60"

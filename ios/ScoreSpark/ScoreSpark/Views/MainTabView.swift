@@ -24,44 +24,57 @@ struct MainTabView: View {
     @State private var searchText = ""
 
     var body: some View {
-        NavigationStack {
-            VStack(spacing: 0) {
-                headerBar
-                contentTabBar
+        ZStack(alignment: .trailing) {
+            NavigationStack {
+                VStack(spacing: 0) {
+                    headerBar
+                    contentTabBar
 
-                Group {
-                    switch selectedContentTab {
-                    case .leagues:
-                        HomeView()
-                    case .standings:
-                        StandingsView()
-                    case .teams:
-                        TeamsListView()
-                    case .news:
-                        NewsListView()
-                    case .following:
-                        FavoritesView()
+                    Group {
+                        switch selectedContentTab {
+                        case .leagues:
+                            HomeView()
+                        case .standings:
+                            StandingsView()
+                        case .teams:
+                            TeamsListView()
+                        case .news:
+                            NewsListView()
+                        case .following:
+                            FavoritesView()
+                        }
                     }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .clipped()
                 }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
-                .clipped()
+                .background(AppColors.background)
+                .ignoresSafeArea(.container, edges: .bottom)
+                .toolbar(.hidden, for: .navigationBar)
+                .navigationDestination(for: String.self) { matchId in
+                    MatchDetailView(matchId: matchId)
+                }
+                .navigationDestination(isPresented: $showSettings) {
+                    SettingsView()
+                }
+                .safeAreaInset(edge: .bottom) {
+                    sportTabBar
+                }
+                .sheet(isPresented: $showSearch) {
+                    searchSheet
+                }
             }
-            .background(AppColors.background)
-            .ignoresSafeArea(.container, edges: .bottom)
-            .toolbar(.hidden, for: .navigationBar)
-            .navigationDestination(for: String.self) { matchId in
-                MatchDetailView(matchId: matchId)
-            }
-            .navigationDestination(isPresented: $showSettings) {
-                SettingsView()
-            }
-            .safeAreaInset(edge: .bottom) {
-                sportTabBar
-            }
-            .sheet(isPresented: $showSearch) {
-                searchSheet
+
+            // Hamburger menu overlay
+            if showMenu {
+                Color.black.opacity(0.5)
+                    .ignoresSafeArea()
+                    .onTapGesture { withAnimation(.easeOut(duration: 0.25)) { showMenu = false } }
+
+                menuDrawer
+                    .transition(.move(edge: .trailing))
             }
         }
+        .animation(.easeOut(duration: 0.25), value: showMenu)
     }
 
     // MARK: - Header Bar (compact 32pt)
@@ -141,6 +154,93 @@ struct MainTabView: View {
         }
         .presentationDetents([.large])
         .presentationDragIndicator(.visible)
+    }
+
+    // MARK: - Hamburger Menu Drawer
+
+    private var menuDrawer: some View {
+        VStack(alignment: .leading, spacing: 0) {
+            // Header
+            HStack {
+                HStack(spacing: 0) {
+                    Text("Score")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(.white)
+                    Image(systemName: "bolt.fill")
+                        .font(.system(size: 8, weight: .bold))
+                        .foregroundStyle(Color(hex: "F5C518"))
+                    Text("Spark")
+                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .foregroundStyle(Color(hex: "9DCAED"))
+                }
+                Spacer()
+                Button { withAnimation { showMenu = false } } label: {
+                    Image(systemName: "xmark")
+                        .font(.system(size: 14, weight: .medium))
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 12)
+
+            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
+
+            // Menu items
+            menuItem(icon: "star.fill", label: "Favorites", color: AppColors.gold) {
+                showMenu = false
+                selectedContentTab = .following
+            }
+            menuItem(icon: "gearshape.fill", label: "Settings", color: AppColors.textSecondary) {
+                showMenu = false
+                showSettings = true
+            }
+            menuItem(icon: "bell.fill", label: "Notifications", color: AppColors.textSecondary) {
+                showMenu = false
+            }
+            menuItem(icon: "moon.fill", label: "Dark Mode", color: AppColors.textSecondary) {
+                // Already dark
+            }
+
+            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5).padding(.vertical, 4)
+
+            menuItem(icon: "info.circle.fill", label: "About ScoreSpark", color: AppColors.textSecondary) {
+                showMenu = false
+            }
+            menuItem(icon: "envelope.fill", label: "Send Feedback", color: AppColors.textSecondary) {
+                showMenu = false
+            }
+
+            Spacer()
+
+            Text("v1.0.0")
+                .font(.system(size: 10, design: .rounded))
+                .foregroundStyle(AppColors.textTertiary)
+                .padding(.horizontal, 16)
+                .padding(.bottom, 8)
+        }
+        .frame(width: 260)
+        .frame(maxHeight: .infinity)
+        .background(AppColors.surface)
+        .ignoresSafeArea(edges: .vertical)
+    }
+
+    private func menuItem(icon: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            HStack(spacing: 10) {
+                Image(systemName: icon)
+                    .font(.system(size: 13))
+                    .foregroundStyle(color)
+                    .frame(width: 20)
+                Text(label)
+                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppColors.textPrimary)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 10)
+            .contentShape(Rectangle())
+        }
+        .buttonStyle(.plain)
     }
 
     // MARK: - Content Tab Bar (compact 26pt)

@@ -63,6 +63,7 @@ const topTabs: TabItem[] = [
   { label: "Teams", href: (sport) => `/scores/${sport}/teams` },
   { label: "News", href: (sport) => `/scores/${sport}/news` },
   { label: "Top Scorers", href: (sport) => `/scores/${sport}/scorers`, sports: ["soccer"] },
+  { label: "Transfers", href: (sport) => `/scores/${sport}/transfers`, sports: ["soccer"] },
   { label: "Leaders", href: (sport) => `/scores/${sport}/leaders`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Injuries", href: (sport) => `/scores/${sport}/injuries`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Rankings", href: (sport) => `/scores/${sport}/rankings`, sports: ["nba", "nfl", "nhl", "mlb"] },

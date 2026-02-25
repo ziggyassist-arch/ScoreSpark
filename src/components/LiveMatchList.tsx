@@ -11,6 +11,41 @@ function todayStr(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
+function formatDateHeader(dateStr: string): string {
+  const date = new Date(dateStr + "T12:00:00");
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  const diff = Math.round((date.getTime() - today.getTime()) / 86400000);
+  if (diff === 0) return "";
+  if (diff === -1) return "Yesterday";
+  if (diff === 1) return "Tomorrow";
+  return date.toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" });
+}
+
+function getEmptyDateMessage(sport: Sport | undefined, dateStr: string): string {
+  const date = new Date(dateStr + "T12:00:00");
+  const today = new Date();
+  today.setHours(12, 0, 0, 0);
+  const isPast = date < today;
+  const isFuture = date > today;
+
+  if (sport === "nfl") {
+    if (isFuture) return "NFL offseason — next season starts September 2025";
+    if (isPast) return "No NFL games on this date";
+  }
+  if (sport === "mlb") {
+    const month = date.getMonth();
+    if (month < 2 || (month === 2 && date.getDate() < 20)) {
+      return isFuture
+        ? "MLB Spring Training begins late February"
+        : "No MLB games on this date";
+    }
+  }
+  if (isFuture) return "No games scheduled for this date";
+  if (isPast) return "No results found for this date";
+  return "No games found";
+}
+
 interface LiveMatchListProps {
   initialMatches: Match[];
   sport?: Sport;
@@ -61,11 +96,29 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
   );
 
   const displayMatches = isToday ? liveMatches : (dateMatches ?? []);
+  const dateHeader = formatDateHeader(selectedDate);
+  const isPast = new Date(selectedDate + "T12:00:00") < new Date(todayStr() + "T12:00:00");
+  const isFuture = new Date(selectedDate + "T12:00:00") > new Date(todayStr() + "T12:00:00");
 
   return (
     <div>
       {/* Date strip */}
       <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} sport={sport} />
+
+      {/* Date context header for non-today */}
+      {dateHeader && !loadingDate && (
+        <div className="flex items-center gap-2 mt-3 mb-1">
+          <span className="text-xs font-semibold text-white/50">{dateHeader}</span>
+          <span className="text-[10px] text-white/20 px-1.5 py-0.5 bg-white/5 rounded-full">
+            {isPast ? "Results" : isFuture ? "Schedule" : ""}
+          </span>
+          {displayMatches.length > 0 && (
+            <span className="text-[10px] text-white/20 ml-auto">
+              {displayMatches.length} game{displayMatches.length !== 1 ? "s" : ""}
+            </span>
+          )}
+        </div>
+      )}
 
       {/* Live indicator */}
       {isToday && hasLiveMatches && (
@@ -92,8 +145,25 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
         </div>
       )}
 
-      {/* Match list */}
-      {!loadingDate && <MatchList matches={displayMatches} />}
+      {/* Match list or contextual empty state */}
+      {!loadingDate && displayMatches.length > 0 && <MatchList matches={displayMatches} />}
+      {!loadingDate && displayMatches.length === 0 && !isToday && (
+        <div className="flex flex-col items-center py-16 gap-3">
+          <Image
+            src="/scorespark_white_transparent_bg.png"
+            alt=""
+            width={40}
+            height={40}
+            className="h-10 w-10 object-contain opacity-15"
+          />
+          <p className="text-sm text-white/30 text-center max-w-[280px]">
+            {getEmptyDateMessage(sport, selectedDate)}
+          </p>
+        </div>
+      )}
+      {!loadingDate && displayMatches.length === 0 && isToday && (
+        <MatchList matches={[]} />
+      )}
     </div>
   );
 }

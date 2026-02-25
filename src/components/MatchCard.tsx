@@ -150,6 +150,50 @@ export default function MatchCard({ match }: { match: Match }) {
           </div>
         </div>
 
+        {/* Team records for American sports */}
+        {match.sportDetail && (match.sportDetail.homeRecord || match.sportDetail.awayRecord) && (
+          <div className="mt-2 flex justify-between text-[10px] text-white/20 px-11">
+            <span>{match.sportDetail.homeRecord}</span>
+            <span>{match.sportDetail.awayRecord}</span>
+          </div>
+        )}
+
+        {/* Venue for upcoming games */}
+        {match.status === "upcoming" && match.venue && (
+          <div className="mt-2 text-center">
+            <span className="text-[10px] text-white/15">{match.venue}</span>
+          </div>
+        )}
+
+        {/* Linescores for finished/live American sports */}
+        {revealed && match.sportDetail?.linescores && match.status !== "upcoming" && (
+          <div className="mt-3 pt-3 border-t border-white/5">
+            <div className="flex items-center gap-2 text-[10px] text-white/30 font-mono tabular-nums">
+              <span className="w-8" />
+              {match.sportDetail.linescores.home.map((_, i) => (
+                <span key={i} className="w-6 text-center">
+                  {match.sport === "nba" ? `Q${i + 1}` : match.sport === "nhl" ? `P${i + 1}` : match.sport === "mlb" ? i + 1 : `Q${i + 1}`}
+                </span>
+              ))}
+              <span className="w-8 text-center font-bold">T</span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono tabular-nums">
+              <span className="w-8 truncate text-white/30">{match.homeTeam.shortName}</span>
+              {match.sportDetail.linescores.home.map((s, i) => (
+                <span key={i} className="w-6 text-center">{s}</span>
+              ))}
+              <span className="w-8 text-center font-bold text-white/60">{match.homeScore}</span>
+            </div>
+            <div className="flex items-center gap-2 text-[10px] text-white/40 font-mono tabular-nums">
+              <span className="w-8 truncate text-white/30">{match.awayTeam.shortName}</span>
+              {match.sportDetail.linescores.away.map((s, i) => (
+                <span key={i} className="w-6 text-center">{s}</span>
+              ))}
+              <span className="w-8 text-center font-bold text-white/60">{match.awayScore}</span>
+            </div>
+          </div>
+        )}
+
         {/* Goal scorers for live/finished soccer (hidden in spoiler mode) */}
         {revealed && match.sport === "soccer" && match.events.length > 0 && match.status !== "upcoming" && (
           <div className="mt-3 pt-3 border-t border-white/5">

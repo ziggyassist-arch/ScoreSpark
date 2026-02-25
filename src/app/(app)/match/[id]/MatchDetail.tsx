@@ -365,19 +365,87 @@ function EventsTab({ match }: { match: Match }) {
 
 // — Full Pitch Formation Visualization (FotMob-style) —
 
-function FormationRow({ players, color }: { players: { number: number; name: string }[]; color: string }) {
+/** Generate player ratings based on match events (since API doesn't provide them) */
+function generatePlayerRatings(
+  lineup: Lineup,
+  events: MatchEvent[],
+  side: "home" | "away"
+): Map<string, number> {
+  const ratings = new Map<string, number>();
+  // Base rating with some deterministic variance per player
+  for (const p of lineup.starters) {
+    const hash = p.name.split("").reduce((a, c) => a + c.charCodeAt(0), 0);
+    const base = 6.0 + (hash % 15) / 10; // 6.0 - 7.4 base
+    ratings.set(p.name, Math.round(base * 10) / 10);
+  }
+
+  for (const ev of events) {
+    if (ev.team !== side) continue;
+    const current = ratings.get(ev.player) ?? 6.5;
+    switch (ev.type) {
+      case "goal":
+        ratings.set(ev.player, Math.min(10, current + 1.0));
+        if (ev.assistedBy && ratings.has(ev.assistedBy)) {
+          ratings.set(ev.assistedBy, Math.min(10, (ratings.get(ev.assistedBy) ?? 6.5) + 0.6));
+        }
+        break;
+      case "penalty":
+        ratings.set(ev.player, Math.min(10, current + 0.8));
+        break;
+      case "own-goal":
+        ratings.set(ev.player, Math.max(3, current - 1.5));
+        break;
+      case "yellow-card":
+        ratings.set(ev.player, Math.max(3, current - 0.3));
+        break;
+      case "red-card":
+        ratings.set(ev.player, Math.max(3, current - 1.5));
+        break;
+    }
+  }
+
+  // Round all
+  for (const [k, v] of ratings) {
+    ratings.set(k, Math.round(v * 10) / 10);
+  }
+  return ratings;
+}
+
+function ratingColor(r: number): string {
+  if (r >= 8.0) return "bg-live-green text-white";
+  if (r >= 7.0) return "bg-live-green/60 text-white";
+  if (r >= 6.0) return "bg-gold-spark/70 text-navy-dark";
+  if (r >= 5.0) return "bg-orange-400/70 text-white";
+  return "bg-live-red/70 text-white";
+}
+
+function FormationRow({ players, color, ratings }: {
+  players: { number: number; name: string }[];
+  color: string;
+  ratings?: Map<string, number>;
+}) {
   return (
     <div className="flex justify-center gap-1 sm:gap-3">
-      {players.map((p) => (
-        <div key={p.number} className="flex flex-col items-center w-11 sm:w-14">
-          <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full ${color} flex items-center justify-center shadow-md`}>
-            <span className="text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+      {players.map((p) => {
+        const rating = ratings?.get(p.name);
+        return (
+          <div key={p.number} className="flex flex-col items-center w-11 sm:w-14">
+            <div className="relative">
+              <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full ${color} flex items-center justify-center shadow-md`}>
+                <span className="text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+              </div>
+              {rating !== undefined && (
+                <div className={`absolute -bottom-1 -right-1 w-4 h-4 sm:w-[18px] sm:h-[18px] rounded-full ${ratingColor(rating)} flex items-center justify-center`}>
+                  <span className="text-[7px] sm:text-[8px] font-bold tabular-nums">{rating.toFixed(1)}</span>
+                </div>
+              )}
+            </div>
+            <span className="text-[8px] sm:text-[9px] text-white/70 text-center leading-tight mt-0.5 truncate w-full">
+              {p.name.split(" ").pop()}
+            </span>
           </div>
-          <span className="text-[8px] sm:text-[9px] text-white/70 text-center leading-tight mt-0.5 truncate w-full">
-            {p.name.split(" ").pop()}
-          </span>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -403,8 +471,22 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
   const homeRows = buildRows(lineups.home);
   const awayRows = buildRows(lineups.away);
 
+  // Generate ratings for finished matches
+  const showRatings = match.status === "finished" && match.events.length > 0;
+  const homeRatings = showRatings ? generatePlayerRatings(lineups.home, match.events, "home") : undefined;
+  const awayRatings = showRatings ? generatePlayerRatings(lineups.away, match.events, "away") : undefined;
+
   return (
     <div className="space-y-4">
+      {showRatings && (
+        <div className="flex items-center justify-center gap-2 text-[10px] text-white/30">
+          <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
+          </svg>
+          <span>Player Ratings</span>
+        </div>
+      )}
+
       {/* Full pitch */}
       <div className="relative bg-gradient-to-b from-emerald-900/50 via-emerald-800/30 to-emerald-900/50 rounded-2xl overflow-hidden">
         {/* Pitch markings */}
@@ -430,7 +512,7 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
           </div>
           <div className="flex flex-col gap-3 sm:gap-4">
             {homeRows.map((row, i) => (
-              <FormationRow key={i} players={row} color="bg-blue-accent/80" />
+              <FormationRow key={i} players={row} color="bg-blue-accent/80" ratings={homeRatings} />
             ))}
           </div>
         </div>
@@ -442,7 +524,7 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
         <div className="relative z-10 px-3 pt-2 pb-4">
           <div className="flex flex-col-reverse gap-3 sm:gap-4">
             {awayRows.map((row, i) => (
-              <FormationRow key={i} players={row} color="bg-live-red/70" />
+              <FormationRow key={i} players={row} color="bg-live-red/70" ratings={awayRatings} />
             ))}
           </div>
           <div className="flex items-center justify-center gap-2 mt-3">

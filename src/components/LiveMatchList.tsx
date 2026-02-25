@@ -8,7 +8,8 @@ import DatePicker from "./DatePicker";
 import MatchList from "./MatchList";
 
 function todayStr(): string {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function formatDateHeader(dateStr: string): string {
@@ -84,9 +85,14 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
         const res = await fetch(`/api/v1/matches?${params.toString()}`);
         if (res.ok) {
           const data = await res.json();
+          console.log(`[LiveMatchList] Fetched ${data.matches?.length ?? 0} matches for ${date}`);
           setDateMatches(data.matches ?? []);
+        } else {
+          console.warn(`[LiveMatchList] API returned ${res.status} for date=${date}`);
+          setDateMatches([]);
         }
-      } catch {
+      } catch (err) {
+        console.error("[LiveMatchList] Fetch error:", err);
         setDateMatches([]);
       } finally {
         setLoadingDate(false);

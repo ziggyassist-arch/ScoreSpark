@@ -2,13 +2,14 @@ import { config } from "@/lib/config";
 import { cacheGet, cacheSet } from "./cache";
 import { getMatches, getMatchDetail, type CompetitionCode } from "@/lib/api/football-data";
 import { normalizeMatch, normalizeMatchDetail, normalizeMatchLineups } from "./soccer-normalizer";
-import { getScoreboard, getESPNSoccerScoreboard, ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
+import { getScoreboard, getESPNSoccerScoreboard, getESPNEventSummary, ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
 import { normalizeESPNMatch, normalizeESPNSoccerMatch } from "./espn-normalizer";
 import { allMatches as mockMatches, sampleLineups as mockLineups } from "@/lib/mock-data";
 import type { Match, Sport, Lineup } from "@/lib/types";
 
 function todayStr(): string {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 function dateRangeStr(offset: number): string {
@@ -173,11 +174,51 @@ export async function getMatchDetailById(
     // Parse: espn-{sport}-{eventId}
     const parts = id.split("-");
     const sport = parts[1] as "nba" | "nfl" | "nhl" | "mlb" | "soccer";
+    const eventId = parts.slice(2).join("-");
+
     if (["nba", "nfl", "nhl", "mlb"].includes(sport)) {
+      // Try today's scoreboard first
       const matches = await fetchESPNMatches(sport as "nba" | "nfl" | "nhl" | "mlb");
       const match = matches.find((m) => m.id === id);
       if (match) return { match, lineups: null };
+
+      // Fallback: fetch event directly via summary API (works for any date)
+      try {
+        const sportPaths: Record<string, { sport: string; league: string }> = {
+          nba: { sport: "basketball", league: "nba" },
+          nfl: { sport: "football", league: "nfl" },
+          nhl: { sport: "hockey", league: "nhl" },
+          mlb: { sport: "baseball", league: "mlb" },
+        };
+        const paths = sportPaths[sport];
+        if (paths) {
+          const summary = await getESPNEventSummary(paths.sport, paths.league, eventId);
+          if (summary.header?.competitions?.[0]) {
+            const comp = summary.header.competitions[0];
+            // Build a synthetic ESPNEvent to reuse the normalizer
+            const syntheticEvent = {
+              id: eventId,
+              date: comp.date,
+              name: "",
+              shortName: "",
+              competitions: [{
+                id: comp.id,
+                date: comp.date,
+                venue: { id: "", fullName: "" },
+                competitors: comp.competitors,
+                status: comp.status,
+              }],
+              status: comp.status,
+            };
+            const normalizedMatch = normalizeESPNMatch(syntheticEvent, sport as Sport);
+            return { match: normalizedMatch, lineups: null };
+          }
+        }
+      } catch (err) {
+        console.error(`[match-service] ESPN event summary fallback error:`, err);
+      }
     }
+
     if (sport === "soccer") {
       // ESPN soccer match — search across all ESPN soccer leagues
       const allESPNSoccer = await Promise.all(

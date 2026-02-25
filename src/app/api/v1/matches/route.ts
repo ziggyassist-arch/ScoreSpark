@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAllMatches, getMatchesForSport } from "@/lib/services/match-service";
 import type { Sport } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 const VALID_SPORTS = new Set(["soccer", "nba", "nfl", "nhl", "mlb"]);
 
 export async function GET(request: NextRequest) {

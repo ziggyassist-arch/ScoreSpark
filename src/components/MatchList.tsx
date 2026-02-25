@@ -15,6 +15,22 @@ const LEAGUE_LOGOS: Record<string, string> = {
   "NHL (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
   "MLB": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
   "MLB (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
+  // Soccer — football-data.org leagues
+  "Premier League": "https://crests.football-data.org/PL.png",
+  "La Liga": "https://crests.football-data.org/PD.png",
+  "Bundesliga": "https://crests.football-data.org/BL1.png",
+  "Serie A": "https://crests.football-data.org/SA.png",
+  "Ligue 1": "https://crests.football-data.org/FL1.png",
+  "UEFA Champions League": "https://crests.football-data.org/CL.png",
+  "Championship": "https://crests.football-data.org/ELC.png",
+  "Eredivisie": "https://crests.football-data.org/DED.png",
+  "Primeira Liga": "https://crests.football-data.org/PPL.png",
+  // Soccer — ESPN leagues
+  "MLS": "https://a.espncdn.com/i/teamlogos/leagues/500/mls.png",
+  "Liga MX": "https://a.espncdn.com/i/teamlogos/leagues/500/mex.1.png",
+  "Scottish Premiership": "https://a.espncdn.com/i/teamlogos/leagues/500/sco.1.png",
+  "Brasileirao Serie A": "https://a.espncdn.com/i/teamlogos/leagues/500/bra.1.png",
+  "Saudi Pro League": "https://a.espncdn.com/i/teamlogos/leagues/500/sau.1.png",
 };
 
 function sortMatches(matches: Match[], favorites: string[]): Match[] {
@@ -69,7 +85,14 @@ export default function MatchList({ matches }: { matches: Match[] }) {
           <div className="flex items-center gap-1.5 mb-1.5">
             {LEAGUE_LOGOS[league] && (
               // eslint-disable-next-line @next/next/no-img-element
-              <img src={LEAGUE_LOGOS[league]} alt={league} width={14} height={14} className="w-3.5 h-3.5 object-contain" />
+              <img
+                src={LEAGUE_LOGOS[league]}
+                alt={league}
+                width={14}
+                height={14}
+                className="w-3.5 h-3.5 object-contain"
+                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+              />
             )}
             <h3 className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">
               {league}

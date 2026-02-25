@@ -35,18 +35,15 @@ const RSS_FEEDS: Record<Sport, { name: string; url: string }[]> = {
   ],
   nba: [
     { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=basketball" },
-    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
     { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nba/" },
     { name: "Yahoo Sports", url: "https://sports.yahoo.com/nba/rss" },
     { name: "NBA.com", url: "https://www.nba.com/feeds/promopage/rss" },
-    { name: "The Ringer", url: "https://www.theringer.com/rss/index.xml" },
   ],
   nfl: [
     { name: "The Athletic", url: "https://theathletic.com/feeds/rss/news/?sport=football" },
     { name: "NFL.com", url: "https://www.nfl.com/feeds-rs/headlines.rss" },
     { name: "CBS Sports", url: "https://www.cbssports.com/rss/headlines/nfl/" },
     { name: "Pro Football Talk", url: "https://profootballtalk.nbcsports.com/feed/" },
-    { name: "Bleacher Report", url: "https://bleacherreport.com/articles/feed" },
     { name: "Yahoo Sports", url: "https://sports.yahoo.com/nfl/rss" },
   ],
   nhl: [
@@ -64,6 +61,35 @@ const RSS_FEEDS: Record<Sport, { name: string; url: string }[]> = {
     { name: "Baseball America", url: "https://www.baseballamerica.com/feed/" },
   ],
 };
+
+// Keywords that identify articles as belonging to a specific sport
+const SPORT_KEYWORDS: Record<Sport, RegExp> = {
+  soccer: /\b(soccer|football|premier league|la liga|champions league|europa league|epl|serie a|bundesliga|ligue 1|mls|uefa|fifa|world cup|fc |united|city|arsenal|chelsea|liverpool|barca|real madrid|transfer window|matchday|nil-nil|clean sheet|var |offside|penalty kick|hat-trick|pitch|goalkeeper|striker|winger|midfielder|defender)\b/i,
+  nba: /\b(nba|basketball|lakers|celtics|warriors|bucks|76ers|sixers|knicks|nets|heat|nuggets|suns|mavericks|cavaliers|thunder|timberwolves|grizzlies|clippers|spurs|raptors|pacers|hawks|hornets|pistons|magic|wizards|kings|blazers|rockets|pelicans|jazz|three.?pointer|dunk|rebound|free throw|triple.?double|double.?double|all.?star game|nba draft|slam dunk)\b/i,
+  nfl: /\b(nfl|super bowl|quarterback|touchdown|endzone|end zone|passing yards|rushing|interception|fumble|sack|field goal|punt|wide receiver|tight end|linebacker|cornerback|safety|pro bowl|nfl draft|chiefs|eagles|49ers|cowboys|packers|ravens|bills|dolphins|bengals|lions|texans|bears|steelers|browns|broncos|chargers|rams|seahawks|jets|patriots|saints|colts|falcons|buccaneers|bucs|cardinals|commanders|titans|jaguars|panthers|raiders|vikings|giants)\b/i,
+  nhl: /\b(nhl|hockey|stanley cup|hat trick|power play|penalty box|slapshot|goaltender|goalie|puck|ice hockey|bruins|maple leafs|canadiens|rangers|penguins|blackhawks|red wings|flyers|capitals|lightning|avalanche|oilers|flames|canucks|sharks|blues|wild|predators|hurricanes|panthers|jets|islanders|senators|devils|ducks|coyotes|kraken|golden knights)\b/i,
+  mlb: /\b(mlb|baseball|world series|home run|strikeout|pitcher|batting average|rbi|innings|dugout|outfield|infield|shortstop|catcher|bullpen|spring training|yankees|dodgers|red sox|astros|braves|mets|phillies|cubs|cardinals|padres|brewers|guardians|twins|orioles|rays|mariners|rangers|blue jays|white sox|tigers|royals|reds|pirates|diamondbacks|rockies|marlins|nationals|athletics)\b/i,
+};
+
+// Keywords that mean the article is definitely NOT this sport
+const OTHER_SPORT_SIGNALS: Record<Sport, RegExp> = {
+  soccer: /\b(nba|nfl|nhl|mlb|basketball|hockey|baseball|touchdown|quarterback|slam dunk|home run|stanley cup|super bowl)\b/i,
+  nba: /\b(nfl|nhl|mlb|soccer|hockey|baseball|touchdown|quarterback|stanley cup|home run|premier league|champions league|world cup|la liga)\b/i,
+  nfl: /\b(nba|nhl|mlb|soccer|basketball|hockey|baseball|slam dunk|stanley cup|home run|premier league|champions league|world cup|la liga)\b/i,
+  nhl: /\b(nba|nfl|mlb|soccer|basketball|baseball|touchdown|quarterback|slam dunk|home run|super bowl|premier league|champions league|world cup|la liga)\b/i,
+  mlb: /\b(nba|nfl|nhl|soccer|basketball|hockey|touchdown|quarterback|slam dunk|stanley cup|super bowl|premier league|champions league|world cup|la liga)\b/i,
+};
+
+/** Check if an article is relevant to the requested sport */
+function isRelevantToSport(title: string, url: string, sport: Sport): boolean {
+  const text = `${title} ${url}`;
+  const hasOwnKeyword = SPORT_KEYWORDS[sport].test(text);
+  const hasOtherKeyword = OTHER_SPORT_SIGNALS[sport].test(text);
+
+  // If it has keywords from another sport and none from ours, filter it out
+  if (hasOtherKeyword && !hasOwnKeyword) return false;
+  return true;
+}
 
 function timeAgo(dateStr: string): string {
   const now = Date.now();
@@ -192,10 +218,11 @@ export async function getNewsForSport(sport: Sport): Promise<NewsArticle[]> {
     ...feeds.map((feed) => fetchRSSFeed(feed.url, feed.name, sport)),
   ]);
 
-  // Merge and deduplicate by title similarity
+  // Merge, filter by sport relevance, and deduplicate by title similarity
   const allArticles = [...espnArticles, ...rssResults.flat()];
+  const relevant = allArticles.filter((a) => isRelevantToSport(a.title, a.url, sport));
   const seen = new Set<string>();
-  const deduped = allArticles.filter((a) => {
+  const deduped = relevant.filter((a) => {
     const key = a.title.toLowerCase().replace(/[^a-z0-9]/g, "").slice(0, 40);
     if (seen.has(key)) return false;
     seen.add(key);

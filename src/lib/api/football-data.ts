@@ -155,6 +155,35 @@ export interface FDScorer {
   penalties: number | null;
 }
 
+/** Squad player from /teams/{id} */
+export interface FDSquadPlayer {
+  id: number;
+  name: string;
+  position: "Goalkeeper" | "Defence" | "Midfield" | "Offence" | null;
+  dateOfBirth: string | null;
+  nationality: string | null;
+  shirtNumber: number | null;
+}
+
+/** Team detail response from /teams/{id} */
+export interface FDTeamDetail {
+  id: number;
+  name: string;
+  shortName: string;
+  tla: string;
+  crest: string;
+  coach: { id: number; name: string; nationality: string } | null;
+  squad: FDSquadPlayer[];
+  runningCompetitions: { id: number; name: string; code: string }[];
+}
+
+/**
+ * Get team detail including squad from football-data.org
+ */
+export async function getTeamSquad(teamId: number): Promise<FDTeamDetail> {
+  return fdFetch<FDTeamDetail>(`/teams/${teamId}`);
+}
+
 /**
  * Get top scorers for a competition
  */

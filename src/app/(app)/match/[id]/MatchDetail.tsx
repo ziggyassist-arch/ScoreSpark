@@ -170,8 +170,42 @@ function LineupsTab({
   match: Match;
 }) {
   const [showFormation, setShowFormation] = useState(true);
+  const [predictedLineups, setPredictedLineups] = useState<{ home: Lineup; away: Lineup } | null>(null);
+  const [predictedLoading, setPredictedLoading] = useState(false);
+  const isPredicted = !lineups && !!predictedLineups;
 
-  if (!lineups) {
+  // Fetch predicted lineups for upcoming FD soccer matches when no actual lineups
+  useEffect(() => {
+    if (lineups || match.status !== "upcoming" || !match.id.startsWith("fd-")) return;
+
+    // Extract numeric team IDs from fd-prefixed IDs
+    const homeId = match.homeTeam.id.replace("fd-", "");
+    const awayId = match.awayTeam.id.replace("fd-", "");
+    if (!homeId || !awayId) return;
+
+    setPredictedLoading(true);
+    fetch(`/api/v1/predicted-lineup?homeTeamId=${homeId}&awayTeamId=${awayId}`)
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (data?.home && data?.away) {
+          setPredictedLineups({ home: data.home, away: data.away });
+        }
+      })
+      .catch(() => {})
+      .finally(() => setPredictedLoading(false));
+  }, [lineups, match.status, match.id, match.homeTeam.id, match.awayTeam.id]);
+
+  const displayLineups = lineups ?? predictedLineups;
+
+  if (predictedLoading) {
+    return (
+      <div className="text-center py-12 text-white/30 animate-pulse">
+        <p>Loading predicted lineups...</p>
+      </div>
+    );
+  }
+
+  if (!displayLineups) {
     return (
       <div className="text-center py-12 text-white/30">
         <p>Lineups not available</p>
@@ -181,6 +215,17 @@ function LineupsTab({
 
   return (
     <div className="space-y-4">
+      {/* Predicted badge */}
+      {isPredicted && (
+        <div className="flex items-center justify-center gap-2 py-2 px-4 bg-gold-spark/10 rounded-xl">
+          <svg className="w-4 h-4 text-gold-spark" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9.813 15.904L9 18.75l-.813-2.846a4.5 4.5 0 00-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 003.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 003.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 00-3.09 3.09zM18.259 8.715L18 9.75l-.259-1.035a3.375 3.375 0 00-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 002.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 002.455 2.456L21.75 6l-1.036.259a3.375 3.375 0 00-2.455 2.456z" />
+          </svg>
+          <span className="text-xs font-semibold text-gold-spark">Predicted Starting XI</span>
+          <span className="text-[10px] text-white/30">Based on squad data</span>
+        </div>
+      )}
+
       {/* Toggle: Formation / List */}
       <div className="flex justify-center gap-2">
         <button
@@ -203,12 +248,12 @@ function LineupsTab({
 
       {showFormation ? (
         /* Full pitch formation — FotMob style */
-        <FullPitchFormation lineups={lineups} match={match} />
+        <FullPitchFormation lineups={displayLineups} match={match} />
       ) : (
         /* List view */
         <div className="grid grid-cols-2 gap-4">
           {(["home", "away"] as const).map((side) => {
-            const lineup = lineups[side];
+            const lineup = displayLineups[side];
             const team = side === "home" ? match.homeTeam : match.awayTeam;
             return (
               <div key={side}>

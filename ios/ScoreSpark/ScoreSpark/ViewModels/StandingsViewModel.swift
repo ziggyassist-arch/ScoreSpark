@@ -10,22 +10,25 @@ final class StandingsViewModel {
 
     /// Map League IDs to API standings slugs
     private static let leagueAPIMap: [String: String] = [
-        "pl": "epl",
-        "ll": "laliga",
-        "bl": "bundesliga",
-        "sa": "seriea",
-        "l1": "ligue1",
-        "ucl": "ucl",
-        "ered": "eredivisie",
-        "champ": "championship",
-        "ligapt": "ligapt",
-        "nba-east": "nba-east",
-        "nba-west": "nba-west",
-        "nfl-afc": "nfl-afc",
-        "nfl-nfc": "nfl-nfc",
-        "nhl": "nhl",
-        "mlb-al": "mlb-al",
-        "mlb-nl": "mlb-nl",
+        // Top 5 + European
+        "pl": "epl", "ll": "laliga", "bl": "bundesliga", "sa": "seriea", "l1": "ligue1",
+        "ucl": "ucl", "ered": "eredivisie", "ligapt": "ligapt",
+        // Rest of Europe
+        "eng-championship": "eng-championship",
+        "scottish": "scottish", "superlig": "superlig", "jupiler": "jupiler",
+        "austrian": "austrian", "swiss": "swiss", "greek": "greek",
+        "danish": "danish", "norwegian": "norwegian", "swedish": "swedish",
+        "czech": "czech", "finnish": "finnish", "romanian": "romanian", "russian": "russian",
+        // Americas
+        "mls": "mls", "ligamx": "ligamx", "brasileirao": "brasileirao", "argentina": "argentina",
+        "colombian": "colombian", "chilean": "chilean", "peruvian": "peruvian", "uruguayan": "uruguayan",
+        // Asia & Africa
+        "jleague": "jleague", "saudipro": "saudipro", "indian": "indian",
+        "chinese": "chinese", "aleague": "aleague",
+        // American sports
+        "nba-east": "nba-east", "nba-west": "nba-west",
+        "nfl-afc": "nfl-afc", "nfl-nfc": "nfl-nfc",
+        "nhl": "nhl", "mlb-al": "mlb-al", "mlb-nl": "mlb-nl",
     ]
 
     func updateLeagues(for sport: Sport) {

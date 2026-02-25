@@ -34,6 +34,7 @@ const SOCCER_LEAGUE_MAP: Record<string, CompetitionCode> = {
 
 // Map our league IDs to ESPN soccer league codes
 const ESPN_SOCCER_LEAGUE_MAP: Record<string, string> = {
+  // Already had
   mls: "MLS",
   ligamx: "LMX",
   scottish: "SPL",
@@ -44,6 +45,56 @@ const ESPN_SOCCER_LEAGUE_MAP: Record<string, string> = {
   saudipro: "SAL",
   jleague: "JL",
   aleague: "AL",
+  // New — Europe
+  austrian: "AUT",
+  swiss: "SUI",
+  greek: "GRE",
+  czech: "CZE",
+  danish: "DEN",
+  norwegian: "NOR",
+  swedish: "SWE",
+  finnish: "FIN",
+  romanian: "ROU",
+  russian: "RUS",
+  israeli: "ISR",
+  cypriot: "CYP",
+  // New — Americas
+  colombian: "COL",
+  chilean: "CHI",
+  peruvian: "PER",
+  uruguayan: "URU",
+  ecuadorian: "ECU",
+  paraguayan: "PAR",
+  // New — Asia & Africa
+  indian: "IND",
+  indonesian: "IDN",
+  thai: "THA",
+  singapore: "SGP",
+  malaysian: "MYS",
+  chinese: "CHN",
+  nigerian: "NGA",
+  ghanaian: "GHA",
+  kenyan: "KEN",
+  // European cups (ESPN versions)
+  "ucl-espn": "UCL_ESPN",
+  "uel-espn": "UEL_ESPN",
+  // Second divisions
+  "eng-championship": "ENG2",
+  "esp-segunda": "ESP2",
+  "ger-2bundesliga": "GER2",
+  "ita-serieb": "ITA2",
+  "fra-ligue2": "FRA2",
+  // Domestic cups
+  "fa-cup": "FA_CUP",
+  "efl-cup": "LEAGUE_CUP",
+  "copa-del-rey": "COPA_REY",
+  "dfb-pokal": "DFB_POKAL",
+  "coppa-italia": "COPPA",
+  "coupe-de-france": "COUPE_FR",
+  // Women's & lower
+  nwsl: "NWSL",
+  wsl: "WSL",
+  usl: "USL1",
 };
 
 /**
@@ -243,17 +294,33 @@ export async function getStandingsForLeague(leagueId: string): Promise<Standings
     case "ligapt":
       return { type: "soccer", rows: await fetchSoccerStandings(leagueId) };
 
-    // ESPN soccer leagues (expanded)
-    case "mls":
-    case "ligamx":
-    case "scottish":
-    case "superlig":
-    case "jupiler":
-    case "brasileirao":
-    case "argentina":
-    case "saudipro":
-    case "jleague":
-    case "aleague":
+    // Raw football-data.org competition code aliases
+    case "PL": return { type: "soccer", rows: await fetchSoccerStandings("epl") };
+    case "PD": return { type: "soccer", rows: await fetchSoccerStandings("laliga") };
+    case "BL1": return { type: "soccer", rows: await fetchSoccerStandings("bundesliga") };
+    case "SA": return { type: "soccer", rows: await fetchSoccerStandings("seriea") };
+    case "FL1": return { type: "soccer", rows: await fetchSoccerStandings("ligue1") };
+    case "CL": return { type: "soccer", rows: await fetchSoccerStandings("ucl") };
+    case "DED": return { type: "soccer", rows: await fetchSoccerStandings("eredivisie") };
+    case "ELC": return { type: "soccer", rows: await fetchSoccerStandings("championship") };
+    case "PPL": return { type: "soccer", rows: await fetchSoccerStandings("ligapt") };
+
+    // ESPN soccer leagues (expanded — 50+ leagues)
+    case "mls": case "ligamx": case "scottish": case "superlig": case "jupiler":
+    case "brasileirao": case "argentina": case "saudipro": case "jleague": case "aleague":
+    case "austrian": case "swiss": case "greek": case "czech": case "danish":
+    case "norwegian": case "swedish": case "finnish": case "romanian": case "russian":
+    case "israeli": case "cypriot":
+    case "colombian": case "chilean": case "peruvian": case "uruguayan":
+    case "ecuadorian": case "paraguayan":
+    case "indian": case "indonesian": case "thai": case "singapore":
+    case "malaysian": case "chinese": case "nigerian": case "ghanaian": case "kenyan":
+    case "ucl-espn": case "uel-espn":
+    case "eng-championship": case "esp-segunda": case "ger-2bundesliga":
+    case "ita-serieb": case "fra-ligue2":
+    case "fa-cup": case "efl-cup": case "copa-del-rey":
+    case "dfb-pokal": case "coppa-italia": case "coupe-de-france":
+    case "nwsl": case "wsl": case "usl":
       return { type: "soccer", rows: await fetchESPNSoccerStandings(leagueId) };
 
     // NBA

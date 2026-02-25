@@ -558,7 +558,13 @@ enum MockDataService {
     static func leagues(for sport: Sport) -> [League] {
         switch sport {
         case .all: [.premierLeague, .laLiga, .championsLeague, .serieA, .nba, .nfl, .nhl, .mlb]
-        case .soccer: [.premierLeague, .laLiga, .championsLeague, .serieA]
+        case .soccer: [
+            .premierLeague, .laLiga, .bundesliga, .serieA, .ligue1, .championsLeague,
+            .eredivisie, .primeiraLiga, .championship,
+            .scottish, .superLig, .jupiler, .austrian, .swiss, .greek, .danish, .norwegian, .swedish, .czech, .finnish, .romanian, .russian,
+            .mls, .ligaMX, .brasileirao, .argentina, .colombian, .chilean, .peruvian, .uruguayan,
+            .jLeague, .saudiPro, .indian, .chinese, .aLeague,
+        ]
         case .nba: [.nbaEast, .nbaWest]
         case .nfl: [.nfl]
         case .nhl: [.nhl]

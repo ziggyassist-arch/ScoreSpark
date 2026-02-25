@@ -44,8 +44,10 @@ struct MainTabView: View {
                     }
                 }
                 .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
             }
             .background(AppColors.background)
+            .ignoresSafeArea(.container, edges: .bottom)
             .toolbar(.hidden, for: .navigationBar)
             .navigationDestination(for: String.self) { matchId in
                 MatchDetailView(matchId: matchId)
@@ -200,12 +202,12 @@ struct MainTabView: View {
                 }
             }
         }
-        .padding(.horizontal, 2)
-        .padding(.bottom, 1)
+        .padding(.horizontal, 0)
+        .padding(.bottom, 0)
         .background(
             Rectangle()
                 .fill(AppColors.background)
-                .shadow(color: .black.opacity(0.3), radius: 3, y: -1)
+                .shadow(color: .black.opacity(0.4), radius: 2, y: -1)
                 .ignoresSafeArea(edges: .bottom)
         )
     }

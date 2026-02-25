@@ -33,8 +33,8 @@ struct StandingsView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
+                .padding(.horizontal, 6)
+                .padding(.vertical, 3)
             }
 
             if viewModel.isLoading {
@@ -155,8 +155,8 @@ struct StandingRow: View {
             }
             .frame(width: 56)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 4)
     }
 
     private var positionColor: Color {

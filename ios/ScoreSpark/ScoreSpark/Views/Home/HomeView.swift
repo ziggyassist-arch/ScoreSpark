@@ -55,11 +55,11 @@ struct HomeView: View {
                                 .frame(width: 4, height: 4)
                                 .modifier(PulseModifier())
                             Text("\(liveCount) live")
-                                .font(.system(size: 10, weight: .semibold, design: .rounded))
+                                .font(.system(size: 9, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.livePulse)
                         }
-                        .padding(.horizontal, 8)
-                        .padding(.vertical, 2)
+                        .padding(.horizontal, 6)
+                        .padding(.vertical, 1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
@@ -76,7 +76,6 @@ struct HomeView: View {
                                 Rectangle()
                                     .fill(Color.white.opacity(0.04))
                                     .frame(height: 0.33)
-                                    .padding(.horizontal, 8)
                             }
                         }
                     }
@@ -160,9 +159,9 @@ struct HomeView: View {
             }
             Spacer()
         }
-        .padding(.horizontal, 8)
-        .frame(height: 22)
-        .background(AppColors.surface.opacity(0.2))
+        .padding(.horizontal, 6)
+        .frame(height: 18)
+        .background(AppColors.surface.opacity(0.15))
     }
 
     private func leagueLogoURL(for league: League) -> URL? {
@@ -230,8 +229,8 @@ struct FotMobMatchRow: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 8)
-        .frame(height: 40)
+        .padding(.horizontal, 6)
+        .frame(height: 36)
     }
 
     private func teamBadge(_ team: Team) -> some View {
@@ -246,6 +245,6 @@ struct FotMobMatchRow: View {
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: 18, height: 18)
+        .frame(width: 16, height: 16)
     }
 }

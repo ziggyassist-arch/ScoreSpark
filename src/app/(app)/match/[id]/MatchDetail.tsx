@@ -668,7 +668,8 @@ interface H2HData {
 
 function Head2HeadTab({ match }: { match: Match }) {
   const [h2h, setH2h] = useState<H2HData | null>(null);
-  const [espnSeries, setEspnSeries] = useState<string | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [espnSeries, setEspnSeries] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -688,8 +689,8 @@ function Head2HeadTab({ match }: { match: Match }) {
         .then((r) => (r.ok ? r.json() : null))
         .then((data) => {
           const series = data?.seasonseries?.[0];
-          if (series?.summary) {
-            setEspnSeries(series.summary);
+          if (series) {
+            setEspnSeries(series);
           }
         })
         .catch(() => {})
@@ -703,12 +704,44 @@ function Head2HeadTab({ match }: { match: Match }) {
     return <div className="text-center py-12 text-white/30 animate-pulse">Loading head-to-head...</div>;
   }
 
-  // ESPN season series (simple display)
+  // ESPN season series (enhanced display)
   if (espnSeries) {
+    const events = espnSeries.events ?? [];
     return (
-      <div className="text-center py-12">
-        <p className="text-xs text-white/40 uppercase tracking-wider mb-3">Season Series</p>
-        <p className="text-lg font-bold text-white/90">{espnSeries}</p>
+      <div className="space-y-4">
+        <div className="text-center">
+          <p className="text-xs text-white/40 uppercase tracking-wider mb-2">{espnSeries.title ?? "Season Series"}</p>
+          <p className="text-lg font-bold text-white/90">{espnSeries.summary ?? espnSeries.seriesScore}</p>
+        </div>
+        {events.length > 0 && (
+          <div className="space-y-1.5">
+            <p className="text-xs text-white/30 uppercase tracking-wider px-1">Games</p>
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {events.map((ev: any, i: number) => {
+              const comps = ev.competitors ?? [];
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const home = comps.find((c: any) => c.homeAway === "home");
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              const away = comps.find((c: any) => c.homeAway === "away");
+              const date = ev.date ? new Date(ev.date).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
+              return (
+                <div key={i} className="flex items-center justify-between bg-white/5 rounded-lg px-3 py-2">
+                  <span className="text-xs text-white/30 w-16">{date}</span>
+                  <div className="flex items-center gap-2 flex-1 justify-center">
+                    <span className={`text-sm ${home?.winner ? "text-white font-bold" : "text-white/50"}`}>
+                      {home?.team?.abbreviation ?? "?"} {home?.score?.displayValue ?? ""}
+                    </span>
+                    <span className="text-xs text-white/20">-</span>
+                    <span className={`text-sm ${away?.winner ? "text-white font-bold" : "text-white/50"}`}>
+                      {away?.score?.displayValue ?? ""} {away?.team?.abbreviation ?? "?"}
+                    </span>
+                  </div>
+                  <span className="text-[10px] text-white/20 w-12 text-right">{ev.statusType?.shortDetail ?? ""}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     );
   }

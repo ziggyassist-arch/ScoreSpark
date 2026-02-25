@@ -13,7 +13,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const url = `${ESPN_BASE}/${teamId}/depthcharts`;
+    // Strip prefix: espn-nfl-team-22 → 22, or espn-nfl-22 → 22
+    const espnId = teamId.replace(/^espn-\w+-(?:team-)?/, "");
+    const url = `${ESPN_BASE}/${espnId}/depthcharts`;
     const res = await fetch(url, {
       headers: { Accept: "application/json" },
       next: { revalidate: 300 }, // cache for 5 minutes

@@ -92,7 +92,10 @@ export default function DepthChartPage() {
         return r.json();
       })
       .then((d) => {
-        const sorted = (d.teams ?? []).sort((a: Team, b: Team) =>
+        const sorted = (d.teams ?? []).map((t: Team & { name?: string }) => ({
+          ...t,
+          displayName: t.displayName || t.name || t.abbreviation || "Unknown",
+        })).sort((a: Team, b: Team) =>
           a.displayName.localeCompare(b.displayName)
         );
         setTeams(sorted);

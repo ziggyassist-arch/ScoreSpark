@@ -139,7 +139,9 @@ export default function FantasyStatsPage() {
         return r.json();
       })
       .then((d) => {
-        setData(d);
+        // ESPN wraps categories under d.leaders.categories
+        const categories = d?.leaders?.categories ?? d?.categories ?? [];
+        setData({ categories });
         setActiveCategory(0);
         setActivePosition(0);
       })

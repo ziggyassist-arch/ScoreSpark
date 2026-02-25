@@ -20,6 +20,13 @@ import type {
   NHLStandingRow,
 } from "@/lib/types";
 
+/** Safely parse a score string to a number */
+function parseScore(raw: string | undefined | null): number {
+  if (raw == null || raw === "") return 0;
+  const n = Number(raw);
+  return isNaN(n) ? 0 : n;
+}
+
 /** Map ESPN status state to ScoreSpark status */
 function normalizeStatus(status: ESPNStatus): MatchStatus {
   switch (status.type.state) {
@@ -120,8 +127,8 @@ function extractSportDetail(
   // Linescores (quarter/period/inning scores)
   if (home.linescores?.length || away.linescores?.length) {
     detail.linescores = {
-      home: (home.linescores ?? []).map((l) => l.value),
-      away: (away.linescores ?? []).map((l) => l.value),
+      home: (home.linescores ?? []).map((l) => Number(l.value) || 0),
+      away: (away.linescores ?? []).map((l) => Number(l.value) || 0),
     };
   }
 
@@ -152,7 +159,7 @@ function extractSportDetail(
       down: sit.down,
       distance: sit.distance,
       yardLine: sit.yardLine,
-      possession: sit.possession === home.team.id ? "home" : "away",
+      possession: String(sit.possession) === String(home.team.id) ? "home" : "away",
       lastPlay: sit.lastPlay?.text,
       isRedZone: sit.isRedZone,
     };
@@ -163,7 +170,7 @@ function extractSportDetail(
     detail.leaders = [];
     for (const cat of comp.leaders) {
       for (const leader of (cat.leaders ?? []).slice(0, 1)) {
-        const teamSide = leader.team?.id === home.team.id ? "home" as const : "away" as const;
+        const teamSide = String(leader.team?.id) === String(home.team.id) ? "home" as const : "away" as const;
         detail.leaders.push({
           category: cat.shortDisplayName || cat.displayName || cat.name,
           playerName: leader.athlete?.displayName ?? leader.athlete?.fullName ?? "Unknown",
@@ -201,8 +208,8 @@ export function normalizeESPNMatch(
     leagueShort,
     homeTeam: normalizeTeam(home, sport),
     awayTeam: normalizeTeam(away, sport),
-    homeScore: matchStatus === "upcoming" ? null : parseInt(home.score) || 0,
-    awayScore: matchStatus === "upcoming" ? null : parseInt(away.score) || 0,
+    homeScore: matchStatus === "upcoming" ? null : parseScore(home.score),
+    awayScore: matchStatus === "upcoming" ? null : parseScore(away.score),
     status: matchStatus,
     clock: normalizeClock(status, sport),
     startTime: event.date,
@@ -256,8 +263,8 @@ export function normalizeESPNSoccerMatch(
       badge: away.team.logo || `https://a.espncdn.com/i/teamlogos/soccer/500/${away.team.id}.png`,
       sport: "soccer",
     },
-    homeScore: matchStatus === "upcoming" ? null : parseInt(home.score) || 0,
-    awayScore: matchStatus === "upcoming" ? null : parseInt(away.score) || 0,
+    homeScore: matchStatus === "upcoming" ? null : parseScore(home.score),
+    awayScore: matchStatus === "upcoming" ? null : parseScore(away.score),
     status: matchStatus,
     clock,
     startTime: event.date,

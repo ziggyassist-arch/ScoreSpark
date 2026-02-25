@@ -17,12 +17,73 @@ const LEAGUE_OPTIONS = [
   { code: "PPL", name: "Primeira Liga", logo: "/leagues/ligapt.png" },
 ];
 
-type SortMode = "goals" | "assists";
+type ViewMode = "goals" | "assists";
 
 interface ScorersData {
   competition: { name: string; code: string };
   season: { currentMatchday: number };
   scorers: FDScorer[];
+}
+
+function PlayerRow({ scorer, rank, stat, statLabel }: { scorer: FDScorer; rank: number; stat: number; statLabel: "G" | "A" }) {
+  const isTop3 = rank <= 3;
+  return (
+    <div className={`flex items-center gap-2.5 px-3 py-2 ${isTop3 ? "bg-gold-spark/5" : ""}`}>
+      <span className={`w-5 text-center text-xs font-bold tabular-nums ${isTop3 ? "text-gold-spark" : "text-white/25"}`}>
+        {rank}
+      </span>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={scorer.team.crest} alt="" className="w-5 h-5 object-contain flex-shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-medium text-white/90 truncate">{scorer.player.name}</p>
+        <p className="text-[10px] text-white/30 truncate">{scorer.team.shortName}</p>
+      </div>
+      <div className="text-right flex-shrink-0">
+        <span className="text-sm font-bold text-white tabular-nums">{stat}</span>
+        <span className="text-[9px] text-white/20 ml-0.5">{statLabel}</span>
+      </div>
+    </div>
+  );
+}
+
+function LeaderList({ title, scorers, statKey, statLabel, icon }: {
+  title: string;
+  scorers: FDScorer[];
+  statKey: "goals" | "assists";
+  statLabel: "G" | "A";
+  icon: React.ReactNode;
+}) {
+  const sorted = [...scorers].sort((a, b) => {
+    const aVal = statKey === "assists" ? (a.assists ?? 0) : a.goals;
+    const bVal = statKey === "assists" ? (b.assists ?? 0) : b.goals;
+    return bVal - aVal;
+  }).slice(0, 15);
+
+  return (
+    <div className="bg-card rounded-xl border border-white/5 overflow-hidden">
+      <div className="px-3 py-2.5 border-b border-white/5 flex items-center gap-2">
+        {icon}
+        <span className="text-sm font-bold text-white/80">{title}</span>
+      </div>
+      <div className="divide-y divide-white/5">
+        {sorted.map((scorer, i) => {
+          const stat = statKey === "assists" ? (scorer.assists ?? 0) : scorer.goals;
+          return (
+            <PlayerRow
+              key={`${scorer.player.id}-${statKey}`}
+              scorer={scorer}
+              rank={i + 1}
+              stat={stat}
+              statLabel={statLabel}
+            />
+          );
+        })}
+        {sorted.length === 0 && (
+          <div className="px-3 py-6 text-center text-white/20 text-sm">No data available</div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default function TopScorersPage() {
@@ -31,7 +92,7 @@ export default function TopScorersPage() {
   const [data, setData] = useState<ScorersData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [sortMode, setSortMode] = useState<SortMode>("goals");
+  const [mobileView, setMobileView] = useState<ViewMode>("goals");
 
   useEffect(() => {
     if (sport !== "soccer") return;
@@ -56,49 +117,20 @@ export default function TopScorersPage() {
     );
   }
 
-  // Sort scorers by selected mode
-  const sortedScorers = data?.scorers
-    ? [...data.scorers].sort((a, b) => {
-        if (sortMode === "assists") {
-          return (b.assists ?? 0) - (a.assists ?? 0);
-        }
-        return b.goals - a.goals;
-      })
-    : [];
-
   return (
-    <div>
-      {/* Title + sort toggle */}
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-xl font-bold text-white">
-          {sortMode === "goals" ? "Top Scorers" : "Assist Leaders"}
-        </h1>
-        <div className="flex gap-1 bg-surface rounded-lg p-0.5">
-          <button
-            onClick={() => setSortMode("goals")}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-              sortMode === "goals"
-                ? "bg-card text-white shadow-sm"
-                : "text-white/40 hover:text-white/60"
-            }`}
-          >
-            Goals
-          </button>
-          <button
-            onClick={() => setSortMode("assists")}
-            className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-              sortMode === "assists"
-                ? "bg-card text-white shadow-sm"
-                : "text-white/40 hover:text-white/60"
-            }`}
-          >
-            Assists
-          </button>
-        </div>
+    <div className="animate-slide-up">
+      {/* Header */}
+      <div className="mb-4">
+        <h1 className="text-xl font-bold text-white">Top Scorers & Assists</h1>
+        {data && (
+          <p className="text-xs text-white/30 mt-1">
+            {data.competition.name} — Matchday {data.season.currentMatchday}
+          </p>
+        )}
       </div>
 
       {/* League selector */}
-      <div className="flex gap-2 overflow-x-auto hide-scrollbar mb-6 pb-1">
+      <div className="flex gap-2 overflow-x-auto hide-scrollbar mb-4 pb-1">
         {LEAGUE_OPTIONS.map((opt) => (
           <button
             key={opt.code}
@@ -125,50 +157,66 @@ export default function TopScorersPage() {
       {error && <p className="text-red-400 text-sm text-center py-8">{error}</p>}
 
       {!loading && data && (
-        <div className="bg-card rounded-xl border border-white/5 overflow-hidden">
-          <div className="px-4 py-3 border-b border-white/5 flex items-center justify-between">
-            <span className="text-sm font-semibold text-white/60">{data.competition.name}</span>
-            <span className="text-[10px] text-white/20">Matchday {data.season.currentMatchday}</span>
-          </div>
-
-          {/* Table header */}
-          <div className="grid grid-cols-[auto_1fr_auto_auto_auto] gap-2 px-4 py-2 text-[10px] font-bold text-white/20 uppercase tracking-wider border-b border-white/5">
-            <span className="w-6 text-center">#</span>
-            <span>Player</span>
-            <span className="w-10 text-center">GP</span>
-            <span className={`w-10 text-center ${sortMode === "goals" ? "text-gold-spark/60" : ""}`}>G</span>
-            <span className={`w-10 text-center ${sortMode === "assists" ? "text-gold-spark/60" : ""}`}>A</span>
-          </div>
-
-          {/* Scorers rows */}
-          {sortedScorers.map((scorer, i) => (
-            <div
-              key={`${scorer.player.id}-${i}`}
-              className={`grid grid-cols-[auto_1fr_auto_auto_auto] gap-2 px-4 py-2.5 items-center ${
-                i < 3 ? "bg-gold-spark/5" : ""
-              } ${i !== sortedScorers.length - 1 ? "border-b border-white/5" : ""}`}
+        <>
+          {/* Mobile: toggle between goals / assists */}
+          <div className="md:hidden flex gap-1 bg-surface rounded-lg p-0.5 mb-4">
+            <button
+              onClick={() => setMobileView("goals")}
+              className={`flex-1 px-3 py-2 text-xs font-semibold rounded-md transition-all ${
+                mobileView === "goals" ? "bg-card text-white shadow-sm" : "text-white/40"
+              }`}
             >
-              <span className={`w-6 text-center text-sm font-bold ${i < 3 ? "text-gold-spark" : "text-white/30"}`}>
-                {i + 1}
-              </span>
-              <div className="flex items-center gap-2 min-w-0">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={scorer.team.crest} alt="" className="w-5 h-5 object-contain flex-shrink-0" />
-                <div className="min-w-0">
-                  <p className="text-sm font-medium text-white/90 truncate">{scorer.player.name}</p>
-                  <p className="text-[10px] text-white/30 truncate">{scorer.team.name}</p>
-                </div>
-              </div>
-              <span className="w-10 text-center text-xs text-white/40 tabular-nums">{scorer.playedMatches}</span>
-              <span className={`w-10 text-center tabular-nums ${
-                sortMode === "goals" ? "text-sm font-bold text-white" : "text-xs text-white/40"
-              }`}>{scorer.goals}</span>
-              <span className={`w-10 text-center tabular-nums ${
-                sortMode === "assists" ? "text-sm font-bold text-white" : "text-xs text-white/40"
-              }`}>{scorer.assists ?? "-"}</span>
-            </div>
-          ))}
-        </div>
+              Top Scorers
+            </button>
+            <button
+              onClick={() => setMobileView("assists")}
+              className={`flex-1 px-3 py-2 text-xs font-semibold rounded-md transition-all ${
+                mobileView === "assists" ? "bg-card text-white shadow-sm" : "text-white/40"
+              }`}
+            >
+              Top Assists
+            </button>
+          </div>
+
+          {/* Mobile: single list */}
+          <div className="md:hidden">
+            {mobileView === "goals" ? (
+              <LeaderList
+                title="Top Scorers"
+                scorers={data.scorers}
+                statKey="goals"
+                statLabel="G"
+                icon={<svg className="w-4 h-4 text-sport-soccer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10" /><path d="M12 2 L14 8 L20 8 L15 12 L17 18 L12 14 L7 18 L9 12 L4 8 L10 8 Z" strokeWidth={1} /></svg>}
+              />
+            ) : (
+              <LeaderList
+                title="Top Assists"
+                scorers={data.scorers}
+                statKey="assists"
+                statLabel="A"
+                icon={<svg className="w-4 h-4 text-blue-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>}
+              />
+            )}
+          </div>
+
+          {/* Desktop: side by side */}
+          <div className="hidden md:grid md:grid-cols-2 gap-4">
+            <LeaderList
+              title="Top Scorers"
+              scorers={data.scorers}
+              statKey="goals"
+              statLabel="G"
+              icon={<svg className="w-4 h-4 text-sport-soccer" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="12" r="10" /><path d="M12 2 L14 8 L20 8 L15 12 L17 18 L12 14 L7 18 L9 12 L4 8 L10 8 Z" strokeWidth={1} /></svg>}
+            />
+            <LeaderList
+              title="Top Assists"
+              scorers={data.scorers}
+              statKey="assists"
+              statLabel="A"
+              icon={<svg className="w-4 h-4 text-blue-accent" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5" /></svg>}
+            />
+          </div>
+        </>
       )}
     </div>
   );

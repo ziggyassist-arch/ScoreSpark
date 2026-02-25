@@ -146,3 +146,75 @@ html {
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* ── Light Mode Theme ── */
+html.light {
+  --color-navy-dark: #F5F6FA;
+  --color-surface: #FFFFFF;
+  --color-card: #FFFFFF;
+  --color-card-hover: #F0F1F5;
+  --color-indigo-dusk: #E5E7F0;
+  color-scheme: light;
+}
+
+html.light body {
+  background-color: var(--color-navy-dark);
+  color: #1C2038;
+}
+
+/* Text: white → dark navy */
+html.light .text-white { color: #1C2038; }
+html.light .text-white\/90 { color: rgba(28, 32, 56, 0.9); }
+html.light .text-white\/80 { color: rgba(28, 32, 56, 0.8); }
+html.light .text-white\/70 { color: rgba(28, 32, 56, 0.7); }
+html.light .text-white\/60 { color: rgba(28, 32, 56, 0.6); }
+html.light .text-white\/50 { color: rgba(28, 32, 56, 0.5); }
+html.light .text-white\/40 { color: rgba(28, 32, 56, 0.4); }
+html.light .text-white\/30 { color: rgba(28, 32, 56, 0.3); }
+html.light .text-white\/25 { color: rgba(28, 32, 56, 0.25); }
+html.light .text-white\/20 { color: rgba(28, 32, 56, 0.2); }
+html.light .text-white\/15 { color: rgba(28, 32, 56, 0.15); }
+
+/* Hover text */
+html.light .hover\:text-white\/60:hover { color: rgba(28, 32, 56, 0.6); }
+html.light .hover\:text-white\/70:hover { color: rgba(28, 32, 56, 0.7); }
+html.light .hover\:text-white\/80:hover { color: rgba(28, 32, 56, 0.8); }
+html.light .hover\:text-white:hover { color: #1C2038; }
+html.light .hover\:text-white\/50:hover { color: rgba(28, 32, 56, 0.5); }
+
+/* Borders: white/X → navy/X */
+html.light .border-white\/5 { border-color: rgba(28, 32, 56, 0.08); }
+html.light .border-white\/10 { border-color: rgba(28, 32, 56, 0.1); }
+html.light .border-b-white\/5 { border-bottom-color: rgba(28, 32, 56, 0.08); }
+html.light .border-b-white\/10 { border-bottom-color: rgba(28, 32, 56, 0.1); }
+html.light .border-l-white\/5 { border-left-color: rgba(28, 32, 56, 0.08); }
+html.light .border-l-white\/10 { border-left-color: rgba(28, 32, 56, 0.1); }
+html.light .border-t-white\/5 { border-top-color: rgba(28, 32, 56, 0.08); }
+html.light .ring-white\/10 { --tw-ring-color: rgba(28, 32, 56, 0.1); }
+
+/* Backgrounds: white/X → navy/X */
+html.light .bg-white\/5 { background-color: rgba(28, 32, 56, 0.04); }
+html.light .bg-white\/10 { background-color: rgba(28, 32, 56, 0.06); }
+html.light .hover\:bg-white\/5:hover { background-color: rgba(28, 32, 56, 0.04); }
+html.light .hover\:bg-white\/10:hover { background-color: rgba(28, 32, 56, 0.08); }
+
+/* Card shadows in light mode */
+html.light .bg-card {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(28, 32, 56, 0.06);
+}
+
+/* Gold spark warmer in light */
+html.light .text-gold-spark { color: #B8860B; }
+html.light .border-gold-spark { border-color: #B8860B; }
+html.light .bg-gold-spark\/10 { background-color: rgba(184, 134, 11, 0.1); }
+html.light .bg-gold-spark\/15 { background-color: rgba(184, 134, 11, 0.15); }
+html.light .bg-gold-spark\/5 { background-color: rgba(184, 134, 11, 0.05); }
+
+/* Selection */
+html.light ::selection {
+  background-color: rgba(184, 134, 11, 0.3);
+  color: #1C2038;
+}
+
+/* Focus border */
+html.light .focus-within\:border-gold-spark\/40:focus-within { border-color: rgba(184, 134, 11, 0.4); }

@@ -6,14 +6,16 @@ import AuthProvider from "@/components/AuthProvider";
 import { FavoritesProvider } from "@/lib/favorites";
 import { SpoilerModeProvider } from "@/lib/spoiler-mode";
 import { StreakProvider } from "@/lib/streak";
+import { ThemeProvider } from "@/lib/theme";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <AuthProvider>
+    <ThemeProvider>
     <FavoritesProvider>
     <StreakProvider>
     <SpoilerModeProvider>
-      <div className="min-h-screen bg-navy-dark">
+      <div className="min-h-screen bg-navy-dark light:bg-gray-50">
         <Navigation />
         {/* Main content area - offset for left sidebar + top tab bar on desktop, header+tabs+bottom bar on mobile */}
         <div className="md:ml-20 lg:ml-56 pb-16 md:pb-0 pt-20 md:pt-12">
@@ -30,6 +32,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
     </SpoilerModeProvider>
     </StreakProvider>
     </FavoritesProvider>
+    </ThemeProvider>
     </AuthProvider>
   );
 }

@@ -64,6 +64,9 @@ const topTabs: TabItem[] = [
   { label: "Leaders", href: (sport) => `/scores/${sport}/leaders`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Injuries", href: (sport) => `/scores/${sport}/injuries`, sports: ["nba", "nfl", "nhl", "mlb"] },
   { label: "Rankings", href: (sport) => `/scores/${sport}/rankings`, sports: ["nba", "nfl", "nhl", "mlb"] },
+  { label: "Playoffs", href: (sport) => `/scores/${sport}/playoffs`, sports: ["nba", "nfl", "nhl", "mlb"] },
+  { label: "Transactions", href: (sport) => `/scores/${sport}/transactions`, sports: ["nba", "nfl", "nhl", "mlb"] },
+  { label: "Depth Charts", href: (sport) => `/scores/${sport}/depth-chart`, sports: ["nfl"] },
   { label: "Following", href: () => "/favorites" },
 ];
 

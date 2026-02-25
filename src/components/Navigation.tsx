@@ -224,9 +224,12 @@ export default function Navigation() {
       {/* Mobile top header */}
       <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-surface/95 backdrop-blur-xl border-b border-white/5 z-40 flex items-center justify-between px-4">
         <Link href="/scores" className="hover:opacity-80 transition-opacity">
-          <span className="text-[22px] font-bold tracking-tight">
+          <span className="text-[22px] font-bold tracking-tight inline-flex items-center">
             <span className="text-white">Score</span>
-            <span className="text-[#F5C518]">Spark</span>
+            <svg className="w-4 h-4 mx-[1px] -mt-[1px]" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" />
+            </svg>
+            <span className="text-[#9DCAED]">Spark</span>
           </span>
         </Link>
         <div className="flex items-center gap-1">
@@ -273,9 +276,12 @@ export default function Navigation() {
           href="/scores"
           className="flex items-center justify-center lg:justify-start px-4 py-5 border-b border-white/5 hover:opacity-80 transition-opacity"
         >
-          <span className="hidden lg:block text-[20px] font-bold tracking-tight">
+          <span className="hidden lg:flex text-[20px] font-bold tracking-tight items-center">
             <span className="text-white">Score</span>
-            <span className="text-[#F5C518]">Spark</span>
+            <svg className="w-3.5 h-3.5 mx-[1px] -mt-[1px]" viewBox="0 0 24 24" fill="#F5C518" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 2L4.5 13.5H11L10 22L19.5 10.5H13L13 2Z" />
+            </svg>
+            <span className="text-[#9DCAED]">Spark</span>
           </span>
           <span className="lg:hidden text-[22px] font-black text-[#F5C518]">S</span>
         </Link>

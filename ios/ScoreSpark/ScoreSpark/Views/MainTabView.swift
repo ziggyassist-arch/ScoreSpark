@@ -66,10 +66,18 @@ struct MainTabView: View {
 
     private var headerBar: some View {
         HStack {
-            Image("Logo")
-                .resizable()
-                .scaledToFit()
-                .frame(height: 28)
+            HStack(spacing: 0) {
+                Text("Score")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(.white)
+                Image(systemName: "bolt.fill")
+                    .font(.system(size: 12, weight: .bold))
+                    .foregroundStyle(Color(hex: "F5C518"))
+                    .padding(.horizontal, 1)
+                Text("Spark")
+                    .font(.system(size: 22, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color(hex: "9DCAED"))
+            }
             Spacer()
             HStack(spacing: 16) {
                 Button { showSearch = true } label: {

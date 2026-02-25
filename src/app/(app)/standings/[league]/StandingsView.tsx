@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { FormResult, StandingRow, NBAStandingRow, NHLStandingRow } from "@/lib/types";
@@ -70,7 +71,7 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
 
             return (
               <tr
-                key={row.team.id}
+                key={row.team?.id ?? i}
                 className={`border-b border-white/5 hover:bg-white/5 transition-colors ${zoneBorder}`}
               >
                 <td className="py-3 px-2 text-white/40 tabular-nums">
@@ -78,19 +79,21 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={row.team.badge}
-                      alt={row.team.shortName}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded"
-                    />
+                    {row.team?.badge && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={row.team.badge}
+                        alt={row.team.shortName ?? ""}
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 rounded"
+                      />
+                    )}
                     <span className="text-white/80 font-medium hidden sm:inline">
-                      {row.team.name}
+                      {row.team?.name ?? "Unknown"}
                     </span>
                     <span className="text-white/80 font-medium sm:hidden">
-                      {row.team.shortName}
+                      {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
                   </div>
                 </td>
@@ -128,7 +131,7 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
                 </td>
                 <td className="text-center py-3 px-2 hidden sm:table-cell">
                   <div className="flex items-center justify-center gap-1">
-                    {row.form.map((f, j) => (
+                    {(row.form ?? []).map((f, j) => (
                       <FormDot key={j} result={f} />
                     ))}
                   </div>
@@ -182,7 +185,7 @@ function NBATable({ standings }: { standings: NBAStandingRow[] }) {
 
             return (
               <tr
-                key={row.team.id}
+                key={row.team?.id ?? i}
                 className={`border-b border-white/5 hover:bg-white/5 transition-colors ${playoffLine} ${playInLine}`}
               >
                 <td className="py-3 px-2 text-white/40 tabular-nums">
@@ -190,19 +193,21 @@ function NBATable({ standings }: { standings: NBAStandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={row.team.badge}
-                      alt={row.team.shortName}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded"
-                    />
+                    {row.team?.badge && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={row.team.badge}
+                        alt={row.team.shortName ?? ""}
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 rounded"
+                      />
+                    )}
                     <span className="text-white/80 font-medium hidden sm:inline">
-                      {row.team.name}
+                      {row.team?.name ?? "Unknown"}
                     </span>
                     <span className="text-white/80 font-medium sm:hidden">
-                      {row.team.shortName}
+                      {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
                   </div>
                 </td>
@@ -221,7 +226,7 @@ function NBATable({ standings }: { standings: NBAStandingRow[] }) {
                 <td className="text-center py-3 px-2 hidden sm:table-cell">
                   <span
                     className={`text-xs font-medium ${
-                      row.streak.startsWith("W")
+                      row.streak?.startsWith("W")
                         ? "text-live-green/80"
                         : "text-live-red/80"
                     }`}
@@ -266,7 +271,7 @@ function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
 
             return (
               <tr
-                key={row.team.id}
+                key={row.team?.id ?? i}
                 className={`border-b border-white/5 hover:bg-white/5 transition-colors ${playoffLine}`}
               >
                 <td className="py-3 px-2 text-white/40 tabular-nums">
@@ -274,19 +279,21 @@ function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={row.team.badge}
-                      alt={row.team.shortName}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded"
-                    />
+                    {row.team?.badge && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={row.team.badge}
+                        alt={row.team.shortName ?? ""}
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 rounded"
+                      />
+                    )}
                     <span className="text-white/80 font-medium hidden sm:inline">
-                      {row.team.name}
+                      {row.team?.name ?? "Unknown"}
                     </span>
                     <span className="text-white/80 font-medium sm:hidden">
-                      {row.team.shortName}
+                      {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
                   </div>
                 </td>
@@ -314,7 +321,7 @@ function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
                 <td className="text-center py-3 px-2 hidden sm:table-cell">
                   <span
                     className={`text-xs font-medium ${
-                      row.streak.startsWith("W")
+                      row.streak?.startsWith("W")
                         ? "text-live-green/80"
                         : "text-live-red/80"
                     }`}
@@ -365,7 +372,7 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
 
             return (
               <tr
-                key={row.team.id}
+                key={row.team?.id ?? i}
                 className={`border-b border-white/5 hover:bg-white/5 transition-colors ${playoffLine}`}
               >
                 <td className="py-3 px-2 text-white/40 tabular-nums">
@@ -373,19 +380,21 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={row.team.badge}
-                      alt={row.team.shortName}
-                      width={24}
-                      height={24}
-                      className="w-6 h-6 rounded"
-                    />
+                    {row.team?.badge && (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={row.team.badge}
+                        alt={row.team.shortName ?? ""}
+                        width={24}
+                        height={24}
+                        className="w-6 h-6 rounded"
+                      />
+                    )}
                     <span className="text-white/80 font-medium hidden sm:inline">
-                      {row.team.name}
+                      {row.team?.name ?? "Unknown"}
                     </span>
                     <span className="text-white/80 font-medium sm:hidden">
-                      {row.team.shortName}
+                      {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
                   </div>
                 </td>
@@ -404,7 +413,7 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
                 <td className="text-center py-3 px-2 hidden sm:table-cell">
                   <span
                     className={`text-xs font-medium ${
-                      row.streak.startsWith("W")
+                      row.streak?.startsWith("W")
                         ? "text-live-green/80"
                         : "text-live-red/80"
                     }`}
@@ -425,19 +434,41 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
 }
 
 const SOCCER_LEAGUES = new Set(["epl", "laliga", "bundesliga", "seriea", "ligue1", "ucl", "uel", "eredivisie", "championship", "ligapt"]);
+const MLB_LEAGUES = new Set(["mlb-al", "mlb-nl"]);
 
-export default function StandingsView({
-  league,
-  soccerStandings,
-  nbaStandings,
-  nhlStandings,
-}: {
-  league: string;
-  soccerStandings?: StandingRow[];
-  nbaStandings?: NBAStandingRow[];
-  nhlStandings?: NHLStandingRow[];
-}) {
+type StandingsData =
+  | { type: "soccer"; rows: StandingRow[] }
+  | { type: "nba"; rows: NBAStandingRow[] }
+  | { type: "nhl"; rows: NHLStandingRow[] };
+
+export default function StandingsView({ league }: { league: string }) {
   const pathname = usePathname();
+  const [data, setData] = useState<StandingsData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+
+    fetch(`/api/v1/standings/${league}`)
+      .then((res) => res.json())
+      .then((result: StandingsData) => {
+        if (!cancelled) {
+          setData(result);
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setData(null);
+          setLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [league]);
 
   return (
     <div className="space-y-6 animate-slide-up">
@@ -466,12 +497,41 @@ export default function StandingsView({
         })}
       </div>
 
+      {/* Loading skeleton */}
+      {loading && (
+        <div className="bg-card rounded-2xl p-4 border border-white/5">
+          <div className="space-y-3">
+            {Array.from({ length: 10 }).map((_, i) => (
+              <div key={i} className="flex items-center gap-3 animate-pulse">
+                <div className="w-6 h-4 rounded bg-white/5" />
+                <div className="w-6 h-6 rounded-full bg-white/5" />
+                <div className="w-24 h-4 rounded bg-white/5" />
+                <div className="flex-1" />
+                <div className="w-8 h-4 rounded bg-white/5" />
+                <div className="w-8 h-4 rounded bg-white/5" />
+                <div className="w-8 h-4 rounded bg-white/5" />
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       {/* Table */}
-      <div className="bg-card rounded-2xl p-4 border border-white/5">
-        {soccerStandings && <SoccerTable standings={soccerStandings} />}
-        {nbaStandings && <NBATable standings={nbaStandings} />}
-        {nhlStandings && <NHLTable standings={nhlStandings} />}
-      </div>
+      {!loading && data && (
+        <div className="bg-card rounded-2xl p-4 border border-white/5">
+          {data.type === "soccer" && <SoccerTable standings={data.rows as StandingRow[]} />}
+          {data.type === "nba" && MLB_LEAGUES.has(league) && <MLBTable standings={data.rows as NBAStandingRow[]} />}
+          {data.type === "nba" && !MLB_LEAGUES.has(league) && <NBATable standings={data.rows as NBAStandingRow[]} />}
+          {data.type === "nhl" && <NHLTable standings={data.rows as NHLStandingRow[]} />}
+        </div>
+      )}
+
+      {/* Error state */}
+      {!loading && !data && (
+        <div className="bg-card rounded-2xl p-8 border border-white/5 text-center">
+          <p className="text-white/30 text-sm">Unable to load standings</p>
+        </div>
+      )}
     </div>
   );
 }

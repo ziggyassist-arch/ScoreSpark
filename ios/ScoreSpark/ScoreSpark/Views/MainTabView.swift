@@ -62,43 +62,43 @@ struct MainTabView: View {
         }
     }
 
-    // MARK: - Header Bar (compact 36pt)
+    // MARK: - Header Bar (compact 32pt)
 
     private var headerBar: some View {
         HStack {
             HStack(spacing: 0) {
                 Text("Score")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 10, weight: .bold))
+                    .font(.system(size: 9, weight: .bold))
                     .foregroundStyle(Color(hex: "F5C518"))
                     .padding(.horizontal, 1)
                 Text("Spark")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
+                    .font(.system(size: 16, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(hex: "9DCAED"))
             }
             Spacer()
-            HStack(spacing: 14) {
+            HStack(spacing: 12) {
                 Button { showSearch = true } label: {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
                 Button { showSettings = true } label: {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
                 Button { showMenu = true } label: {
                     Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
             }
         }
-        .padding(.horizontal, 12)
-        .frame(height: 36)
+        .padding(.horizontal, 8)
+        .frame(height: 32)
     }
 
     // MARK: - Search Sheet
@@ -141,7 +141,7 @@ struct MainTabView: View {
         .presentationDragIndicator(.visible)
     }
 
-    // MARK: - Content Tab Bar (compact 30pt)
+    // MARK: - Content Tab Bar (compact 26pt)
 
     private var contentTabBar: some View {
         HStack(spacing: 0) {
@@ -151,20 +151,20 @@ struct MainTabView: View {
                         selectedContentTab = tab
                     }
                 } label: {
-                    VStack(spacing: 3) {
+                    VStack(spacing: 2) {
                         Text(tab.title)
                             .font(.system(size: 11, weight: selectedContentTab == tab ? .semibold : .regular, design: .rounded))
                             .foregroundStyle(selectedContentTab == tab ? AppColors.gold : AppColors.textTertiary)
                         Rectangle()
                             .fill(selectedContentTab == tab ? AppColors.gold : Color.clear)
-                            .frame(height: 2)
+                            .frame(height: 1.5)
                     }
                 }
                 .frame(maxWidth: .infinity)
             }
         }
-        .padding(.horizontal, 8)
-        .frame(height: 30)
+        .padding(.horizontal, 4)
+        .frame(height: 26)
         .background(AppColors.background)
     }
 
@@ -180,32 +180,32 @@ struct MainTabView: View {
                         selection.current = sport
                     }
                 } label: {
-                    VStack(spacing: 2) {
+                    VStack(spacing: 1) {
                         if let url = sportLogoURL(sport) {
                             AsyncImage(url: url) { image in
                                 image.resizable().scaledToFit()
                             } placeholder: {
                                 Text(sport.emoji)
-                                    .font(.system(size: 14))
+                                    .font(.system(size: 13))
                             }
-                            .frame(width: 20, height: 20)
+                            .frame(width: 18, height: 18)
                             .opacity(isSelected ? 1 : 0.4)
                         }
                         Text(sport == .soccer ? "Soccer" : sport.rawValue)
-                            .font(.system(size: 9, weight: .semibold, design: .rounded))
+                            .font(.system(size: 8, weight: .semibold, design: .rounded))
                             .foregroundStyle(isSelected ? Color(hex: sport.accentColor) : AppColors.textTertiary)
                     }
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 4)
+                    .padding(.vertical, 3)
                 }
             }
         }
-        .padding(.horizontal, 4)
-        .padding(.bottom, 2)
+        .padding(.horizontal, 2)
+        .padding(.bottom, 1)
         .background(
             Rectangle()
                 .fill(AppColors.background)
-                .shadow(color: .black.opacity(0.3), radius: 4, y: -2)
+                .shadow(color: .black.opacity(0.3), radius: 3, y: -1)
                 .ignoresSafeArea(edges: .bottom)
         )
     }
@@ -236,14 +236,14 @@ struct TeamsListView: View {
             if isLoading {
                 ProgressView()
                     .tint(AppColors.gold)
-                    .padding(.top, 40)
+                    .padding(.top, 20)
             } else if teams.isEmpty {
                 ContentUnavailableView("No Teams", systemImage: "person.3",
                     description: Text("No teams available for this sport."))
             } else {
-                LazyVGrid(columns: columns, spacing: 10) {
+                LazyVGrid(columns: columns, spacing: 8) {
                     ForEach(teams) { team in
-                        VStack(spacing: 4) {
+                        VStack(spacing: 3) {
                             AsyncImage(url: team.logoURL) { image in
                                 image.resizable().scaledToFit()
                             } placeholder: {
@@ -255,7 +255,7 @@ struct TeamsListView: View {
                                             .foregroundStyle(Color(hex: team.primaryColor))
                                     }
                             }
-                            .frame(width: 40, height: 40)
+                            .frame(width: 36, height: 36)
 
                             Text(team.shortName)
                                 .font(.system(size: 9, weight: .medium, design: .rounded))
@@ -265,7 +265,7 @@ struct TeamsListView: View {
                     }
                 }
                 .padding(.horizontal, 8)
-                .padding(.top, 8)
+                .padding(.top, 4)
             }
         }
         .task(id: sportSelection.current) {
@@ -305,10 +305,10 @@ struct NewsListView: View {
             if isLoading {
                 ProgressView()
                     .tint(AppColors.gold)
-                    .padding(.top, 40)
+                    .padding(.top, 20)
             } else if articles.isEmpty {
-                VStack(spacing: 8) {
-                    Spacer().frame(height: 30)
+                VStack(spacing: 6) {
+                    Spacer().frame(height: 16)
                     Image(systemName: hasError ? "wifi.slash" : "newspaper")
                         .font(.system(size: 28))
                         .foregroundStyle(AppColors.textTertiary)

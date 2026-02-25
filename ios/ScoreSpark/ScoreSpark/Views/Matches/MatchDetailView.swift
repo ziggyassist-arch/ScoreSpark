@@ -54,15 +54,15 @@ struct MatchDetailView: View {
 
     private var matchHeader: some View {
         let m = displayMatch
-        return VStack(spacing: 10) {
+        return VStack(spacing: 6) {
             Text(m.league.name)
                 .font(.system(size: 11, design: .rounded))
                 .foregroundStyle(Color(hex: m.league.sport.accentColor))
 
-            HStack(spacing: 16) {
+            HStack(spacing: 12) {
                 detailTeamView(m.homeTeam)
 
-                VStack(spacing: 3) {
+                VStack(spacing: 2) {
                     if let h = m.homeScore, let a = m.awayScore {
                         Text("\(h) - \(a)")
                             .font(.system(size: 32, weight: .heavy, design: .rounded).monospacedDigit())
@@ -111,12 +111,12 @@ struct MatchDetailView: View {
                     .foregroundStyle(AppColors.textTertiary)
             }
         }
-        .padding(.vertical, 12)
-        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 8)
     }
 
     private func detailTeamView(_ team: Team) -> some View {
-        VStack(spacing: 5) {
+        VStack(spacing: 4) {
             AsyncImage(url: team.logoURL) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
@@ -170,16 +170,16 @@ struct MatchDetailView: View {
 
         if m.league.sport == .soccer {
             switch selectedTab {
-            case 0: summaryTab.padding(10)
-            case 1: statsTab.padding(10)
-            case 2: lineupsTab.padding(10)
-            case 3: eventsTab.padding(10)
+            case 0: summaryTab.padding(8)
+            case 1: statsTab.padding(8)
+            case 2: lineupsTab.padding(8)
+            case 3: eventsTab.padding(8)
             default: EmptyView()
             }
         } else {
             switch selectedTab {
-            case 0: americanSummaryTab.padding(10)
-            case 1: statsTab.padding(10)
+            case 0: americanSummaryTab.padding(8)
+            case 1: statsTab.padding(8)
             default: EmptyView()
             }
         }

@@ -1,58 +1,66 @@
 import SwiftUI
 
+/// Compact FotMob-style match row (~44pt height)
 struct MatchCard: View {
     let match: Match
 
     var body: some View {
-        VStack(spacing: 8) {
-            // Status badge
-            HStack {
-                if match.isLive {
-                    liveBadge
+        HStack(spacing: 0) {
+            // Home team — right-aligned name + badge
+            HStack(spacing: 5) {
+                Text(match.homeTeam.shortName)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .trailing)
+                teamBadge(match.homeTeam)
+            }
+
+            // Center score / time
+            VStack(spacing: 1) {
+                if let hs = match.homeScore, let aws = match.awayScore {
+                    Text("\(hs) - \(aws)")
+                        .font(.system(size: 14, weight: .bold).monospacedDigit())
+                        .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
+                } else {
+                    Text(match.displayTime)
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppColors.textTertiary)
                 }
-                Spacer()
-                Text(match.displayTime)
-                    .font(.system(size: 11, design: .rounded))
-                    .foregroundStyle(match.isLive ? AppColors.livePulse : AppColors.textSecondary)
+
+                if match.isLive {
+                    HStack(spacing: 2) {
+                        Circle()
+                            .fill(AppColors.livePulse)
+                            .frame(width: 3, height: 3)
+                            .modifier(PulseModifier())
+                        Text(match.displayTime)
+                            .font(.system(size: 9, weight: .semibold))
+                            .foregroundStyle(AppColors.livePulse)
+                    }
+                } else if match.status == .finished {
+                    Text("FT")
+                        .font(.system(size: 9))
+                        .foregroundStyle(AppColors.textTertiary)
+                }
             }
+            .frame(width: 56)
 
-            // Teams & Score
-            HStack {
-                teamColumn(match.homeTeam, alignment: .leading)
-                Spacer()
-                scoreView
-                Spacer()
-                teamColumn(match.awayTeam, alignment: .trailing)
+            // Away team — badge + left-aligned name
+            HStack(spacing: 5) {
+                teamBadge(match.awayTeam)
+                Text(match.awayTeam.shortName)
+                    .font(.system(size: 13, weight: .medium))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .cardStyle()
+        .padding(.horizontal, 8)
+        .frame(height: 44)
     }
 
-    private var liveBadge: some View {
-        HStack(spacing: 3) {
-            Circle()
-                .fill(AppColors.livePulse)
-                .frame(width: 6, height: 6)
-                .modifier(PulseModifier())
-            Text("LIVE")
-                .font(.system(size: 9, weight: .black, design: .rounded))
-                .foregroundStyle(AppColors.livePulse)
-        }
-        .padding(.horizontal, 6)
-        .padding(.vertical, 2)
-        .background(AppColors.livePulse.opacity(0.15), in: Capsule())
-    }
-
-    private func teamColumn(_ team: Team, alignment: HorizontalAlignment) -> some View {
-        VStack(alignment: alignment, spacing: 4) {
-            teamLogo(team, size: 32)
-            Text(team.shortName)
-                .font(.system(size: 10, design: .rounded))
-                .foregroundStyle(AppColors.textSecondary)
-        }
-    }
-
-    private func teamLogo(_ team: Team, size: CGFloat) -> some View {
+    private func teamBadge(_ team: Team) -> some View {
         AsyncImage(url: team.logoURL) { image in
             image.resizable().scaledToFit()
         } placeholder: {
@@ -60,30 +68,11 @@ struct MatchCard: View {
                 .fill(Color(hex: team.primaryColor).opacity(0.3))
                 .overlay {
                     Text(String(team.shortName.prefix(2)))
-                        .font(.system(size: size * 0.35, weight: .bold, design: .rounded))
+                        .font(.system(size: 7, weight: .bold))
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: size, height: size)
-    }
-
-    private var scoreView: some View {
-        Group {
-            if let home = match.homeScore, let away = match.awayScore {
-                HStack(spacing: 6) {
-                    Text("\(home)")
-                    Text("-")
-                        .foregroundStyle(AppColors.textTertiary)
-                    Text("\(away)")
-                }
-                .font(AppTypography.scoreMedium)
-                .foregroundStyle(AppColors.textPrimary)
-            } else {
-                Text("vs")
-                    .font(AppTypography.scoreCompact)
-                    .foregroundStyle(AppColors.textTertiary)
-            }
-        }
+        .frame(width: 20, height: 20)
     }
 }
 

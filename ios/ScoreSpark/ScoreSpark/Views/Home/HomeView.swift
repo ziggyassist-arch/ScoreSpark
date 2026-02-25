@@ -49,17 +49,17 @@ struct HomeView: View {
                     // Live count banner
                     let liveCount = viewModel.groups.flatMap(\.matches).filter(\.isLive).count
                     if liveCount > 0 && selectedDateOffset == 0 {
-                        HStack(spacing: 4) {
+                        HStack(spacing: 3) {
                             Circle()
                                 .fill(AppColors.livePulse)
-                                .frame(width: 5, height: 5)
+                                .frame(width: 4, height: 4)
                                 .modifier(PulseModifier())
                             Text("\(liveCount) live")
-                                .font(.system(size: 11, weight: .semibold, design: .rounded))
+                                .font(.system(size: 10, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.livePulse)
                         }
-                        .padding(.horizontal, 12)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
@@ -138,7 +138,7 @@ struct HomeView: View {
     }
 
     private func leagueHeader(_ league: League) -> some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 4) {
             if let url = leagueLogoURL(for: league) {
                 AsyncImage(url: url) { image in
                     image.resizable().scaledToFit()
@@ -160,9 +160,9 @@ struct HomeView: View {
             }
             Spacer()
         }
-        .padding(.horizontal, 12)
-        .frame(height: 24)
-        .background(AppColors.surface.opacity(0.25))
+        .padding(.horizontal, 8)
+        .frame(height: 22)
+        .background(AppColors.surface.opacity(0.2))
     }
 
     private func leagueLogoURL(for league: League) -> URL? {

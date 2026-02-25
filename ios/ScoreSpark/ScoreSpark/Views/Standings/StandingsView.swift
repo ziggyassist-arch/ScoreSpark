@@ -34,10 +34,15 @@ struct StandingsView: View {
                     }
                 }
                 .padding(.horizontal, 8)
-                .padding(.vertical, 6)
+                .padding(.vertical, 4)
             }
 
-            if viewModel.standings.isEmpty && !viewModel.isLoading {
+            if viewModel.isLoading {
+                Spacer()
+                ProgressView()
+                    .tint(AppColors.gold)
+                Spacer()
+            } else if viewModel.standings.isEmpty {
                 ContentUnavailableView("No Standings", systemImage: "list.number",
                     description: Text("Standings are not available for this league yet."))
                     .frame(maxHeight: .infinity)
@@ -45,33 +50,33 @@ struct StandingsView: View {
                 // Table header
                 HStack(spacing: 0) {
                     Text("#")
-                        .frame(width: 22, alignment: .center)
-                    // Team logo + name column
+                        .frame(width: 24, alignment: .center)
+                    // Team logo + name column — takes remaining space
                     Text("Team")
-                        .padding(.leading, 4)
+                        .padding(.leading, 6)
                     Spacer()
                     Group {
-                        Text("P").frame(width: 24)
-                        Text("W").frame(width: 24)
-                        Text("D").frame(width: 24)
-                        Text("L").frame(width: 24)
-                        Text("GD").frame(width: 28)
-                        Text("Pts").frame(width: 28)
+                        Text("P").frame(width: 26)
+                        Text("W").frame(width: 26)
+                        Text("D").frame(width: 26)
+                        Text("L").frame(width: 26)
+                        Text("GD").frame(width: 30)
+                        Text("Pts").frame(width: 30)
                     }
                     // Form guide
-                    Text("Form").frame(width: 52)
+                    Text("Form").frame(width: 56)
                 }
                 .font(.system(size: 10, weight: .semibold, design: .rounded))
                 .foregroundStyle(AppColors.textTertiary)
                 .padding(.horizontal, 8)
-                .padding(.vertical, 6)
+                .padding(.vertical, 4)
 
                 // Rows
                 ScrollView {
                     LazyVStack(spacing: 0) {
                         ForEach(viewModel.standings) { standing in
                             StandingRow(standing: standing)
-                            Divider().overlay(AppColors.surface)
+                            Divider().overlay(Color.white.opacity(0.04))
                         }
                     }
                 }
@@ -95,12 +100,13 @@ struct StandingRow: View {
 
     var body: some View {
         HStack(spacing: 0) {
+            // Position number
             Text("\(standing.position)")
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(.system(size: 12, weight: .bold, design: .rounded))
                 .foregroundStyle(positionColor)
-                .frame(width: 22, alignment: .center)
+                .frame(width: 24, alignment: .center)
 
-            // Team logo
+            // Team logo (bigger for visibility)
             AsyncImage(url: standing.team.logoURL) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
@@ -108,47 +114,49 @@ struct StandingRow: View {
                     .fill(Color(hex: standing.team.primaryColor).opacity(0.3))
                     .overlay {
                         Text(String(standing.team.shortName.prefix(2)))
-                            .font(.system(size: 6, weight: .bold))
+                            .font(.system(size: 7, weight: .bold))
                             .foregroundStyle(.white)
                     }
             }
-            .frame(width: 20, height: 20)
+            .frame(width: 24, height: 24)
             .padding(.leading, 4)
 
-            Text(standing.team.name)
+            // Team name
+            Text(standing.team.shortName)
                 .font(.system(size: 13, weight: .medium, design: .rounded))
                 .foregroundStyle(AppColors.textPrimary)
                 .lineLimit(1)
                 .padding(.leading, 6)
 
-            Spacer()
+            Spacer(minLength: 2)
 
+            // Stats columns
             Group {
-                Text("\(standing.played)").frame(width: 24)
-                Text("\(standing.won)").frame(width: 24)
-                Text("\(standing.drawn)").frame(width: 24)
-                Text("\(standing.lost)").frame(width: 24)
-                Text("\(standing.goalDifference > 0 ? "+" : "")\(standing.goalDifference)").frame(width: 28)
+                Text("\(standing.played)").frame(width: 26)
+                Text("\(standing.won)").frame(width: 26)
+                Text("\(standing.drawn)").frame(width: 26)
+                Text("\(standing.lost)").frame(width: 26)
+                Text("\(standing.goalDifference > 0 ? "+" : "")\(standing.goalDifference)").frame(width: 30)
                 Text("\(standing.points)")
                     .fontWeight(.bold)
                     .foregroundStyle(AppColors.gold)
-                    .frame(width: 28)
+                    .frame(width: 30)
             }
-            .font(.system(size: 11, weight: .medium, design: .rounded))
+            .font(.system(size: 12, weight: .medium, design: .rounded))
             .foregroundStyle(AppColors.textSecondary)
 
             // Form guide dots
             HStack(spacing: 2) {
-                ForEach(Array(standing.form.enumerated()), id: \.offset) { _, result in
+                ForEach(Array(standing.form.suffix(5).enumerated()), id: \.offset) { _, result in
                     Circle()
                         .fill(formColor(result))
-                        .frame(width: 7, height: 7)
+                        .frame(width: 8, height: 8)
                 }
             }
-            .frame(width: 52)
+            .frame(width: 56)
         }
         .padding(.horizontal, 8)
-        .padding(.vertical, 7)
+        .padding(.vertical, 6)
     }
 
     private var positionColor: Color {

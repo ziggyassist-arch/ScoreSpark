@@ -204,7 +204,7 @@ function LineupsTab({
                 number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
                 position: p.position?.abbreviation ?? "?",
               }));
-            return { formation: roster.formation ?? "", startingXI: starters, substitutes: subs };
+            return { formation: roster.formation ?? "", starters, substitutes: subs };
           };
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const homeRoster = data.rosters.find((r: any) => r.homeAway === "home") ?? data.rosters[0];

@@ -389,6 +389,30 @@ async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
     const team = data.team;
     if (!team) return null;
 
+    // Fetch roster separately (team endpoint doesn't include athletes)
+    let squad: TeamDetail["squad"] = [];
+    try {
+      const rosterRes = await fetch(`${url}/roster`, { next: { revalidate: 600 } });
+      if (rosterRes.ok) {
+        const rosterData = await rosterRes.json();
+        squad = (rosterData.athletes ?? []).slice(0, 30).map((p: {
+          id: string;
+          fullName: string;
+          position: { abbreviation: string };
+          jersey?: string;
+        }) => ({
+          id: `espn-p-${p.id}`,
+          name: p.fullName,
+          position: p.position?.abbreviation ?? "Unknown",
+          shirtNumber: p.jersey ? parseInt(p.jersey, 10) : null,
+        }));
+      }
+    } catch {
+      // Roster fetch failed, continue without it
+    }
+
+    const record = team.record?.items?.[0]?.summary;
+
     const detail: TeamDetail = {
       id: teamId,
       name: team.displayName,
@@ -399,18 +423,8 @@ async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
       coach: undefined,
       founded: undefined,
       colors: team.color ? `#${team.color}` : undefined,
-      competitions: [team.standingSummary ?? ""].filter(Boolean),
-      squad: (team.athletes ?? []).slice(0, 30).map((p: {
-        id: string;
-        fullName: string;
-        position: { abbreviation: string };
-        jersey?: string;
-      }) => ({
-        id: `espn-p-${p.id}`,
-        name: p.fullName,
-        position: p.position?.abbreviation ?? "Unknown",
-        shirtNumber: p.jersey ? parseInt(p.jersey, 10) : null,
-      })),
+      competitions: [team.standingSummary ?? "", record ? `Record: ${record}` : ""].filter(Boolean),
+      squad,
     };
 
     cacheSet(cacheKey, detail, config.cache.teamTTL);

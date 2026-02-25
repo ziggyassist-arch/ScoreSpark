@@ -13,7 +13,7 @@ struct MatchDetailView: View {
     private var tabs: [String] {
         let m = displayMatch
         if m.league.sport == .soccer {
-            return ["Summary", "Stats", "Lineups", "Events"]
+            return ["Summary", "Stats", "Lineups", "Commentary"]
         }
         var t = ["Summary"]
         if m.stats != nil { t.append("Box Score") }
@@ -382,21 +382,90 @@ struct MatchDetailView: View {
         }
     }
 
-    // MARK: - Events Tab
+    // MARK: - Commentary Tab
 
     private var eventsTab: some View {
         let m = displayMatch
-        return VStack(spacing: 8) {
+        return VStack(spacing: 6) {
             if !m.events.isEmpty {
-                ForEach(m.events) { event in
-                    eventRow(event)
+                ForEach(m.events.sorted(by: { $0.minute > $1.minute })) { event in
+                    commentaryRow(event)
                 }
             } else {
-                ContentUnavailableView("No Events", systemImage: "list.bullet",
-                    description: Text("Events will appear as the match progresses."))
+                ContentUnavailableView("No Commentary", systemImage: "text.bubble",
+                    description: Text("Commentary will appear as the match progresses."))
             }
         }
     }
+
+    private func commentaryRow(_ event: MatchEvent) -> some View {
+        let m = displayMatch
+        let isHome = event.teamId == m.homeTeam.id || event.teamId == "home"
+        let teamName = isHome ? m.homeTeam.shortName : m.awayTeam.shortName
+        return HStack(spacing: 0) {
+            RoundedRectangle(cornerRadius: 2)
+                .fill(eventColor(event.type))
+                .frame(width: 3)
+
+            VStack(alignment: .leading, spacing: 3) {
+                HStack(spacing: 6) {
+                    Text("\(event.minute)'")
+                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .foregroundStyle(eventColor(event.type))
+                    Image(systemName: event.type.icon)
+                        .font(.system(size: 10))
+                        .foregroundStyle(eventColor(event.type))
+                    Text(event.type.label)
+                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .foregroundStyle(AppColors.textTertiary)
+                    Spacer()
+                    Text(teamName)
+                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .foregroundStyle(AppColors.textTertiary)
+                }
+
+                Text(commentaryText(event, teamName: teamName))
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppColors.textPrimary)
+                    .fixedSize(horizontal: false, vertical: true)
+
+                if let detail = event.detail, !detail.isEmpty {
+                    Text("Assist: \(detail)")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(AppColors.textTertiary)
+                }
+            }
+            .padding(.leading, 8)
+            .padding(.vertical, 6)
+            .padding(.trailing, 8)
+        }
+        .background(AppColors.surface.opacity(0.5), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+    }
+
+    private func commentaryText(_ event: MatchEvent, teamName: String) -> String {
+        switch event.type {
+        case .goal:
+            if let assist = event.detail, !assist.isEmpty {
+                return "GOAL! \(event.playerName) scores for \(teamName)! Assisted by \(assist)."
+            }
+            return "GOAL! \(event.playerName) scores for \(teamName)!"
+        case .penalty:
+            return "PENALTY GOAL! \(event.playerName) converts from the spot for \(teamName)!"
+        case .ownGoal:
+            return "OWN GOAL! \(event.playerName) puts the ball into their own net."
+        case .yellowCard:
+            return "\(event.playerName) is shown a yellow card by the referee."
+        case .redCard:
+            return "\(event.playerName) receives a red card! \(teamName) down to 10 men."
+        case .substitution:
+            if let playerOut = event.detail, !playerOut.isEmpty {
+                return "Substitution for \(teamName): \(event.playerName) comes on for \(playerOut)."
+            }
+            return "Substitution for \(teamName): \(event.playerName) comes on."
+        }
+    }
+
+    // MARK: - Summary Event Row
 
     private func eventRow(_ event: MatchEvent) -> some View {
         let m = displayMatch
@@ -410,9 +479,16 @@ struct MatchDetailView: View {
             Image(systemName: event.type.icon)
                 .font(.system(size: 11))
                 .foregroundStyle(eventColor(event.type))
-            Text(event.playerName)
-                .font(.system(size: 12, weight: .medium, design: .rounded))
-                .foregroundStyle(AppColors.textPrimary)
+            VStack(alignment: isHome ? .leading : .trailing, spacing: 1) {
+                Text(event.playerName)
+                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .foregroundStyle(AppColors.textPrimary)
+                if let detail = event.detail, !detail.isEmpty {
+                    Text(event.type == .substitution ? "for \(detail)" : "Ast. \(detail)")
+                        .font(.system(size: 10, design: .rounded))
+                        .foregroundStyle(AppColors.textTertiary)
+                }
+            }
             if isHome { Spacer() }
         }
         .padding(.vertical, 4)

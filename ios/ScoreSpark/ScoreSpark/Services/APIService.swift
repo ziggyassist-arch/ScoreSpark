@@ -220,12 +220,15 @@ extension APIMatchEvent {
             }
         }()
 
+        // For substitutions, pass playerOut as detail; for goals, pass assistedBy
+        let detailText: String? = eventType == .substitution ? playerOut : assistedBy
+
         return MatchEvent(
             type: eventType,
             minute: minute,
             playerName: player,
             teamId: team,
-            detail: assistedBy
+            detail: detailText
         )
     }
 }

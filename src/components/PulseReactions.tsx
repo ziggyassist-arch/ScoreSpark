@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { PULSE_EMOJIS } from "@/lib/services/pulse-service";
+import { PULSE_EMOJIS, PULSE_EMOJIS_BY_SPORT } from "@/lib/services/pulse-service";
 
 interface FloatingEmoji {
   id: number;
@@ -11,7 +11,8 @@ interface FloatingEmoji {
 
 let nextId = 0;
 
-export default function PulseReactions({ matchId }: { matchId: string }) {
+export default function PulseReactions({ matchId, sport = "soccer" }: { matchId: string; sport?: string }) {
+  const emojis = PULSE_EMOJIS_BY_SPORT[sport] ?? PULSE_EMOJIS;
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [floatingEmojis, setFloatingEmojis] = useState<FloatingEmoji[]>([]);
   const [cooldown, setCooldown] = useState(false);
@@ -117,7 +118,7 @@ export default function PulseReactions({ matchId }: { matchId: string }) {
         </div>
 
         <div className="flex gap-2 flex-wrap">
-          {PULSE_EMOJIS.map((emoji) => {
+          {emojis.map((emoji) => {
             const count = counts[emoji] ?? 0;
             return (
               <button

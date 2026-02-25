@@ -91,7 +91,18 @@ export default async function MockDraftPage({
         </div>
 
         {/* Picks */}
-        {draft.picks.map((pick) => (
+        {draft.picks.map((pick, idx) => (
+          <>{/* Round divider for NBA */}
+          {sport === "nba" && pick.pick === 31 && (
+            <div className="px-4 py-2.5 bg-gold-spark/10 border-t border-white/5">
+              <span className="text-xs font-bold text-gold-spark uppercase tracking-wider">Round 2</span>
+            </div>
+          )}
+          {sport === "nba" && pick.pick === 1 && idx === 0 && (
+            <div className="px-4 py-2.5 bg-gold-spark/10">
+              <span className="text-xs font-bold text-gold-spark uppercase tracking-wider">Round 1</span>
+            </div>
+          )}
           <div
             key={pick.pick}
             className="flex items-center gap-3 px-4 py-3 border-t border-white/5 hover:bg-white/[0.02] transition-colors"
@@ -133,6 +144,7 @@ export default async function MockDraftPage({
               {pick.school}
             </span>
           </div>
+          </>
         ))}
       </div>
 

@@ -61,4 +61,11 @@ export function getCounts(matchId: string): Record<string, number> {
   return pulseStore.get(matchId)?.counts ?? {};
 }
 
-export const PULSE_EMOJIS = ["🔥", "⚽", "🎉", "😱", "💪", "❤️", "👏", "😤"];
+export const PULSE_EMOJIS_BY_SPORT: Record<string, string[]> = {
+  soccer: ["🔥", "⚽", "🎉", "😱", "💪", "❤️", "👏", "😤"],
+  nfl: ["🔥", "🏈", "🎉", "😱", "💪", "❤️", "👏", "😤"],
+  nba: ["🔥", "🏀", "🎉", "😱", "💪", "❤️", "👏", "😤"],
+  nhl: ["🔥", "🏒", "🎉", "😱", "💪", "❤️", "👏", "😤"],
+  mlb: ["🔥", "⚾", "🎉", "😱", "💪", "❤️", "👏", "😤"],
+};
+export const PULSE_EMOJIS = PULSE_EMOJIS_BY_SPORT.soccer; // default fallback

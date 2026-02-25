@@ -27,7 +27,7 @@ interface Drive {
 
 interface SummaryData {
   plays?: Play[];
-  drives?: Drive[];
+  drives?: Drive[] | { previous?: Drive[]; current?: Drive };
   scoringPlays?: Play[];
 }
 
@@ -57,12 +57,16 @@ export default function PlayByPlay({ match }: { match: Match }) {
     return <div className="text-center py-12 text-white/30 animate-pulse">Loading play-by-play...</div>;
   }
 
-  // NFL uses drives
-  if (match.sport === "nfl" && data?.drives?.length) {
+  // NFL uses drives — ESPN wraps in { previous: [...] }
+  const drives: Drive[] = Array.isArray(data?.drives)
+    ? data.drives
+    : (data?.drives as { previous?: Drive[] })?.previous ?? [];
+
+  if (match.sport === "nfl" && drives.length) {
     return (
       <div className="space-y-3">
         <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider">Drive Summary</h3>
-        {data.drives.map((drive) => (
+        {drives.map((drive) => (
           <div key={drive.id} className="bg-white/[0.02] rounded-lg overflow-hidden">
             <button
               onClick={() => setExpandedDrive(expandedDrive === drive.id ? null : drive.id)}

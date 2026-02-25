@@ -161,6 +161,12 @@ function currentSportFromPath(pathname: string): string {
   for (const sport of ["soccer", "nfl", "nba", "nhl", "mlb"]) {
     if (pathname.includes(`/scores/${sport}`)) return sport;
   }
+  // Match detail pages: /match/espn-{sport}-{id}
+  const matchSport = pathname.match(/\/match\/espn-(\w+)-/)?.[1];
+  if (matchSport && ["soccer", "nfl", "nba", "nhl", "mlb"].includes(matchSport)) return matchSport;
+  // Team pages: /team/espn-{sport}-{id}
+  const teamSport = pathname.match(/\/team\/espn-(\w+)-/)?.[1];
+  if (teamSport && ["soccer", "nfl", "nba", "nhl", "mlb"].includes(teamSport)) return teamSport;
   return "soccer"; // default
 }
 

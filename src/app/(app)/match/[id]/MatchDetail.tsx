@@ -1160,7 +1160,7 @@ export default function MatchDetail({
       {/* Pulse Reactions — live & finished matches */}
       {match.status !== "upcoming" && (
         <div className="mb-6">
-          <PulseReactions matchId={match.id} />
+          <PulseReactions matchId={match.id} sport={match.sport} />
         </div>
       )}
 

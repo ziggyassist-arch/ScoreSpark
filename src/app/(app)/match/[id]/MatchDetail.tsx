@@ -1093,6 +1093,13 @@ export default function MatchDetail({
               width={64}
               height={64}
               className="w-16 h-16 object-contain mb-2"
+              onError={(e) => {
+                const t = e.target as HTMLImageElement;
+                if (!t.dataset.fallback) {
+                  t.dataset.fallback = "1";
+                  t.src = `https://placehold.co/64x64/1E1B3A/7EB6E6?text=${encodeURIComponent(match.homeTeam.shortName)}`;
+                }
+              }}
             />
             <p className="text-sm font-semibold text-white/90 text-center truncate w-full">
               {match.homeTeam.shortName}
@@ -1130,6 +1137,13 @@ export default function MatchDetail({
               width={64}
               height={64}
               className="w-16 h-16 object-contain mb-2"
+              onError={(e) => {
+                const t = e.target as HTMLImageElement;
+                if (!t.dataset.fallback) {
+                  t.dataset.fallback = "1";
+                  t.src = `https://placehold.co/64x64/1E1B3A/7EB6E6?text=${encodeURIComponent(match.awayTeam.shortName)}`;
+                }
+              }}
             />
             <p className="text-sm font-semibold text-white/90 text-center truncate w-full">
               {match.awayTeam.shortName}

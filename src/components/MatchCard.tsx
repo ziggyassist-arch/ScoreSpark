@@ -13,7 +13,14 @@ function TeamBadge({ src, alt }: { src: string; alt: string }) {
       alt={alt}
       width={24}
       height={24}
-      className="w-6 h-6 rounded object-cover"
+      className="w-6 h-6 rounded object-contain"
+      onError={(e) => {
+        const target = e.target as HTMLImageElement;
+        if (!target.dataset.fallback) {
+          target.dataset.fallback = "1";
+          target.src = `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(alt.slice(0, 3))}`;
+        }
+      }}
     />
   );
 }
@@ -83,7 +90,7 @@ export default function MatchCard({ match }: { match: Match }) {
   return (
     <Link href={`/match/${match.id}`} className="block group" onClick={handleReveal}>
       <div
-        className={`bg-card hover:bg-card-hover rounded-lg p-2.5 border border-white/5 border-l-2 ${sportBorderColor} transition-all duration-200 hover:border-white/10 active:scale-[0.99]`}
+        className={`bg-card hover:bg-card-hover rounded-xl p-2.5 border border-white/5 border-l-2 ${sportBorderColor} transition-all duration-200 hover:border-white/10 active:scale-[0.99]`}
       >
         {/* League + Status row */}
         <div className="flex items-center justify-between mb-1.5">

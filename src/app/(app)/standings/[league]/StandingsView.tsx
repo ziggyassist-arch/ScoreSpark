@@ -81,16 +81,21 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {row.team?.badge && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={row.team.badge}
-                        alt={row.team.shortName ?? ""}
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 rounded"
-                      />
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
+                      alt={row.team?.shortName ?? ""}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded object-contain"
+                      onError={(e) => {
+                        const t = e.target as HTMLImageElement;
+                        if (!t.dataset.fallback) {
+                          t.dataset.fallback = "1";
+                          t.src = `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`;
+                        }
+                      }}
+                    />
                     <span className="text-white/80 font-medium hidden sm:inline">
                       {row.team?.name ?? "Unknown"}
                     </span>
@@ -198,16 +203,21 @@ function NBATable({ standings }: { standings: NBAStandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {row.team?.badge && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={row.team.badge}
-                        alt={row.team.shortName ?? ""}
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 rounded"
-                      />
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
+                      alt={row.team?.shortName ?? ""}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded object-contain"
+                      onError={(e) => {
+                        const t = e.target as HTMLImageElement;
+                        if (!t.dataset.fallback) {
+                          t.dataset.fallback = "1";
+                          t.src = `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`;
+                        }
+                      }}
+                    />
                     <span className="text-white/80 font-medium hidden sm:inline">
                       {row.team?.name ?? "Unknown"}
                     </span>
@@ -284,16 +294,21 @@ function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {row.team?.badge && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={row.team.badge}
-                        alt={row.team.shortName ?? ""}
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 rounded"
-                      />
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
+                      alt={row.team?.shortName ?? ""}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded object-contain"
+                      onError={(e) => {
+                        const t = e.target as HTMLImageElement;
+                        if (!t.dataset.fallback) {
+                          t.dataset.fallback = "1";
+                          t.src = `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`;
+                        }
+                      }}
+                    />
                     <span className="text-white/80 font-medium hidden sm:inline">
                       {row.team?.name ?? "Unknown"}
                     </span>
@@ -385,16 +400,21 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
                 </td>
                 <td className="py-3 px-2">
                   <div className="flex items-center gap-2">
-                    {row.team?.badge && (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={row.team.badge}
-                        alt={row.team.shortName ?? ""}
-                        width={24}
-                        height={24}
-                        className="w-6 h-6 rounded"
-                      />
-                    )}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
+                      alt={row.team?.shortName ?? ""}
+                      width={24}
+                      height={24}
+                      className="w-6 h-6 rounded object-contain"
+                      onError={(e) => {
+                        const t = e.target as HTMLImageElement;
+                        if (!t.dataset.fallback) {
+                          t.dataset.fallback = "1";
+                          t.src = `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`;
+                        }
+                      }}
+                    />
                     <span className="text-white/80 font-medium hidden sm:inline">
                       {row.team?.name ?? "Unknown"}
                     </span>

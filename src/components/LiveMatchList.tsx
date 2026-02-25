@@ -30,7 +30,7 @@ function getEmptyDateMessage(sport: Sport | undefined, dateStr: string): string 
   const isFuture = date > today;
 
   if (sport === "nfl") {
-    if (isFuture) return "NFL offseason — next season starts September 2025";
+    if (isFuture) return "NFL offseason — next season starts September 2026";
     if (isPast) return "No NFL games on this date";
   }
   if (sport === "mlb") {

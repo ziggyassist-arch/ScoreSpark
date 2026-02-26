@@ -16,32 +16,45 @@ struct HomeView: View {
         }
     }
 
+    // Generate date range for horizontal scroll picker
+    private var dateRange: [Int] {
+        Array(-3...3)
+    }
+
+    private func dateString(for offset: Int) -> String {
+        switch offset {
+        case -1: return "Yesterday"
+        case 0: return "Today"
+        case 1: return "Tomorrow"
+        default:
+            let date = Calendar.current.date(byAdding: .day, value: offset, to: Date()) ?? Date()
+            let fmt = DateFormatter()
+            fmt.dateFormat = "EEE d"
+            return fmt.string(from: date)
+        }
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             datePickerBar
 
             if viewModel.isLoading && viewModel.groups.isEmpty {
                 Spacer()
-                Image("Logo")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 28, height: 28)
-                    .opacity(0.4)
+                ProgressView()
+                    .tint(AppColors.accent)
                 Spacer()
             } else if viewModel.groups.isEmpty {
                 Spacer()
-                VStack(spacing: 4) {
-                    Image("Logo")
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .opacity(0.15)
+                VStack(spacing: 8) {
+                    Image(systemName: "sportscourt")
+                        .font(.system(size: 28))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.5))
                     Text("No Matches")
-                        .font(.system(size: 13, weight: .semibold, design: .rounded))
-                        .foregroundStyle(AppColors.textSecondary)
+                        .font(.system(size: 15, weight: .semibold))
+                        .foregroundStyle(AppColors.textPrimary)
                     Text("No matches available for \(dateLabel.lowercased()).")
-                        .font(.system(size: 11, design: .rounded))
-                        .foregroundStyle(AppColors.textTertiary)
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppColors.textSecondary)
                 }
                 Spacer()
             } else {
@@ -49,39 +62,32 @@ struct HomeView: View {
                     // Live count banner
                     let liveCount = viewModel.groups.flatMap(\.matches).filter(\.isLive).count
                     if liveCount > 0 && selectedDateOffset == 0 {
-                        HStack(spacing: 3) {
+                        HStack(spacing: 4) {
                             Circle()
-                                .fill(AppColors.livePulse)
-                                .frame(width: 4, height: 4)
+                                .fill(AppColors.accent)
+                                .frame(width: 6, height: 6)
                                 .modifier(PulseModifier())
-                            Text("\(liveCount) live")
-                                .font(.system(size: 9, weight: .semibold, design: .rounded))
-                                .foregroundStyle(AppColors.livePulse)
+                            Text("\(liveCount) LIVE")
+                                .font(.system(size: 11, weight: .bold))
+                                .foregroundStyle(AppColors.accent)
                         }
-                        .padding(.horizontal, 4)
-                        .padding(.vertical, 1)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 4)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    LazyVStack(spacing: 0) {
+                    // League section cards
+                    LazyVStack(spacing: 8) {
                         ForEach(viewModel.groups) { group in
-                            leagueHeader(group.league)
-
-                            ForEach(group.matches) { match in
-                                NavigationLink(value: match.id) {
-                                    FotMobMatchRow(match: match)
-                                }
-                                .buttonStyle(.plain)
-
-                                Rectangle()
-                                    .fill(Color.white.opacity(0.04))
-                                    .frame(height: 0.33)
-                            }
+                            leagueCard(group)
                         }
                     }
+                    .padding(.top, 8)
+                    .padding(.bottom, 16)
                 }
             }
         }
+        .background(AppColors.screenBackground)
         .task(id: "\(sportSelection.current.rawValue)-\(selectedDateOffset)") {
             let date: String? = selectedDateOffset == 0 ? nil : {
                 let d = Calendar.current.date(byAdding: .day, value: selectedDateOffset, to: Date()) ?? Date()
@@ -93,75 +99,97 @@ struct HomeView: View {
         }
     }
 
-    // MARK: - Date Picker Bar (compact 28pt)
+    // MARK: - Date Picker Bar (44pt, horizontal scroll, FotMob style)
 
     private var datePickerBar: some View {
-        HStack(spacing: 0) {
-            Button {
-                withAnimation(.snappy) { selectedDateOffset -= 1 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(AppColors.textTertiary)
-            }
-            .frame(width: 24)
+        ScrollViewReader { proxy in
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 20) {
+                    ForEach(dateRange, id: \.self) { offset in
+                        Button {
+                            withAnimation(.snappy) { selectedDateOffset = offset }
+                        } label: {
+                            VStack(spacing: 4) {
+                                Text(dateString(for: offset))
+                                    .font(.system(size: 15, weight: selectedDateOffset == offset ? .bold : .regular))
+                                    .foregroundStyle(selectedDateOffset == offset ? .white : AppColors.textSecondary)
 
-            ForEach([-1, 0, 1], id: \.self) { offset in
-                let label: String = switch offset {
-                case -1: "Yesterday"
-                case 0: "Today"
-                case 1: "Tomorrow"
-                default: ""
+                                // 2pt white underline indicator
+                                Rectangle()
+                                    .fill(selectedDateOffset == offset ? .white : Color.clear)
+                                    .frame(height: 2)
+                            }
+                        }
+                        .id(offset)
+                    }
                 }
-                Button {
-                    withAnimation(.snappy) { selectedDateOffset = offset }
-                } label: {
-                    Text(label)
-                        .font(.system(size: 11, weight: selectedDateOffset == offset ? .bold : .regular, design: .rounded))
-                        .foregroundStyle(selectedDateOffset == offset ? .white : AppColors.textTertiary)
-                        .frame(maxWidth: .infinity)
-                }
+                .padding(.horizontal, 16)
             }
-
-            Button {
-                withAnimation(.snappy) { selectedDateOffset += 1 }
-            } label: {
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 10, weight: .semibold))
-                    .foregroundStyle(AppColors.textTertiary)
+            .frame(height: 44)
+            .background(AppColors.screenBackground)
+            .onAppear {
+                proxy.scrollTo(0, anchor: .center)
             }
-            .frame(width: 24)
+            .onChange(of: selectedDateOffset) { _, newValue in
+                withAnimation { proxy.scrollTo(newValue, anchor: .center) }
+            }
         }
-        .frame(height: 28)
-        .background(AppColors.surface.opacity(0.3))
     }
 
-    private func leagueHeader(_ league: League) -> some View {
-        HStack(spacing: 4) {
-            if let url = leagueLogoURL(for: league) {
-                AsyncImage(url: url) { image in
-                    image.resizable().scaledToFit()
-                } placeholder: {
-                    EmptyView()
+    // MARK: - League Section Card (FotMob style)
+
+    private func leagueCard(_ group: LeagueGroup) -> some View {
+        VStack(spacing: 0) {
+            // League header row: 52pt height
+            HStack(spacing: 8) {
+                if let url = leagueLogoURL(for: group.league) {
+                    AsyncImage(url: url) { image in
+                        image.resizable().scaledToFit()
+                    } placeholder: {
+                        EmptyView()
+                    }
+                    .frame(width: 28, height: 28)
                 }
-                .frame(width: 14, height: 14)
+                Text(group.league.name)
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundStyle(.white)
+                if !group.league.country.isEmpty {
+                    Text(group.league.country)
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppColors.textSecondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 12, weight: .semibold))
+                    .foregroundStyle(AppColors.textSecondary)
             }
-            Text(league.name)
-                .font(.system(size: 10, weight: .medium))
-                .foregroundStyle(AppColors.textSecondary)
-            if !league.country.isEmpty {
-                Text("·")
-                    .font(.system(size: 8))
-                    .foregroundStyle(AppColors.textTertiary)
-                Text(league.country)
-                    .font(.system(size: 9))
-                    .foregroundStyle(AppColors.textTertiary)
+            .padding(.horizontal, 16)
+            .frame(height: 52)
+
+            // 0.5pt separator
+            Rectangle()
+                .fill(AppColors.separator)
+                .frame(height: 0.5)
+
+            // Match rows
+            ForEach(Array(group.matches.enumerated()), id: \.element.id) { index, match in
+                NavigationLink(value: match.id) {
+                    FotMobMatchRow(match: match)
+                }
+                .buttonStyle(.plain)
+
+                // Separator between rows (not after last)
+                if index < group.matches.count - 1 {
+                    Rectangle()
+                        .fill(AppColors.separator)
+                        .frame(height: 0.5)
+                        .padding(.leading, 16)
+                }
             }
-            Spacer()
         }
-        .padding(.horizontal, 4)
-        .frame(height: 22)
-        .background(AppColors.surface.opacity(0.15))
+        .background(AppColors.cardBackground)
+        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
+        .padding(.horizontal, 10)
     }
 
     private func leagueLogoURL(for league: League) -> URL? {
@@ -175,62 +203,65 @@ struct HomeView: View {
     }
 }
 
-// MARK: - FotMob Match Row (compact 38pt — edge to edge)
+// MARK: - FotMob Match Row (80pt — symmetric horizontal layout)
 
 struct FotMobMatchRow: View {
     let match: Match
 
     var body: some View {
         HStack(spacing: 0) {
-            HStack(spacing: 4) {
+            // Home team name (right-aligned) + badge
+            HStack(spacing: 8) {
                 Text(match.homeTeam.shortName)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 14))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 teamBadge(match.homeTeam)
             }
 
-            VStack(spacing: 0) {
+            // Center block (60pt fixed width)
+            VStack(spacing: 2) {
                 if let hs = match.homeScore, let aws = match.awayScore {
                     Text("\(hs) - \(aws)")
-                        .font(.system(size: 14, weight: .bold).monospacedDigit())
-                        .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
+                        .font(.system(size: 16, weight: .bold).monospacedDigit())
+                        .foregroundStyle(match.isLive ? AppColors.accent : .white)
                 } else {
                     Text(match.displayTime)
-                        .font(.system(size: 10))
-                        .foregroundStyle(AppColors.textTertiary)
+                        .font(.system(size: 13, weight: .medium))
+                        .foregroundStyle(.white)
                 }
 
                 if match.isLive {
-                    HStack(spacing: 2) {
+                    HStack(spacing: 3) {
                         Circle()
-                            .fill(AppColors.livePulse)
-                            .frame(width: 3, height: 3)
+                            .fill(AppColors.accent)
+                            .frame(width: 4, height: 4)
                             .modifier(PulseModifier())
                         Text(match.displayTime)
-                            .font(.system(size: 8, weight: .semibold))
-                            .foregroundStyle(AppColors.livePulse)
+                            .font(.system(size: 11, weight: .semibold))
+                            .foregroundStyle(AppColors.accent)
                     }
                 } else if match.status == .finished {
-                    Text(match.displayTime)
-                        .font(.system(size: 8))
-                        .foregroundStyle(AppColors.textTertiary)
+                    Text("FT")
+                        .font(.system(size: 11))
+                        .foregroundStyle(AppColors.textSecondary)
                 }
             }
-            .frame(width: 50)
+            .frame(width: 60)
 
-            HStack(spacing: 4) {
+            // Away badge + name (left-aligned)
+            HStack(spacing: 8) {
                 teamBadge(match.awayTeam)
                 Text(match.awayTeam.shortName)
-                    .font(.system(size: 13, weight: .medium))
+                    .font(.system(size: 14))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 4)
-        .frame(height: 38)
+        .padding(.horizontal, 16)
+        .frame(height: 80)
     }
 
     private func teamBadge(_ team: Team) -> some View {
@@ -241,10 +272,10 @@ struct FotMobMatchRow: View {
                 .fill(Color(hex: team.primaryColor).opacity(0.3))
                 .overlay {
                     Text(String(team.shortName.prefix(2)))
-                        .font(.system(size: 6, weight: .bold))
+                        .font(.system(size: 9, weight: .bold))
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: 18, height: 18)
+        .frame(width: 30, height: 30)
     }
 }

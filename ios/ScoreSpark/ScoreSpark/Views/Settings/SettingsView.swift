@@ -17,20 +17,15 @@ struct SettingsView: View {
         List {
             Section {
                 HStack(spacing: 12) {
-                    HStack(spacing: 2) {
-                        Text("Score")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
-                            .foregroundStyle(.white)
-                        Text("Spark")
-                            .font(.system(size: 18, weight: .bold, design: .rounded))
-                            .foregroundStyle(AppColors.gold)
-                    }
+                    Text("ScoreSpark")
+                        .font(.system(size: 20, weight: .bold))
+                        .foregroundStyle(.white)
                     Spacer()
                     Text("v1.0.0")
-                        .font(.system(size: 11, design: .rounded))
-                        .foregroundStyle(AppColors.textTertiary)
+                        .font(.system(size: 13))
+                        .foregroundStyle(AppColors.textSecondary)
                 }
-                .listRowBackground(AppColors.surface)
+                .listRowBackground(AppColors.cardBackground)
             }
 
             Section("Preferences") {
@@ -43,72 +38,72 @@ struct SettingsView: View {
                         .tag(sport)
                     }
                 }
-                .font(.system(size: 14, design: .rounded))
+                .font(.system(size: 15))
 
                 Toggle(isOn: $spoilerFreeMode) {
-                    VStack(alignment: .leading, spacing: 1) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text("Spoiler-Free Mode")
-                            .font(.system(size: 14, design: .rounded))
+                            .font(.system(size: 15))
                         Text("Hide scores until you tap to reveal")
-                            .font(.system(size: 11, design: .rounded))
-                            .foregroundStyle(AppColors.textTertiary)
+                            .font(.system(size: 12))
+                            .foregroundStyle(AppColors.textSecondary)
                     }
                 }
                 .onChange(of: spoilerFreeMode) { _, newValue in
                     UserDefaults.standard.set(newValue, forKey: "spoilerFreeMode")
                 }
             }
-            .listRowBackground(AppColors.surface)
+            .listRowBackground(AppColors.cardBackground)
 
             Section("Notifications") {
                 Toggle("Match Alerts", isOn: $notificationsEnabled)
-                    .font(.system(size: 14, design: .rounded))
+                    .font(.system(size: 15))
                 Toggle("Live Activities", isOn: $liveActivitiesEnabled)
-                    .font(.system(size: 14, design: .rounded))
+                    .font(.system(size: 15))
             }
-            .listRowBackground(AppColors.surface)
+            .listRowBackground(AppColors.cardBackground)
 
             Section("About") {
                 Link(destination: URL(string: "https://scorespark.vercel.app")!) {
                     HStack {
                         Text("Website")
-                            .font(.system(size: 14, design: .rounded))
+                            .font(.system(size: 15))
                         Spacer()
                         Image(systemName: "arrow.up.right")
-                            .font(.system(size: 11))
-                            .foregroundStyle(AppColors.textTertiary)
+                            .font(.system(size: 12))
+                            .foregroundStyle(AppColors.textSecondary)
                     }
                 }
                 Link(destination: URL(string: "https://scorespark.vercel.app/pricing")!) {
                     HStack {
                         Text("Upgrade to Premium")
-                            .font(.system(size: 14, design: .rounded))
+                            .font(.system(size: 15))
                         Spacer()
                         Image(systemName: "star.fill")
-                            .font(.system(size: 11))
-                            .foregroundStyle(AppColors.gold)
+                            .font(.system(size: 12))
+                            .foregroundStyle(AppColors.accent)
                     }
                 }
             }
-            .listRowBackground(AppColors.surface)
+            .listRowBackground(AppColors.cardBackground)
 
             Section {
-                VStack(spacing: 2) {
+                VStack(spacing: 4) {
                     Text("Made with ⚡ by ScoreSpark")
-                        .font(.system(size: 11, design: .rounded))
-                        .foregroundStyle(AppColors.textTertiary)
+                        .font(.system(size: 12))
+                        .foregroundStyle(AppColors.textSecondary)
                     Text("Data provided by football-data.org & ESPN")
-                        .font(.system(size: 10, design: .rounded))
-                        .foregroundStyle(AppColors.textTertiary.opacity(0.6))
+                        .font(.system(size: 11))
+                        .foregroundStyle(AppColors.textSecondary.opacity(0.6))
                 }
                 .frame(maxWidth: .infinity)
                 .listRowBackground(Color.clear)
             }
         }
         .scrollContentBackground(.hidden)
-        .background(AppColors.background)
+        .background(AppColors.screenBackground)
         .foregroundStyle(AppColors.textPrimary)
-        .tint(AppColors.gold)
+        .tint(AppColors.accent)
         .navigationTitle("Settings")
         .toolbarTitleDisplayMode(.inline)
     }

@@ -15,7 +15,6 @@ struct MatchDetailView: View {
         if m.league.sport == .soccer {
             return ["Summary", "Stats", "Lineups", "Commentary"]
         }
-        // American sports: always show all tabs even if data might be empty
         return ["Summary", "Stats", "Plays"]
     }
 
@@ -53,22 +52,22 @@ struct MatchDetailView: View {
 
     private var matchHeader: some View {
         let m = displayMatch
-        return VStack(spacing: 6) {
+        return VStack(spacing: 4) {
             Text(m.league.name)
-                .font(.system(size: 11, design: .rounded))
+                .font(.system(size: 10, design: .rounded))
                 .foregroundStyle(Color(hex: m.league.sport.accentColor))
 
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 detailTeamView(m.homeTeam)
 
                 VStack(spacing: 2) {
                     if let h = m.homeScore, let a = m.awayScore {
                         Text("\(h) - \(a)")
-                            .font(.system(size: 32, weight: .heavy, design: .rounded).monospacedDigit())
+                            .font(.system(size: 24, weight: .heavy, design: .rounded).monospacedDigit())
                             .foregroundStyle(AppColors.textPrimary)
                     } else {
                         Text("vs")
-                            .font(.system(size: 20, weight: .bold, design: .rounded))
+                            .font(.system(size: 15, weight: .bold, design: .rounded))
                             .foregroundStyle(AppColors.textTertiary)
                     }
 
@@ -76,26 +75,26 @@ struct MatchDetailView: View {
                         HStack(spacing: 3) {
                             Circle()
                                 .fill(AppColors.livePulse)
-                                .frame(width: 5, height: 5)
+                                .frame(width: 4, height: 4)
                                 .modifier(PulseModifier())
                             Text(m.displayTime)
-                                .font(.system(size: 13, weight: .black, design: .rounded))
+                                .font(.system(size: 11, weight: .black, design: .rounded))
                                 .foregroundStyle(AppColors.livePulse)
                         }
                     } else if m.status == .finished {
                         Text(m.displayTime)
-                            .font(.system(size: 12, weight: .semibold, design: .rounded))
+                            .font(.system(size: 10, weight: .semibold, design: .rounded))
                             .foregroundStyle(AppColors.textTertiary)
-                            .padding(.horizontal, 8)
-                            .padding(.vertical, 2)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 1)
                             .background(AppColors.surface, in: Capsule())
                     } else {
                         VStack(spacing: 1) {
                             Text(m.startTime, style: .time)
-                                .font(.system(size: 11, design: .rounded))
+                                .font(.system(size: 10, design: .rounded))
                                 .foregroundStyle(AppColors.textTertiary)
                             Text(m.startTime, style: .date)
-                                .font(.system(size: 10))
+                                .font(.system(size: 9))
                                 .foregroundStyle(AppColors.textTertiary.opacity(0.6))
                         }
                     }
@@ -106,16 +105,16 @@ struct MatchDetailView: View {
 
             if let desc = m.liveDescription, !desc.isEmpty, m.status == .upcoming {
                 Text(desc)
-                    .font(.system(size: 10, design: .rounded))
+                    .font(.system(size: 9, design: .rounded))
                     .foregroundStyle(AppColors.textTertiary)
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 6)
+        .padding(.horizontal, 6)
     }
 
     private func detailTeamView(_ team: Team) -> some View {
-        VStack(spacing: 4) {
+        VStack(spacing: 2) {
             AsyncImage(url: team.logoURL) { image in
                 image.resizable().scaledToFit()
             } placeholder: {
@@ -123,16 +122,16 @@ struct MatchDetailView: View {
                     .fill(Color(hex: team.primaryColor).opacity(0.3))
                     .overlay {
                         Text(team.shortName)
-                            .font(.system(size: 12, weight: .bold, design: .rounded))
+                            .font(.system(size: 10, weight: .bold, design: .rounded))
                             .foregroundStyle(.white)
                     }
             }
-            .frame(width: 44, height: 44)
+            .frame(width: 28, height: 28)
             Text(team.name)
-                .font(.system(size: 11, weight: .medium, design: .rounded))
+                .font(.system(size: 10, weight: .medium, design: .rounded))
                 .foregroundStyle(AppColors.textSecondary)
                 .lineLimit(1)
-                .frame(width: 80)
+                .frame(width: 72)
                 .multilineTextAlignment(.center)
         }
     }
@@ -145,16 +144,16 @@ struct MatchDetailView: View {
                 Button {
                     withAnimation(.snappy) { selectedTab = idx }
                 } label: {
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         Text(tab)
-                            .font(.system(size: 12, weight: selectedTab == idx ? .semibold : .regular, design: .rounded))
+                            .font(.system(size: 11, weight: selectedTab == idx ? .semibold : .regular, design: .rounded))
                             .foregroundStyle(selectedTab == idx ? AppColors.gold : AppColors.textTertiary)
                             .frame(maxWidth: .infinity)
                         Rectangle()
                             .fill(selectedTab == idx ? AppColors.gold : .clear)
                             .frame(height: 2)
                     }
-                    .padding(.top, 8)
+                    .padding(.top, 4)
                 }
             }
         }
@@ -169,17 +168,17 @@ struct MatchDetailView: View {
 
         if m.league.sport == .soccer {
             switch selectedTab {
-            case 0: summaryTab.padding(8)
-            case 1: statsTab.padding(8)
-            case 2: lineupsTab.padding(8)
-            case 3: eventsTab.padding(8)
+            case 0: summaryTab.padding(6)
+            case 1: statsTab.padding(6)
+            case 2: lineupsTab.padding(6)
+            case 3: eventsTab.padding(6)
             default: EmptyView()
             }
         } else {
             switch selectedTab {
-            case 0: americanSummaryTab.padding(8)
-            case 1: statsTab.padding(8)
-            case 2: playsTab.padding(8)
+            case 0: americanSummaryTab.padding(6)
+            case 1: statsTab.padding(6)
+            case 2: playsTab.padding(6)
             default: EmptyView()
             }
         }
@@ -189,7 +188,7 @@ struct MatchDetailView: View {
 
     private var summaryTab: some View {
         let m = displayMatch
-        return VStack(spacing: 10) {
+        return VStack(spacing: 6) {
             if m.status == .upcoming {
                 upcomingView
             } else if !m.events.isEmpty {
@@ -207,46 +206,46 @@ struct MatchDetailView: View {
 
     private var americanSummaryTab: some View {
         let m = displayMatch
-        return VStack(spacing: 10) {
+        return VStack(spacing: 6) {
             if m.status == .upcoming {
                 upcomingView
             } else {
                 if m.homeScore != nil {
-                    VStack(spacing: 6) {
+                    VStack(spacing: 4) {
                         HStack {
                             Text(m.homeTeam.shortName)
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.textSecondary)
-                                .frame(width: 46, alignment: .leading)
+                                .frame(width: 44, alignment: .leading)
                             Spacer()
                             Text("\(m.homeScore ?? 0)")
-                                .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
+                                .font(.system(size: 13, weight: .bold, design: .rounded).monospacedDigit())
                                 .foregroundStyle(AppColors.textPrimary)
-                                .frame(width: 28)
+                                .frame(width: 26)
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                         .background(AppColors.surface.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
 
                         HStack {
                             Text(m.awayTeam.shortName)
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.textSecondary)
-                                .frame(width: 46, alignment: .leading)
+                                .frame(width: 44, alignment: .leading)
                             Spacer()
                             Text("\(m.awayScore ?? 0)")
-                                .font(.system(size: 14, weight: .bold, design: .rounded).monospacedDigit())
+                                .font(.system(size: 13, weight: .bold, design: .rounded).monospacedDigit())
                                 .foregroundStyle(AppColors.textPrimary)
-                                .frame(width: 28)
+                                .frame(width: 26)
                         }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
                         .background(AppColors.surface.opacity(0.5), in: RoundedRectangle(cornerRadius: 6))
                     }
                 }
 
                 if !m.events.isEmpty {
-                    VStack(alignment: .leading, spacing: 3) {
+                    VStack(alignment: .leading, spacing: 2) {
                         Text("KEY PLAYS")
                             .font(.system(size: 9, weight: .bold, design: .rounded))
                             .foregroundStyle(AppColors.textTertiary)
@@ -264,44 +263,45 @@ struct MatchDetailView: View {
 
     private var upcomingView: some View {
         let m = displayMatch
-        return VStack(spacing: 8) {
+        return VStack(spacing: 4) {
             Image(systemName: "clock")
-                .font(.system(size: 24))
+                .font(.system(size: 20))
                 .foregroundStyle(AppColors.textTertiary)
             Text("Match hasn't started yet")
-                .font(.system(size: 14, weight: .medium, design: .rounded))
+                .font(.system(size: 12, weight: .medium, design: .rounded))
                 .foregroundStyle(AppColors.textSecondary)
             Text(m.startTime, format: .dateTime.weekday(.wide).month(.wide).day())
-                .font(.system(size: 12, design: .rounded))
+                .font(.system(size: 11, design: .rounded))
                 .foregroundStyle(AppColors.textTertiary)
             Text(m.startTime, format: .dateTime.hour().minute())
-                .font(.system(size: 12, design: .rounded))
+                .font(.system(size: 11, design: .rounded))
                 .foregroundStyle(AppColors.textTertiary)
         }
-        .padding(.vertical, 16)
+        .padding(.vertical, 8)
     }
 
     // MARK: - Stats Tab
 
     private var statsTab: some View {
         let m = displayMatch
-        return VStack(spacing: 12) {
+        return VStack(spacing: 6) {
             if let stats = m.stats {
                 ForEach(stats.items) { stat in
-                    VStack(spacing: 4) {
+                    VStack(spacing: 2) {
                         HStack {
                             Text("\(stat.home)")
-                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
                                 .foregroundStyle(AppColors.textPrimary)
                             Spacer()
                             Text(stat.name)
-                                .font(.system(size: 10, design: .rounded))
+                                .font(.system(size: 9, design: .rounded))
                                 .foregroundStyle(AppColors.textTertiary)
                             Spacer()
                             Text("\(stat.away)")
-                                .font(.system(size: 13, weight: .bold, design: .rounded))
+                                .font(.system(size: 12, weight: .bold, design: .rounded))
                                 .foregroundStyle(AppColors.textPrimary)
                         }
+                        .frame(height: 32)
 
                         GeometryReader { geo in
                             let total = max(stat.home + stat.away, 1)
@@ -309,13 +309,13 @@ struct MatchDetailView: View {
                             HStack(spacing: 2) {
                                 RoundedRectangle(cornerRadius: 2)
                                     .fill(AppColors.accent)
-                                    .frame(width: max(homeWidth, 2), height: 4)
+                                    .frame(width: max(homeWidth, 2), height: 3)
                                 RoundedRectangle(cornerRadius: 2)
                                     .fill(AppColors.textTertiary.opacity(0.5))
-                                    .frame(width: max(geo.size.width - homeWidth - 2, 2), height: 4)
+                                    .frame(width: max(geo.size.width - homeWidth - 2, 2), height: 3)
                             }
                         }
-                        .frame(height: 4)
+                        .frame(height: 3)
                     }
                 }
             } else {
@@ -329,51 +329,53 @@ struct MatchDetailView: View {
 
     private var lineupsTab: some View {
         let m = displayMatch
-        return VStack(spacing: 14) {
+        return VStack(spacing: 6) {
             if let lineups = m.lineups {
                 HStack {
-                    VStack(alignment: .leading, spacing: 2) {
+                    VStack(alignment: .leading, spacing: 1) {
                         Text(m.homeTeam.shortName)
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundStyle(AppColors.textPrimary)
                         Text(lineups.homeFormation)
-                            .font(.system(size: 11, design: .rounded))
+                            .font(.system(size: 10, design: .rounded))
                             .foregroundStyle(AppColors.accent)
                     }
                     Spacer()
-                    VStack(alignment: .trailing, spacing: 2) {
+                    VStack(alignment: .trailing, spacing: 1) {
                         Text(m.awayTeam.shortName)
-                            .font(.system(size: 14, weight: .semibold, design: .rounded))
+                            .font(.system(size: 12, weight: .semibold, design: .rounded))
                             .foregroundStyle(AppColors.textPrimary)
                         Text(lineups.awayFormation)
-                            .font(.system(size: 11, design: .rounded))
+                            .font(.system(size: 10, design: .rounded))
                             .foregroundStyle(AppColors.accent)
                     }
                 }
 
                 ForEach(Array(zip(lineups.homeStarting, lineups.awayStarting).enumerated()), id: \.offset) { _, pair in
                     HStack {
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Text("\(pair.0.number)")
-                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
                                 .foregroundStyle(AppColors.accent)
-                                .frame(width: 20)
+                                .frame(width: 18)
                             Text(pair.0.name)
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
                                 .foregroundStyle(AppColors.textPrimary)
                         }
                         Spacer()
-                        HStack(spacing: 6) {
+                        HStack(spacing: 4) {
                             Text(pair.1.name)
-                                .font(.system(size: 13, weight: .medium, design: .rounded))
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
                                 .foregroundStyle(AppColors.textPrimary)
                             Text("\(pair.1.number)")
-                                .font(.system(size: 11, weight: .bold, design: .rounded))
+                                .font(.system(size: 10, weight: .bold, design: .rounded))
                                 .foregroundStyle(AppColors.accent)
-                                .frame(width: 20)
+                                .frame(width: 18)
                         }
                     }
-                    Divider().overlay(AppColors.surface)
+                    Rectangle()
+                        .fill(Color.white.opacity(0.04))
+                        .frame(height: 0.5)
                 }
             } else {
                 ContentUnavailableView("No Lineups Available", systemImage: "person.3",
@@ -386,23 +388,22 @@ struct MatchDetailView: View {
 
     private var playsTab: some View {
         let m = displayMatch
-        return VStack(spacing: 6) {
+        return VStack(spacing: 4) {
             if !m.events.isEmpty {
                 ForEach(m.events.sorted(by: { $0.minute > $1.minute })) { event in
-                    HStack(spacing: 8) {
-                        // Event icon
+                    HStack(spacing: 6) {
                         Image(systemName: playIcon(event.type.rawValue))
-                            .font(.system(size: 11))
+                            .font(.system(size: 10))
                             .foregroundStyle(eventColor(event.type))
-                            .frame(width: 20)
+                            .frame(width: 18)
 
                         VStack(alignment: .leading, spacing: 1) {
                             Text(event.playerName)
-                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .font(.system(size: 11, weight: .medium, design: .rounded))
                                 .foregroundStyle(AppColors.textPrimary)
                             if let assist = event.detail, !assist.isEmpty {
                                 Text(assist)
-                                    .font(.system(size: 10, design: .rounded))
+                                    .font(.system(size: 9, design: .rounded))
                                     .foregroundStyle(AppColors.textTertiary)
                             }
                         }
@@ -410,15 +411,17 @@ struct MatchDetailView: View {
                         Spacer()
 
                         Text(event.type.rawValue.capitalized)
-                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .font(.system(size: 9, weight: .medium, design: .rounded))
                             .foregroundStyle(AppColors.textTertiary)
-                            .padding(.horizontal, 6)
+                            .padding(.horizontal, 4)
                             .padding(.vertical, 2)
                             .background(AppColors.surface, in: Capsule())
                     }
-                    .padding(.horizontal, 6)
-                    .padding(.vertical, 4)
-                    Divider().overlay(Color.white.opacity(0.04))
+                    .padding(.horizontal, 4)
+                    .padding(.vertical, 3)
+                    Rectangle()
+                        .fill(Color.white.opacity(0.04))
+                        .frame(height: 0.5)
                 }
             } else {
                 ContentUnavailableView("No Play Data", systemImage: "play.rectangle",
@@ -443,7 +446,7 @@ struct MatchDetailView: View {
 
     private var eventsTab: some View {
         let m = displayMatch
-        return VStack(spacing: 6) {
+        return VStack(spacing: 4) {
             if !m.events.isEmpty {
                 ForEach(m.events.sorted(by: { $0.minute > $1.minute })) { event in
                     commentaryRow(event)
@@ -464,39 +467,39 @@ struct MatchDetailView: View {
                 .fill(eventColor(event.type))
                 .frame(width: 3)
 
-            VStack(alignment: .leading, spacing: 3) {
-                HStack(spacing: 6) {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack(spacing: 4) {
                     Text("\(event.minute)'")
-                        .font(.system(size: 11, weight: .bold, design: .rounded))
+                        .font(.system(size: 10, weight: .bold, design: .rounded))
                         .foregroundStyle(eventColor(event.type))
                     Image(systemName: event.type.icon)
-                        .font(.system(size: 10))
+                        .font(.system(size: 9))
                         .foregroundStyle(eventColor(event.type))
                     Text(event.type.label)
-                        .font(.system(size: 10, weight: .semibold, design: .rounded))
+                        .font(.system(size: 9, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                     Spacer()
                     Text(teamName)
-                        .font(.system(size: 10, weight: .medium, design: .rounded))
+                        .font(.system(size: 9, weight: .medium, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                 }
 
                 Text(commentaryText(event, teamName: teamName))
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundStyle(AppColors.textPrimary)
                     .fixedSize(horizontal: false, vertical: true)
 
                 if let detail = event.detail, !detail.isEmpty {
                     Text("Assist: \(detail)")
-                        .font(.system(size: 10, design: .rounded))
+                        .font(.system(size: 9, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                 }
             }
-            .padding(.leading, 8)
-            .padding(.vertical, 6)
-            .padding(.trailing, 8)
+            .padding(.leading, 6)
+            .padding(.vertical, 4)
+            .padding(.trailing, 6)
         }
-        .background(AppColors.surface.opacity(0.5), in: RoundedRectangle(cornerRadius: 8, style: .continuous))
+        .background(AppColors.surface.opacity(0.5), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
 
     private func commentaryText(_ event: MatchEvent, teamName: String) -> String {
@@ -527,29 +530,29 @@ struct MatchDetailView: View {
     private func eventRow(_ event: MatchEvent) -> some View {
         let m = displayMatch
         let isHome = event.teamId == m.homeTeam.id || event.teamId == "home"
-        return HStack(spacing: 8) {
+        return HStack(spacing: 6) {
             if !isHome { Spacer() }
             Text("\(event.minute)'")
-                .font(.system(size: 11, weight: .bold, design: .rounded))
+                .font(.system(size: 10, weight: .bold, design: .rounded))
                 .foregroundStyle(AppColors.textTertiary)
-                .frame(width: 28)
+                .frame(width: 24)
             Image(systemName: event.type.icon)
-                .font(.system(size: 11))
+                .font(.system(size: 10))
                 .foregroundStyle(eventColor(event.type))
             VStack(alignment: isHome ? .leading : .trailing, spacing: 1) {
                 Text(event.playerName)
-                    .font(.system(size: 12, weight: .medium, design: .rounded))
+                    .font(.system(size: 11, weight: .medium, design: .rounded))
                     .foregroundStyle(AppColors.textPrimary)
                 if let detail = event.detail, !detail.isEmpty {
                     Text(event.type == .substitution ? "for \(detail)" : "Ast. \(detail)")
-                        .font(.system(size: 10, design: .rounded))
+                        .font(.system(size: 9, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                 }
             }
             if isHome { Spacer() }
         }
-        .padding(.vertical, 4)
-        .padding(.horizontal, 8)
+        .padding(.vertical, 3)
+        .padding(.horizontal, 6)
         .background(AppColors.surface.opacity(0.5), in: RoundedRectangle(cornerRadius: 6, style: .continuous))
     }
 

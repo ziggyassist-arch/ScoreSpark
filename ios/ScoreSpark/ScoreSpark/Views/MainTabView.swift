@@ -77,43 +77,43 @@ struct MainTabView: View {
         .animation(.easeOut(duration: 0.25), value: showMenu)
     }
 
-    // MARK: - Header Bar (compact 32pt)
+    // MARK: - Header Bar (compact 32pt max, logo 20px)
 
     private var headerBar: some View {
-        HStack {
+        HStack(spacing: 0) {
             HStack(spacing: 0) {
                 Text("Score")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(.white)
                 Image(systemName: "bolt.fill")
-                    .font(.system(size: 9, weight: .bold))
+                    .font(.system(size: 8, weight: .bold))
                     .foregroundStyle(Color(hex: "F5C518"))
                     .padding(.horizontal, 1)
                 Text("Spark")
-                    .font(.system(size: 16, weight: .bold, design: .rounded))
+                    .font(.system(size: 14, weight: .bold, design: .rounded))
                     .foregroundStyle(Color(hex: "9DCAED"))
             }
             Spacer()
-            HStack(spacing: 12) {
+            HStack(spacing: 8) {
                 Button { showSearch = true } label: {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
                 Button { showSettings = true } label: {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
                 Button { showMenu = true } label: {
                     Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
             }
         }
         .padding(.horizontal, 6)
-        .frame(height: 28)
+        .frame(height: 32)
     }
 
     // MARK: - Search Sheet
@@ -122,21 +122,21 @@ struct MainTabView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if searchText.isEmpty {
-                    VStack(spacing: 8) {
+                    VStack(spacing: 6) {
                         Spacer()
                         Image(systemName: "magnifyingglass")
-                            .font(.system(size: 32))
+                            .font(.system(size: 28))
                             .foregroundStyle(AppColors.textTertiary)
                         Text("Search teams, leagues, or matches")
-                            .font(.system(size: 13, design: .rounded))
+                            .font(.system(size: 12, design: .rounded))
                             .foregroundStyle(AppColors.textTertiary)
                         Spacer()
                     }
                 } else {
                     Text("Search results for \"\(searchText)\"")
-                        .font(.system(size: 13, design: .rounded))
+                        .font(.system(size: 12, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
-                        .padding(12)
+                        .padding(8)
                     Spacer()
                 }
             }
@@ -164,24 +164,24 @@ struct MainTabView: View {
             HStack {
                 HStack(spacing: 0) {
                     Text("Score")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundStyle(.white)
                     Image(systemName: "bolt.fill")
-                        .font(.system(size: 8, weight: .bold))
+                        .font(.system(size: 7, weight: .bold))
                         .foregroundStyle(Color(hex: "F5C518"))
                     Text("Spark")
-                        .font(.system(size: 14, weight: .bold, design: .rounded))
+                        .font(.system(size: 13, weight: .bold, design: .rounded))
                         .foregroundStyle(Color(hex: "9DCAED"))
                 }
                 Spacer()
                 Button { withAnimation { showMenu = false } } label: {
                     Image(systemName: "xmark")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(AppColors.textSecondary)
                 }
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
 
             Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5)
 
@@ -201,7 +201,7 @@ struct MainTabView: View {
                 // Already dark
             }
 
-            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5).padding(.vertical, 4)
+            Rectangle().fill(Color.white.opacity(0.06)).frame(height: 0.5).padding(.vertical, 2)
 
             menuItem(icon: "info.circle.fill", label: "About ScoreSpark", color: AppColors.textSecondary) {
                 showMenu = false
@@ -213,12 +213,12 @@ struct MainTabView: View {
             Spacer()
 
             Text("v1.0.0")
-                .font(.system(size: 10, design: .rounded))
+                .font(.system(size: 9, design: .rounded))
                 .foregroundStyle(AppColors.textTertiary)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 8)
+                .padding(.horizontal, 8)
+                .padding(.bottom, 4)
         }
-        .frame(width: 260)
+        .frame(width: 240)
         .frame(maxHeight: .infinity)
         .background(AppColors.surface)
         .ignoresSafeArea(edges: .vertical)
@@ -226,24 +226,24 @@ struct MainTabView: View {
 
     private func menuItem(icon: String, label: String, color: Color, action: @escaping () -> Void) -> some View {
         Button(action: action) {
-            HStack(spacing: 10) {
+            HStack(spacing: 8) {
                 Image(systemName: icon)
-                    .font(.system(size: 13))
+                    .font(.system(size: 12))
                     .foregroundStyle(color)
-                    .frame(width: 20)
+                    .frame(width: 18)
                 Text(label)
-                    .font(.system(size: 14, weight: .medium, design: .rounded))
+                    .font(.system(size: 13, weight: .medium, design: .rounded))
                     .foregroundStyle(AppColors.textPrimary)
                 Spacer()
             }
-            .padding(.horizontal, 16)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }
 
-    // MARK: - Content Tab Bar (compact 26pt)
+    // MARK: - Content Tab Bar (32pt height, 12pt font)
 
     private var contentTabBar: some View {
         HStack(spacing: 0) {
@@ -255,7 +255,7 @@ struct MainTabView: View {
                 } label: {
                     VStack(spacing: 2) {
                         Text(tab.title)
-                            .font(.system(size: 11, weight: selectedContentTab == tab ? .semibold : .regular, design: .rounded))
+                            .font(.system(size: 12, weight: selectedContentTab == tab ? .semibold : .regular, design: .rounded))
                             .foregroundStyle(selectedContentTab == tab ? AppColors.gold : AppColors.textTertiary)
                         Rectangle()
                             .fill(selectedContentTab == tab ? AppColors.gold : Color.clear)
@@ -266,7 +266,7 @@ struct MainTabView: View {
             }
         }
         .padding(.horizontal, 2)
-        .frame(height: 24)
+        .frame(height: 32)
         .background(AppColors.background)
     }
 
@@ -288,7 +288,7 @@ struct MainTabView: View {
                                 image.resizable().scaledToFit()
                             } placeholder: {
                                 Text(sport.emoji)
-                                    .font(.system(size: 13))
+                                    .font(.system(size: 12))
                             }
                             .frame(width: 18, height: 18)
                             .opacity(isSelected ? 1 : 0.4)
@@ -331,21 +331,21 @@ struct TeamsListView: View {
     @State private var teams: [Team] = []
     @State private var isLoading = true
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: 8), count: 4)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: 6), count: 4)
 
     var body: some View {
         ScrollView {
             if isLoading {
                 ProgressView()
                     .tint(AppColors.gold)
-                    .padding(.top, 20)
+                    .padding(.top, 8)
             } else if teams.isEmpty {
                 ContentUnavailableView("No Teams", systemImage: "person.3",
                     description: Text("No teams available for this sport."))
             } else {
-                LazyVGrid(columns: columns, spacing: 8) {
+                LazyVGrid(columns: columns, spacing: 6) {
                     ForEach(teams) { team in
-                        VStack(spacing: 3) {
+                        VStack(spacing: 2) {
                             AsyncImage(url: team.logoURL) { image in
                                 image.resizable().scaledToFit()
                             } placeholder: {
@@ -353,11 +353,11 @@ struct TeamsListView: View {
                                     .fill(Color(hex: team.primaryColor).opacity(0.25))
                                     .overlay {
                                         Text(String(team.shortName.prefix(3)))
-                                            .font(.system(size: 10, weight: .bold))
+                                            .font(.system(size: 9, weight: .bold))
                                             .foregroundStyle(Color(hex: team.primaryColor))
                                     }
                             }
-                            .frame(width: 36, height: 36)
+                            .frame(width: 32, height: 32)
 
                             Text(team.shortName)
                                 .font(.system(size: 9, weight: .medium, design: .rounded))
@@ -366,8 +366,8 @@ struct TeamsListView: View {
                         }
                     }
                 }
-                .padding(.horizontal, 8)
-                .padding(.top, 4)
+                .padding(.horizontal, 6)
+                .padding(.top, 2)
             }
         }
         .task(id: sportSelection.current) {
@@ -407,18 +407,18 @@ struct NewsListView: View {
             if isLoading {
                 ProgressView()
                     .tint(AppColors.gold)
-                    .padding(.top, 20)
+                    .padding(.top, 8)
             } else if articles.isEmpty {
-                VStack(spacing: 6) {
-                    Spacer().frame(height: 16)
+                VStack(spacing: 4) {
+                    Spacer().frame(height: 8)
                     Image(systemName: hasError ? "wifi.slash" : "newspaper")
-                        .font(.system(size: 28))
+                        .font(.system(size: 24))
                         .foregroundStyle(AppColors.textTertiary)
                     Text(hasError ? "Couldn't Load News" : "No News")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppColors.textSecondary)
                     Text(hasError ? "Check your connection and try again." : "No news available right now.")
-                        .font(.system(size: 12, design: .rounded))
+                        .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                     if hasError {
                         Button {
@@ -431,10 +431,10 @@ struct NewsListView: View {
                             }
                         } label: {
                             Text("Retry")
-                                .font(.system(size: 13, weight: .semibold, design: .rounded))
+                                .font(.system(size: 12, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.darkNavy)
-                                .padding(.horizontal, 16)
-                                .padding(.vertical, 6)
+                                .padding(.horizontal, 8)
+                                .padding(.vertical, 4)
                                 .background(AppColors.gold, in: Capsule())
                         }
                         .padding(.top, 2)
@@ -444,22 +444,22 @@ struct NewsListView: View {
                 LazyVStack(spacing: 0) {
                     ForEach(articles) { article in
                         Link(destination: article.url) {
-                            HStack(spacing: 10) {
-                                VStack(alignment: .leading, spacing: 3) {
+                            HStack(spacing: 8) {
+                                VStack(alignment: .leading, spacing: 2) {
                                     Text(article.title)
-                                        .font(.system(size: 13, weight: .medium, design: .rounded))
+                                        .font(.system(size: 12, weight: .medium, design: .rounded))
                                         .foregroundStyle(AppColors.textPrimary)
                                         .lineLimit(2)
                                         .multilineTextAlignment(.leading)
-                                    HStack(spacing: 4) {
+                                    HStack(spacing: 3) {
                                         Text(article.source)
-                                            .font(.system(size: 10, design: .rounded))
+                                            .font(.system(size: 9, design: .rounded))
                                             .foregroundStyle(AppColors.textTertiary)
                                         Text("·")
-                                            .font(.system(size: 10))
+                                            .font(.system(size: 9))
                                             .foregroundStyle(AppColors.textTertiary)
                                         Text(article.timeAgo)
-                                            .font(.system(size: 10, design: .rounded))
+                                            .font(.system(size: 9, design: .rounded))
                                             .foregroundStyle(AppColors.textTertiary)
                                     }
                                 }
@@ -468,26 +468,26 @@ struct NewsListView: View {
                                     AsyncImage(url: imageURL) { image in
                                         image.resizable().scaledToFill()
                                     } placeholder: {
-                                        RoundedRectangle(cornerRadius: 6)
+                                        RoundedRectangle(cornerRadius: 4)
                                             .fill(AppColors.surface)
                                             .overlay {
                                                 Image(systemName: "photo")
-                                                    .font(.system(size: 14))
+                                                    .font(.system(size: 12))
                                                     .foregroundStyle(AppColors.textTertiary.opacity(0.5))
                                             }
                                     }
-                                    .frame(width: 72, height: 48)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
+                                    .frame(width: 64, height: 42)
+                                    .clipShape(RoundedRectangle(cornerRadius: 4))
                                 }
                             }
-                            .padding(.horizontal, 12)
-                            .padding(.vertical, 8)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 6)
                         }
 
                         Rectangle()
                             .fill(Color.white.opacity(0.04))
                             .frame(height: 0.33)
-                            .padding(.horizontal, 12)
+                            .padding(.horizontal, 6)
                     }
                 }
             }

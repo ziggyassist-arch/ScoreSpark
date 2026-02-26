@@ -8,15 +8,16 @@ struct SectionHeader: View {
     var body: some View {
         HStack {
             Label(title, systemImage: icon)
-                .font(.system(size: 14, weight: .semibold, design: .rounded))
+                .font(.system(size: 11, weight: .bold, design: .rounded))
                 .foregroundStyle(AppColors.textPrimary)
             Spacer()
             if action != nil {
                 Button("See All") { action?() }
-                    .font(.system(size: 11, design: .rounded))
+                    .font(.system(size: 10, design: .rounded))
                     .foregroundStyle(AppColors.accent)
             }
         }
-        .padding(.horizontal, 12)
+        .padding(.horizontal, 6)
+        .frame(height: 22)
     }
 }

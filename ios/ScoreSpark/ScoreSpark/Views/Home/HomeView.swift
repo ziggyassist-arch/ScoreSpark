@@ -25,22 +25,22 @@ struct HomeView: View {
                 Image("Logo")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 32, height: 32)
+                    .frame(width: 28, height: 28)
                     .opacity(0.4)
                 Spacer()
             } else if viewModel.groups.isEmpty {
                 Spacer()
-                VStack(spacing: 6) {
+                VStack(spacing: 4) {
                     Image("Logo")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 28, height: 28)
+                        .frame(width: 24, height: 24)
                         .opacity(0.15)
                     Text("No Matches")
-                        .font(.system(size: 14, weight: .semibold, design: .rounded))
+                        .font(.system(size: 13, weight: .semibold, design: .rounded))
                         .foregroundStyle(AppColors.textSecondary)
                     Text("No matches available for \(dateLabel.lowercased()).")
-                        .font(.system(size: 12, design: .rounded))
+                        .font(.system(size: 11, design: .rounded))
                         .foregroundStyle(AppColors.textTertiary)
                 }
                 Spacer()
@@ -58,7 +58,7 @@ struct HomeView: View {
                                 .font(.system(size: 9, weight: .semibold, design: .rounded))
                                 .foregroundStyle(AppColors.livePulse)
                         }
-                        .padding(.horizontal, 6)
+                        .padding(.horizontal, 4)
                         .padding(.vertical, 1)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
@@ -104,7 +104,7 @@ struct HomeView: View {
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(AppColors.textTertiary)
             }
-            .frame(width: 28)
+            .frame(width: 24)
 
             ForEach([-1, 0, 1], id: \.self) { offset in
                 let label: String = switch offset {
@@ -130,9 +130,9 @@ struct HomeView: View {
                     .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(AppColors.textTertiary)
             }
-            .frame(width: 28)
+            .frame(width: 24)
         }
-        .frame(height: 26)
+        .frame(height: 28)
         .background(AppColors.surface.opacity(0.3))
     }
 
@@ -144,7 +144,7 @@ struct HomeView: View {
                 } placeholder: {
                     EmptyView()
                 }
-                .frame(width: 12, height: 12)
+                .frame(width: 14, height: 14)
             }
             Text(league.name)
                 .font(.system(size: 10, weight: .medium))
@@ -160,7 +160,7 @@ struct HomeView: View {
             Spacer()
         }
         .padding(.horizontal, 4)
-        .frame(height: 16)
+        .frame(height: 22)
         .background(AppColors.surface.opacity(0.15))
     }
 
@@ -175,7 +175,7 @@ struct HomeView: View {
     }
 }
 
-// MARK: - FotMob Match Row (compact 34pt — edge to edge)
+// MARK: - FotMob Match Row (compact 38pt — edge to edge)
 
 struct FotMobMatchRow: View {
     let match: Match
@@ -184,7 +184,7 @@ struct FotMobMatchRow: View {
         HStack(spacing: 0) {
             HStack(spacing: 4) {
                 Text(match.homeTeam.shortName)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .trailing)
@@ -194,11 +194,11 @@ struct FotMobMatchRow: View {
             VStack(spacing: 0) {
                 if let hs = match.homeScore, let aws = match.awayScore {
                     Text("\(hs) - \(aws)")
-                        .font(.system(size: 13, weight: .bold).monospacedDigit())
+                        .font(.system(size: 14, weight: .bold).monospacedDigit())
                         .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
                 } else {
                     Text(match.displayTime)
-                        .font(.system(size: 11))
+                        .font(.system(size: 10))
                         .foregroundStyle(AppColors.textTertiary)
                 }
 
@@ -218,19 +218,19 @@ struct FotMobMatchRow: View {
                         .foregroundStyle(AppColors.textTertiary)
                 }
             }
-            .frame(width: 48)
+            .frame(width: 50)
 
             HStack(spacing: 4) {
                 teamBadge(match.awayTeam)
                 Text(match.awayTeam.shortName)
-                    .font(.system(size: 12, weight: .medium))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
         .padding(.horizontal, 4)
-        .frame(height: 34)
+        .frame(height: 38)
     }
 
     private func teamBadge(_ team: Team) -> some View {
@@ -245,6 +245,6 @@ struct FotMobMatchRow: View {
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: 15, height: 15)
+        .frame(width: 18, height: 18)
     }
 }

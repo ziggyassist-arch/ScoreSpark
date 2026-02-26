@@ -1,13 +1,13 @@
 import SwiftUI
 
-/// Compact FotMob-style match row (~44pt height)
+/// Compact FotMob-style match row (~38pt height)
 struct MatchCard: View {
     let match: Match
 
     var body: some View {
         HStack(spacing: 0) {
             // Home team — right-aligned name + badge
-            HStack(spacing: 5) {
+            HStack(spacing: 4) {
                 Text(match.homeTeam.shortName)
                     .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.white)
@@ -24,7 +24,7 @@ struct MatchCard: View {
                         .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
                 } else {
                     Text(match.displayTime)
-                        .font(.system(size: 12))
+                        .font(.system(size: 10))
                         .foregroundStyle(AppColors.textTertiary)
                 }
 
@@ -44,10 +44,10 @@ struct MatchCard: View {
                         .foregroundStyle(AppColors.textTertiary)
                 }
             }
-            .frame(width: 56)
+            .frame(width: 52)
 
             // Away team — badge + left-aligned name
-            HStack(spacing: 5) {
+            HStack(spacing: 4) {
                 teamBadge(match.awayTeam)
                 Text(match.awayTeam.shortName)
                     .font(.system(size: 13, weight: .medium))
@@ -56,8 +56,9 @@ struct MatchCard: View {
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 8)
-        .frame(height: 44)
+        .padding(.horizontal, 6)
+        .padding(.vertical, 4)
+        .frame(height: 38)
     }
 
     private func teamBadge(_ team: Team) -> some View {
@@ -68,11 +69,11 @@ struct MatchCard: View {
                 .fill(Color(hex: team.primaryColor).opacity(0.3))
                 .overlay {
                     Text(String(team.shortName.prefix(2)))
-                        .font(.system(size: 7, weight: .bold))
+                        .font(.system(size: 6, weight: .bold))
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: 20, height: 20)
+        .frame(width: 18, height: 18)
     }
 }
 

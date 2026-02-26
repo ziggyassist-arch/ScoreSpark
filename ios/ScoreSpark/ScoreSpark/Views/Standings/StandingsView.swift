@@ -174,7 +174,7 @@ struct StandingRow: View {
     private var positionColor: Color {
         switch standing.position {
         case 1...4: AppColors.accent
-        case 5...6: Color(hex: "F5C518")
+        case 5...6: AppColors.textSecondary
         case 18...20: .red
         default: AppColors.textSecondary
         }

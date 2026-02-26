@@ -22,45 +22,51 @@ struct MainTabView: View {
     @State private var showSearch = false
     @State private var showMenu = false
     @State private var searchText = ""
+    @State private var selectedMatchId: String?
 
     var body: some View {
         ZStack(alignment: .trailing) {
-            NavigationStack {
-                VStack(spacing: 0) {
-                    headerBar
-                    contentTabBar
+            Color.black.ignoresSafeArea()
+            
+            VStack(spacing: 0) {
+                headerBar
+                contentTabBar
 
-                    Group {
-                        switch selectedContentTab {
-                        case .leagues:
-                            HomeView()
-                        case .standings:
-                            StandingsView()
-                        case .teams:
-                            TeamsListView()
-                        case .news:
-                            NewsListView()
-                        case .following:
-                            FavoritesView()
-                        }
+                Group {
+                    switch selectedContentTab {
+                    case .leagues:
+                        HomeView(selectedMatchId: $selectedMatchId)
+                    case .standings:
+                        StandingsView()
+                    case .teams:
+                        TeamsListView()
+                    case .news:
+                        NewsListView()
+                    case .following:
+                        FavoritesView()
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .clipped()
                 }
-                .background(AppColors.screenBackground)
-                .ignoresSafeArea(.container, edges: .bottom)
-                .toolbar(.hidden, for: .navigationBar)
-                .navigationDestination(for: String.self) { matchId in
-                    MatchDetailView(matchId: matchId)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .clipped()
+
+                sportTabBar
+            }
+            .sheet(isPresented: $showSearch) {
+                searchSheet
+            }
+            .fullScreenCover(isPresented: Binding(
+                get: { selectedMatchId != nil },
+                set: { if !$0 { selectedMatchId = nil } }
+            )) {
+                if let matchId = selectedMatchId {
+                    NavigationStack {
+                        MatchDetailView(matchId: matchId)
+                    }
                 }
-                .navigationDestination(isPresented: $showSettings) {
+            }
+            .fullScreenCover(isPresented: $showSettings) {
+                NavigationStack {
                     SettingsView()
-                }
-                .safeAreaInset(edge: .bottom) {
-                    sportTabBar
-                }
-                .sheet(isPresented: $showSearch) {
-                    searchSheet
                 }
             }
 
@@ -80,41 +86,48 @@ struct MainTabView: View {
     // MARK: - Header Bar (50pt below status bar, FotMob style)
 
     private var headerBar: some View {
-        HStack(spacing: 12) {
-            // Logo/wordmark left-aligned
-            Text("ScoreSpark")
-                .font(.system(size: 22, weight: .bold))
-                .foregroundStyle(.white)
+        HStack(spacing: 8) {
+            HStack(spacing: 0) {
+                Text("Score")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(.white)
+                Text("Spark")
+                    .font(.system(size: 20, weight: .bold))
+                    .foregroundStyle(AppColors.textSecondary)
+                Text(" ⚡")
+                    .font(.system(size: 16))
+                    .foregroundStyle(AppColors.accent)
+            }
+            .fixedSize(horizontal: true, vertical: false)
 
             Spacer()
 
-            // Capsule buttons right side
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Button { showSearch = true } label: {
                     Image(systemName: "magnifyingglass")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
-                        .background(AppColors.elevated, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .frame(width: 32, height: 32)
+                        .background(AppColors.elevated, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 Button { showSettings = true } label: {
                     Image(systemName: "gearshape")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
-                        .background(AppColors.elevated, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .frame(width: 32, height: 32)
+                        .background(AppColors.elevated, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
                 Button { withAnimation { showMenu = true } } label: {
                     Image(systemName: "line.3.horizontal")
-                        .font(.system(size: 14, weight: .medium))
+                        .font(.system(size: 13, weight: .medium))
                         .foregroundStyle(.white)
-                        .frame(width: 36, height: 36)
-                        .background(AppColors.elevated, in: RoundedRectangle(cornerRadius: 18, style: .continuous))
+                        .frame(width: 32, height: 32)
+                        .background(AppColors.elevated, in: RoundedRectangle(cornerRadius: 16, style: .continuous))
                 }
             }
         }
-        .padding(.horizontal, 16)
-        .frame(height: 50)
+        .padding(.horizontal, 12)
+        .frame(height: 44)
     }
 
     // MARK: - Search Sheet
@@ -163,9 +176,17 @@ struct MainTabView: View {
         VStack(alignment: .leading, spacing: 0) {
             // Header
             HStack {
-                Text("ScoreSpark")
-                    .font(.system(size: 18, weight: .bold))
-                    .foregroundStyle(.white)
+                HStack(spacing: 0) {
+                    Text("Score")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(.white)
+                    Text("Spark")
+                        .font(.system(size: 18, weight: .bold))
+                        .foregroundStyle(AppColors.textSecondary)
+                    Text(" ⚡")
+                        .font(.system(size: 14))
+                        .foregroundStyle(AppColors.accent)
+                }
                 Spacer()
                 Button { withAnimation { showMenu = false } } label: {
                     Image(systemName: "xmark")
@@ -274,7 +295,7 @@ struct MainTabView: View {
                 } label: {
                     VStack(spacing: 2) {
                         ZStack {
-                            // Selected pill background (72x48, 16pt radius, 15% green)
+                            // Selected pill background (72x48, 16pt radius, 15% gold)
                             if isSelected {
                                 RoundedRectangle(cornerRadius: 16, style: .continuous)
                                     .fill(AppColors.accent.opacity(0.15))
@@ -304,11 +325,6 @@ struct MainTabView: View {
             }
         }
         .frame(height: 49)
-        .background(
-            AppColors.cardBackground
-                .shadow(color: .black.opacity(0.3), radius: 1, y: -0.5)
-                .ignoresSafeArea(edges: .bottom)
-        )
     }
 
     private func sportLogoURL(_ sport: Sport) -> URL? {

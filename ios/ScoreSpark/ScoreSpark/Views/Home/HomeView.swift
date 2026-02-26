@@ -2,6 +2,7 @@ import SwiftUI
 
 struct HomeView: View {
     @Environment(SportSelection.self) private var sportSelection
+    @Binding var selectedMatchId: String?
     @State private var viewModel = MatchesViewModel()
     @State private var selectedDateOffset = 0
 
@@ -71,19 +72,18 @@ struct HomeView: View {
                                 .font(.system(size: 11, weight: .bold))
                                 .foregroundStyle(AppColors.accent)
                         }
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 4)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 2)
                         .frame(maxWidth: .infinity, alignment: .leading)
                     }
 
-                    // League section cards
-                    LazyVStack(spacing: 8) {
+                    LazyVStack(spacing: 4) {
                         ForEach(viewModel.groups) { group in
                             leagueCard(group)
                         }
                     }
-                    .padding(.top, 8)
-                    .padding(.bottom, 16)
+                    .padding(.top, 4)
+                    .padding(.bottom, 8)
                 }
             }
         }
@@ -104,19 +104,18 @@ struct HomeView: View {
     private var datePickerBar: some View {
         ScrollViewReader { proxy in
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: 20) {
+                HStack(spacing: 16) {
                     ForEach(dateRange, id: \.self) { offset in
                         Button {
                             withAnimation(.snappy) { selectedDateOffset = offset }
                         } label: {
-                            VStack(spacing: 4) {
+                            VStack(spacing: 2) {
                                 Text(dateString(for: offset))
-                                    .font(.system(size: 15, weight: selectedDateOffset == offset ? .bold : .regular))
+                                    .font(.system(size: 13, weight: selectedDateOffset == offset ? .bold : .regular))
                                     .foregroundStyle(selectedDateOffset == offset ? .white : AppColors.textSecondary)
 
-                                // 2pt white underline indicator
                                 Rectangle()
-                                    .fill(selectedDateOffset == offset ? .white : Color.clear)
+                                    .fill(selectedDateOffset == offset ? AppColors.accent : Color.clear)
                                     .frame(height: 2)
                             }
                         }
@@ -125,7 +124,7 @@ struct HomeView: View {
                 }
                 .padding(.horizontal, 16)
             }
-            .frame(height: 44)
+            .frame(height: 36)
             .background(AppColors.screenBackground)
             .onAppear {
                 proxy.scrollTo(0, anchor: .center)
@@ -140,56 +139,56 @@ struct HomeView: View {
 
     private func leagueCard(_ group: LeagueGroup) -> some View {
         VStack(spacing: 0) {
-            // League header row: 52pt height
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 if let url = leagueLogoURL(for: group.league) {
                     AsyncImage(url: url) { image in
                         image.resizable().scaledToFit()
                     } placeholder: {
                         EmptyView()
                     }
-                    .frame(width: 28, height: 28)
+                    .frame(width: 20, height: 20)
                 }
                 Text(group.league.name)
-                    .font(.system(size: 15, weight: .semibold))
+                    .font(.system(size: 14, weight: .semibold))
                     .foregroundStyle(.white)
+                    .lineLimit(1)
                 if !group.league.country.isEmpty {
                     Text(group.league.country)
-                        .font(.system(size: 13))
+                        .font(.system(size: 12))
                         .foregroundStyle(AppColors.textSecondary)
+                        .lineLimit(1)
                 }
                 Spacer()
                 Image(systemName: "chevron.right")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(AppColors.textSecondary)
             }
-            .padding(.horizontal, 16)
-            .frame(height: 52)
+            .padding(.horizontal, 12)
+            .frame(height: 40)
 
-            // 0.5pt separator
             Rectangle()
                 .fill(AppColors.separator)
                 .frame(height: 0.5)
 
-            // Match rows
             ForEach(Array(group.matches.enumerated()), id: \.element.id) { index, match in
-                NavigationLink(value: match.id) {
+                Button {
+                    selectedMatchId = match.id
+                } label: {
                     FotMobMatchRow(match: match)
                 }
                 .buttonStyle(.plain)
 
-                // Separator between rows (not after last)
                 if index < group.matches.count - 1 {
                     Rectangle()
                         .fill(AppColors.separator)
                         .frame(height: 0.5)
-                        .padding(.leading, 16)
+                        .padding(.leading, 12)
                 }
             }
         }
         .background(AppColors.cardBackground)
-        .clipShape(RoundedRectangle(cornerRadius: 16, style: .continuous))
-        .padding(.horizontal, 10)
+        .clipShape(RoundedRectangle(cornerRadius: 12, style: .continuous))
+        .padding(.horizontal, 8)
     }
 
     private func leagueLogoURL(for league: League) -> URL? {
@@ -210,58 +209,55 @@ struct FotMobMatchRow: View {
 
     var body: some View {
         HStack(spacing: 0) {
-            // Home team name (right-aligned) + badge
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 Text(match.homeTeam.shortName)
-                    .font(.system(size: 14))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .trailing)
                 teamBadge(match.homeTeam)
             }
 
-            // Center block (60pt fixed width)
-            VStack(spacing: 2) {
+            VStack(spacing: 1) {
                 if let hs = match.homeScore, let aws = match.awayScore {
                     Text("\(hs) - \(aws)")
-                        .font(.system(size: 16, weight: .bold).monospacedDigit())
-                        .foregroundStyle(match.isLive ? AppColors.accent : .white)
+                        .font(.system(size: 15, weight: .bold).monospacedDigit())
+                        .foregroundStyle(match.isLive ? AppColors.livePulse : .white)
                 } else {
                     Text(match.displayTime)
-                        .font(.system(size: 13, weight: .medium))
+                        .font(.system(size: 12, weight: .medium))
                         .foregroundStyle(.white)
                 }
 
                 if match.isLive {
-                    HStack(spacing: 3) {
+                    HStack(spacing: 2) {
                         Circle()
-                            .fill(AppColors.accent)
+                            .fill(AppColors.livePulse)
                             .frame(width: 4, height: 4)
                             .modifier(PulseModifier())
                         Text(match.displayTime)
-                            .font(.system(size: 11, weight: .semibold))
-                            .foregroundStyle(AppColors.accent)
+                            .font(.system(size: 10, weight: .semibold))
+                            .foregroundStyle(AppColors.livePulse)
                     }
                 } else if match.status == .finished {
                     Text("FT")
-                        .font(.system(size: 11))
+                        .font(.system(size: 10))
                         .foregroundStyle(AppColors.textSecondary)
                 }
             }
-            .frame(width: 60)
+            .frame(width: 56)
 
-            // Away badge + name (left-aligned)
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 teamBadge(match.awayTeam)
                 Text(match.awayTeam.shortName)
-                    .font(.system(size: 14))
+                    .font(.system(size: 13, weight: .medium))
                     .foregroundStyle(.white)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
         }
-        .padding(.horizontal, 16)
-        .frame(height: 80)
+        .padding(.horizontal, 12)
+        .frame(height: 52)
     }
 
     private func teamBadge(_ team: Team) -> some View {
@@ -272,10 +268,10 @@ struct FotMobMatchRow: View {
                 .fill(Color(hex: team.primaryColor).opacity(0.3))
                 .overlay {
                     Text(String(team.shortName.prefix(2)))
-                        .font(.system(size: 9, weight: .bold))
+                        .font(.system(size: 8, weight: .bold))
                         .foregroundStyle(.white)
                 }
         }
-        .frame(width: 30, height: 30)
+        .frame(width: 24, height: 24)
     }
 }

@@ -11,6 +11,7 @@ import type {
 } from "@/lib/api/types/espn";
 import type {
   Match,
+  MatchStats,
   Team,
   Sport,
   SportDetail,
@@ -25,6 +26,44 @@ function parseScore(raw: string | undefined | null): number {
   if (raw == null || raw === "") return 0;
   const n = Number(raw);
   return isNaN(n) ? 0 : n;
+}
+
+/** Look up a stat value from an ESPN statistics array by trying multiple names */
+function findStat(
+  stats: { name: string; displayValue: string }[],
+  ...names: string[]
+): number {
+  for (const name of names) {
+    const s = stats.find((st) => st.name === name);
+    if (s) {
+      const v = parseFloat(s.displayValue);
+      return isNaN(v) ? 0 : v;
+    }
+  }
+  return 0;
+}
+
+/** Extract MatchStats from ESPN competitor statistics for soccer */
+function extractSoccerStats(
+  home: ESPNCompetitor,
+  away: ESPNCompetitor
+): MatchStats | undefined {
+  if (!home.statistics?.length && !away.statistics?.length) return undefined;
+
+  const h = home.statistics ?? [];
+  const a = away.statistics ?? [];
+
+  return {
+    possession: [findStat(h, "possessionPct", "possession"), findStat(a, "possessionPct", "possession")],
+    shots: [findStat(h, "totalShots", "shotsTotal"), findStat(a, "totalShots", "shotsTotal")],
+    shotsOnTarget: [findStat(h, "shotsOnTarget", "shotsOnGoal"), findStat(a, "shotsOnTarget", "shotsOnGoal")],
+    corners: [findStat(h, "wonCorners", "cornerKicks"), findStat(a, "wonCorners", "cornerKicks")],
+    fouls: [findStat(h, "foulsCommitted", "foulsConceded"), findStat(a, "foulsCommitted", "foulsConceded")],
+    yellowCards: [findStat(h, "yellowCards", "yellow"), findStat(a, "yellowCards", "yellow")],
+    redCards: [findStat(h, "redCards", "red"), findStat(a, "redCards", "red")],
+    passes: [findStat(h, "totalPasses", "passesTotal"), findStat(a, "totalPasses", "passesTotal")],
+    passAccuracy: [findStat(h, "passAccuracy", "accuratePasses"), findStat(a, "passAccuracy", "accuratePasses")],
+  };
 }
 
 /** Map ESPN status state to ScoreSpark status */
@@ -271,6 +310,7 @@ export function normalizeESPNSoccerMatch(
     events: [],
     venue: comp.venue?.fullName,
     source: "live",
+    stats: extractSoccerStats(home, away),
   };
 }
 

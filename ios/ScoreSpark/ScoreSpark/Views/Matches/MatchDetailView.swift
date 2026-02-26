@@ -15,9 +15,8 @@ struct MatchDetailView: View {
         if m.league.sport == .soccer {
             return ["Summary", "Stats", "Lineups", "Commentary"]
         }
-        var t = ["Summary"]
-        if m.stats != nil { t.append("Box Score") }
-        return t
+        // American sports: always show all tabs even if data might be empty
+        return ["Summary", "Stats", "Plays"]
     }
 
     var body: some View {
@@ -180,6 +179,7 @@ struct MatchDetailView: View {
             switch selectedTab {
             case 0: americanSummaryTab.padding(8)
             case 1: statsTab.padding(8)
+            case 2: playsTab.padding(8)
             default: EmptyView()
             }
         }
@@ -379,6 +379,63 @@ struct MatchDetailView: View {
                 ContentUnavailableView("No Lineups Available", systemImage: "person.3",
                     description: Text("Lineups will be announced closer to kick-off."))
             }
+        }
+    }
+
+    // MARK: - Plays Tab (American Sports)
+
+    private var playsTab: some View {
+        let m = displayMatch
+        return VStack(spacing: 6) {
+            if !m.events.isEmpty {
+                ForEach(m.events.sorted(by: { $0.minute > $1.minute })) { event in
+                    HStack(spacing: 8) {
+                        // Event icon
+                        Image(systemName: playIcon(event.type.rawValue))
+                            .font(.system(size: 11))
+                            .foregroundStyle(eventColor(event.type))
+                            .frame(width: 20)
+
+                        VStack(alignment: .leading, spacing: 1) {
+                            Text(event.playerName)
+                                .font(.system(size: 12, weight: .medium, design: .rounded))
+                                .foregroundStyle(AppColors.textPrimary)
+                            if let assist = event.detail, !assist.isEmpty {
+                                Text(assist)
+                                    .font(.system(size: 10, design: .rounded))
+                                    .foregroundStyle(AppColors.textTertiary)
+                            }
+                        }
+
+                        Spacer()
+
+                        Text(event.type.rawValue.capitalized)
+                            .font(.system(size: 10, weight: .medium, design: .rounded))
+                            .foregroundStyle(AppColors.textTertiary)
+                            .padding(.horizontal, 6)
+                            .padding(.vertical, 2)
+                            .background(AppColors.surface, in: Capsule())
+                    }
+                    .padding(.horizontal, 6)
+                    .padding(.vertical, 4)
+                    Divider().overlay(Color.white.opacity(0.04))
+                }
+            } else {
+                ContentUnavailableView("No Play Data", systemImage: "play.rectangle",
+                    description: Text("Play-by-play data is not yet available for this match."))
+            }
+        }
+    }
+
+    private func playIcon(_ type: String) -> String {
+        switch type.lowercased() {
+        case "goal", "touchdown", "score": return "flame.fill"
+        case "shot", "fieldgoal", "3pt": return "scope"
+        case "foul", "penalty", "flag": return "exclamationmark.triangle.fill"
+        case "substitution", "sub": return "arrow.left.arrow.right"
+        case "yellowcard", "yellow": return "rectangle.fill"
+        case "redcard", "red": return "rectangle.fill"
+        default: return "circle.fill"
         }
     }
 

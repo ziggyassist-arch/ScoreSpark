@@ -31,6 +31,7 @@ export interface MatchStats {
   redCards: [number, number];
   passes: [number, number];
   passAccuracy: [number, number];
+  xg?: [number, number];
 }
 
 export interface MatchClock {

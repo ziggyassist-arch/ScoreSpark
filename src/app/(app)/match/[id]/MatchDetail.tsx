@@ -408,7 +408,76 @@ function SoccerSummaryTab({ match }: { match: Match }) {
   );
 }
 
+function StatBar({
+  label,
+  values,
+  isPercent,
+  animated,
+}: {
+  label: string;
+  values: [number, number];
+  isPercent?: boolean;
+  animated: boolean;
+}) {
+  const total = values[0] + values[1];
+  const homeWidth = total > 0 ? (values[0] / total) * 100 : 50;
+  const awayWidth = 100 - homeWidth;
+  const homeLead = total > 0 && values[0] / total > 0.6;
+  const awayLead = total > 0 && values[1] / total > 0.6;
+
+  return (
+    <div>
+      <div className="flex items-center justify-between text-sm mb-2">
+        <span
+          className={`tabular-nums font-semibold w-12 text-left ${
+            homeLead ? "text-blue-accent" : "text-white/80"
+          }`}
+        >
+          {values[0]}
+          {isPercent ? "%" : ""}
+        </span>
+        <span className="text-white/50 text-xs tracking-wide flex-1 text-center">
+          {label}
+        </span>
+        <span
+          className={`tabular-nums font-semibold w-12 text-right ${
+            awayLead ? "text-blue-accent" : "text-white/80"
+          }`}
+        >
+          {values[1]}
+          {isPercent ? "%" : ""}
+        </span>
+      </div>
+      <div className="flex h-2 gap-1">
+        <div className="flex-1 flex justify-end">
+          <div
+            className={`h-full rounded-full transition-all duration-700 ease-out ${
+              homeLead ? "bg-blue-accent" : "bg-white/25"
+            }`}
+            style={{ width: animated ? `${homeWidth}%` : "0%" }}
+          />
+        </div>
+        <div className="flex-1">
+          <div
+            className={`h-full rounded-full transition-all duration-700 ease-out ${
+              awayLead ? "bg-blue-accent" : "bg-white/25"
+            }`}
+            style={{ width: animated ? `${awayWidth}%` : "0%" }}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function SoccerStatsTab({ match }: { match: Match }) {
+  const [animated, setAnimated] = useState(false);
+
+  useEffect(() => {
+    const timer = requestAnimationFrame(() => setAnimated(true));
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
   if (!match.stats) {
     return (
       <div className="text-center py-12 text-white/30">
@@ -418,52 +487,159 @@ function SoccerStatsTab({ match }: { match: Match }) {
   }
 
   const stats = match.stats;
-  const statRows: { label: string; values: [number, number] }[] = [
-    { label: "Possession", values: stats.possession },
-    { label: "Shots", values: stats.shots },
-    { label: "Shots on Target", values: stats.shotsOnTarget },
-    { label: "Corners", values: stats.corners },
-    { label: "Fouls", values: stats.fouls },
-    { label: "Yellow Cards", values: stats.yellowCards },
-    { label: "Red Cards", values: stats.redCards },
-    { label: "Passes", values: stats.passes },
-    { label: "Pass Accuracy", values: stats.passAccuracy },
+
+  const sections: {
+    title: string;
+    rows: { label: string; values: [number, number]; isPercent?: boolean }[];
+  }[] = [
+    {
+      title: "Attacking",
+      rows: [
+        { label: "Shots", values: stats.shots },
+        { label: "Shots on Target", values: stats.shotsOnTarget },
+        { label: "Corners", values: stats.corners },
+      ],
+    },
+    {
+      title: "Passing",
+      rows: [
+        { label: "Passes", values: stats.passes },
+        { label: "Pass Accuracy", values: stats.passAccuracy, isPercent: true },
+      ],
+    },
+    {
+      title: "Discipline",
+      rows: [
+        { label: "Fouls", values: stats.fouls },
+        { label: "Yellow Cards", values: stats.yellowCards },
+        { label: "Red Cards", values: stats.redCards },
+      ],
+    },
   ];
 
-  return (
-    <div className="space-y-4">
-      {statRows.map((row) => {
-        const total = row.values[0] + row.values[1];
-        const homeWidth = total > 0 ? (row.values[0] / total) * 100 : 50;
-        const isPercent =
-          row.label === "Possession" || row.label === "Pass Accuracy";
+  // Possession bar percentages
+  const possHome = stats.possession[0];
+  const possAway = stats.possession[1];
+  const possHomeLead = possHome > possAway;
+  const possAwayLead = possAway > possHome;
 
-        return (
-          <div key={row.label}>
-            <div className="flex justify-between text-sm mb-1.5">
-              <span className="text-white/80 tabular-nums font-medium">
-                {row.values[0]}
-                {isPercent ? "%" : ""}
-              </span>
-              <span className="text-white/40 text-xs">{row.label}</span>
-              <span className="text-white/80 tabular-nums font-medium">
-                {row.values[1]}
-                {isPercent ? "%" : ""}
-              </span>
-            </div>
-            <div className="flex h-1.5 rounded-full overflow-hidden gap-0.5">
+  return (
+    <div className="space-y-6">
+      {/* xG hero stat */}
+      {stats.xg && (
+        <div className="rounded-xl bg-white/5 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span
+              className={`text-2xl font-bold tabular-nums ${
+                stats.xg[0] > stats.xg[1] ? "text-amber-400" : "text-white/80"
+              }`}
+            >
+              {stats.xg[0].toFixed(1)}
+            </span>
+            <span className="text-amber-400/80 text-xs font-bold tracking-widest uppercase">
+              Expected Goals
+            </span>
+            <span
+              className={`text-2xl font-bold tabular-nums ${
+                stats.xg[1] > stats.xg[0] ? "text-amber-400" : "text-white/80"
+              }`}
+            >
+              {stats.xg[1].toFixed(1)}
+            </span>
+          </div>
+          <div className="flex h-2.5 gap-1">
+            <div className="flex-1 flex justify-end">
               <div
-                className="bg-blue-accent/60 rounded-full transition-all duration-500"
-                style={{ width: `${homeWidth}%` }}
+                className={`h-full rounded-full transition-all duration-700 ease-out ${
+                  stats.xg[0] >= stats.xg[1] ? "bg-amber-400" : "bg-amber-400/30"
+                }`}
+                style={{
+                  width: animated
+                    ? `${
+                        stats.xg[0] + stats.xg[1] > 0
+                          ? (stats.xg[0] / (stats.xg[0] + stats.xg[1])) * 100
+                          : 50
+                      }%`
+                    : "0%",
+                }}
               />
+            </div>
+            <div className="flex-1">
               <div
-                className="bg-white/20 rounded-full transition-all duration-500"
-                style={{ width: `${100 - homeWidth}%` }}
+                className={`h-full rounded-full transition-all duration-700 ease-out ${
+                  stats.xg[1] >= stats.xg[0] ? "bg-amber-400" : "bg-amber-400/30"
+                }`}
+                style={{
+                  width: animated
+                    ? `${
+                        stats.xg[0] + stats.xg[1] > 0
+                          ? (stats.xg[1] / (stats.xg[0] + stats.xg[1])) * 100
+                          : 50
+                      }%`
+                    : "0%",
+                }}
               />
             </div>
           </div>
-        );
-      })}
+        </div>
+      )}
+
+      {/* Possession hero stat */}
+      <div className="rounded-xl bg-white/5 p-4">
+        <div className="flex items-center justify-between mb-3">
+          <span
+            className={`text-xl font-bold tabular-nums ${
+              possHomeLead ? "text-blue-accent" : "text-white/60"
+            }`}
+          >
+            {possHome}%
+          </span>
+          <span className="text-white/50 text-xs font-bold tracking-widest uppercase">
+            Possession
+          </span>
+          <span
+            className={`text-xl font-bold tabular-nums ${
+              possAwayLead ? "text-blue-accent" : "text-white/60"
+            }`}
+          >
+            {possAway}%
+          </span>
+        </div>
+        <div className="flex h-2.5 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all duration-700 ease-out ${
+              possHomeLead ? "bg-blue-accent" : "bg-blue-accent/40"
+            }`}
+            style={{ width: animated ? `${possHome}%` : "0%" }}
+          />
+          <div
+            className={`h-full transition-all duration-700 ease-out ${
+              possAwayLead ? "bg-blue-accent" : "bg-white/20"
+            }`}
+            style={{ width: animated ? `${possAway}%` : "0%" }}
+          />
+        </div>
+      </div>
+
+      {/* Grouped stat sections */}
+      {sections.map((section) => (
+        <div key={section.title}>
+          <h4 className="text-[10px] font-bold tracking-[0.2em] uppercase text-white/30 mb-3">
+            {section.title}
+          </h4>
+          <div className="space-y-4">
+            {section.rows.map((row) => (
+              <StatBar
+                key={row.label}
+                label={row.label}
+                values={row.values}
+                isPercent={row.isPercent}
+                animated={animated}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }

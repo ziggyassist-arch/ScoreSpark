@@ -54,6 +54,9 @@ function extractSoccerStats(
   const h = home.statistics ?? [];
   const a = away.statistics ?? [];
 
+  const homeXG = findStat(h, "expectedGoals", "xG", "xGoals");
+  const awayXG = findStat(a, "expectedGoals", "xG", "xGoals");
+
   return {
     possession: [findStat(h, "possessionPct", "possession"), findStat(a, "possessionPct", "possession")],
     shots: [findStat(h, "totalShots", "shotsTotal"), findStat(a, "totalShots", "shotsTotal")],
@@ -64,6 +67,7 @@ function extractSoccerStats(
     redCards: [findStat(h, "redCards", "red"), findStat(a, "redCards", "red")],
     passes: [findStat(h, "totalPasses", "passesTotal"), findStat(a, "totalPasses", "passesTotal")],
     passAccuracy: [findStat(h, "passAccuracy", "accuratePasses"), findStat(a, "passAccuracy", "accuratePasses")],
+    ...(homeXG > 0 || awayXG > 0 ? { xg: [homeXG, awayXG] as [number, number] } : {}),
   };
 }
 

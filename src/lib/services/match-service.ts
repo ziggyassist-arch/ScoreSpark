@@ -157,6 +157,9 @@ function extractStatsFromBoxscore(summary: any): MatchStats | undefined {
     return 0;
   };
 
+  const homeXG = getStat(homeTeam, "expectedGoals", "xG", "xGoals");
+  const awayXG = getStat(awayTeam, "expectedGoals", "xG", "xGoals");
+
   return {
     possession: [getStat(homeTeam, "possessionPct", "possession"), getStat(awayTeam, "possessionPct", "possession")],
     shots: [getStat(homeTeam, "totalShots", "shots"), getStat(awayTeam, "totalShots", "shots")],
@@ -167,6 +170,7 @@ function extractStatsFromBoxscore(summary: any): MatchStats | undefined {
     redCards: [getStat(homeTeam, "redCards"), getStat(awayTeam, "redCards")],
     passes: [getStat(homeTeam, "totalPasses", "passes"), getStat(awayTeam, "totalPasses", "passes")],
     passAccuracy: [getStat(homeTeam, "passAccuracy"), getStat(awayTeam, "passAccuracy")],
+    ...(homeXG > 0 || awayXG > 0 ? { xg: [homeXG, awayXG] as [number, number] } : {}),
   };
 }
 

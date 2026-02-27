@@ -81,9 +81,39 @@ function normalizeSubstitutions(subs: FDSubstitution[], homeTeamId: number): Mat
   }));
 }
 
+function computeClock(fd: FDMatch): { clock?: Match["clock"]; minute?: number } {
+  if (fd.status !== "IN_PLAY" && fd.status !== "PAUSED") return {};
+
+  if (fd.status === "PAUSED") {
+    return { clock: { displayValue: "HT", value: 45 }, minute: 45 };
+  }
+
+  // Calculate elapsed minutes from kickoff
+  const elapsed = Math.floor((Date.now() - new Date(fd.utcDate).getTime()) / 60000);
+
+  // First half: 0-45 min elapsed → show as-is (capped at 45+)
+  // Half-time break is ~15 min, second half starts ~60 min after kickoff
+  // Second half: subtract ~15 min break to get match minute
+  let matchMinute: number;
+  if (elapsed <= 45) {
+    matchMinute = Math.max(1, elapsed);
+  } else if (elapsed <= 60) {
+    // In the halftime window but status is IN_PLAY — likely 45+
+    matchMinute = 45;
+  } else {
+    matchMinute = Math.min(90, elapsed - 15);
+  }
+
+  return {
+    clock: { displayValue: `${matchMinute}'`, value: matchMinute },
+    minute: matchMinute,
+  };
+}
+
 export function normalizeMatch(fd: FDMatch): Match {
   // Extract main referee
   const mainRef = fd.referees?.find((r) => r.type === "REFEREE");
+  const { clock, minute } = computeClock(fd);
 
   return {
     id: `fd-${fd.id}`,
@@ -95,7 +125,8 @@ export function normalizeMatch(fd: FDMatch): Match {
     homeScore: fd.score.fullTime.home,
     awayScore: fd.score.fullTime.away,
     status: mapStatus(fd.status),
-    minute: fd.minute ?? undefined,
+    minute: minute ?? fd.minute ?? undefined,
+    clock,
     startTime: fd.utcDate,
     events: [],
     venue: fd.venue ?? undefined,

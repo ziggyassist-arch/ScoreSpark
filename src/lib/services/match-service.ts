@@ -400,6 +400,26 @@ export async function getMatchDetailById(
           if (aggregate) {
             match.sportDetail = { ...match.sportDetail, aggregate };
           }
+
+          // Extract stats from boxscore
+          const stats = extractStatsFromBoxscore(summary);
+          if (stats) match.stats = stats;
+
+          // Extract htScore from linescores
+          if (summary.header?.competitions?.[0]?.competitors) {
+            const comps = summary.header.competitions[0].competitors;
+            const homeComp = comps.find((c: { homeAway: string }) => c.homeAway === "home");
+            const awayComp = comps.find((c: { homeAway: string }) => c.homeAway === "away");
+            if (homeComp?.linescores?.[0] && awayComp?.linescores?.[0]) {
+              match.sportDetail = {
+                ...match.sportDetail,
+                htScore: {
+                  home: homeComp.linescores[0].value ?? 0,
+                  away: awayComp.linescores[0].value ?? 0,
+                },
+              };
+            }
+          }
         } catch {
           // Events enrichment failed — return match without events
         }
@@ -470,6 +490,25 @@ export async function getMatchDetailById(
             const aggregate = extractAggregateFromESPN(summary);
             if (aggregate) {
               normalizedMatch.sportDetail = { ...normalizedMatch.sportDetail, aggregate };
+            }
+
+            // Extract stats from boxscore
+            const stats = extractStatsFromBoxscore(summary);
+            if (stats) normalizedMatch.stats = stats;
+
+            // Extract htScore from linescores
+            if (comp.competitors) {
+              const homeComp = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "home");
+              const awayComp = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "away");
+              if (homeComp?.linescores?.[0] && awayComp?.linescores?.[0]) {
+                normalizedMatch.sportDetail = {
+                  ...normalizedMatch.sportDetail,
+                  htScore: {
+                    home: homeComp.linescores[0].value ?? 0,
+                    away: awayComp.linescores[0].value ?? 0,
+                  },
+                };
+              }
             }
 
             return { match: normalizedMatch, lineups: null };

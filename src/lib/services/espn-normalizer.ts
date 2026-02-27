@@ -12,6 +12,7 @@ import type {
 import type {
   Match,
   MatchStats,
+  MatchStatusDetail,
   Team,
   Sport,
   SportDetail,
@@ -78,6 +79,24 @@ function normalizeStatus(status: ESPNStatus): MatchStatus {
     default:
       return "upcoming";
   }
+}
+
+/** Map ESPN status to a statusDetail */
+function normalizeStatusDetail(status: ESPNStatus): MatchStatusDetail | undefined {
+  const name = status.type.name;
+  if (status.type.state === "post") {
+    if (name === "STATUS_FINAL_OVERTIME" || name === "STATUS_FINAL_OT") return "aet";
+    if (name === "STATUS_FINAL_PENALTY" || name === "STATUS_FINAL_PEN") return "pen";
+    if (name === "STATUS_POSTPONED") return "postponed";
+    if (name === "STATUS_CANCELED" || name === "STATUS_CANCELLED") return "cancelled";
+    if (name === "STATUS_SUSPENDED") return "suspended";
+    if (name === "STATUS_ABANDONED") return "abandoned";
+    return "ft";
+  }
+  if (name === "STATUS_POSTPONED") return "postponed";
+  if (name === "STATUS_CANCELED" || name === "STATUS_CANCELLED") return "cancelled";
+  if (name === "STATUS_SUSPENDED") return "suspended";
+  return undefined;
 }
 
 /** Build sport-aware clock display */
@@ -238,6 +257,7 @@ export function normalizeESPNMatch(
   const away = comp.competitors.find((c) => c.homeAway === "away")!;
 
   const matchStatus = normalizeStatus(status);
+  const statusDetail = normalizeStatusDetail(status);
   const { league, leagueShort } = leagueOverride ?? getLeagueName(sport);
 
   return {
@@ -250,6 +270,7 @@ export function normalizeESPNMatch(
     homeScore: matchStatus === "upcoming" ? null : parseScore(home.score),
     awayScore: matchStatus === "upcoming" ? null : parseScore(away.score),
     status: matchStatus,
+    statusDetail,
     clock: normalizeClock(status, sport),
     startTime: event.date,
     events: [],
@@ -275,6 +296,7 @@ export function normalizeESPNSoccerMatch(
   const away = comp.competitors.find((c) => c.homeAway === "away")!;
 
   const matchStatus = normalizeStatus(status);
+  const statusDetail = normalizeStatusDetail(status);
 
   // Soccer-specific clock display
   const clock: MatchClock = status.type.state === "in"
@@ -310,6 +332,7 @@ export function normalizeESPNSoccerMatch(
     homeScore: matchStatus === "upcoming" ? null : parseScore(home.score),
     awayScore: matchStatus === "upcoming" ? null : parseScore(away.score),
     status: matchStatus,
+    statusDetail,
     clock,
     startTime: event.date,
     events: [],

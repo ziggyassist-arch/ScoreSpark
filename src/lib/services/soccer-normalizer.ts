@@ -1,4 +1,4 @@
-import type { Match, MatchEvent, MatchStatus, Team, StandingRow, FormResult, Lineup } from "@/lib/types";
+import type { Match, MatchEvent, MatchStatus, MatchStatusDetail, Team, StandingRow, FormResult, Lineup } from "@/lib/types";
 import type {
   FDMatch,
   FDHead2HeadMatch,
@@ -18,8 +18,32 @@ function mapStatus(fdStatus: FDMatchStatus): MatchStatus {
     case "FINISHED":
     case "AWARDED":
       return "finished";
+    case "SUSPENDED":
+      return "live";
+    case "POSTPONED":
+    case "CANCELLED":
+      return "upcoming";
     default:
       return "upcoming";
+  }
+}
+
+function mapStatusDetail(fdStatus: FDMatchStatus, duration: string | undefined): MatchStatusDetail | undefined {
+  switch (fdStatus) {
+    case "POSTPONED":
+      return "postponed";
+    case "CANCELLED":
+      return "cancelled";
+    case "SUSPENDED":
+      return "suspended";
+    case "AWARDED":
+      return "walkover";
+    case "FINISHED":
+      if (duration === "PENALTY_SHOOTOUT") return "pen";
+      if (duration === "EXTRA_TIME") return "aet";
+      return "ft";
+    default:
+      return undefined;
   }
 }
 
@@ -119,6 +143,8 @@ export function normalizeMatch(fd: FDMatch): Match {
   const htAway = fd.score.halfTime.away;
   const htScore = htHome != null && htAway != null ? { home: htHome, away: htAway } : null;
 
+  const statusDetail = mapStatusDetail(fd.status, fd.score.duration);
+
   return {
     id: `fd-${fd.id}`,
     sport: "soccer",
@@ -129,6 +155,7 @@ export function normalizeMatch(fd: FDMatch): Match {
     homeScore: fd.score.fullTime.home,
     awayScore: fd.score.fullTime.away,
     status: mapStatus(fd.status),
+    statusDetail,
     minute: minute ?? fd.minute ?? undefined,
     clock,
     startTime: fd.utcDate,

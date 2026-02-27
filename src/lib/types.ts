@@ -2,6 +2,8 @@ export type Sport = "soccer" | "nba" | "nfl" | "nhl" | "mlb";
 
 export type MatchStatus = "live" | "upcoming" | "finished";
 
+export type MatchStatusDetail = "ft" | "aet" | "pen" | "postponed" | "cancelled" | "suspended" | "abandoned" | "walkover";
+
 export interface Team {
   id: string;
   name: string;
@@ -79,6 +81,7 @@ export interface Match {
   homeScore: number | null;
   awayScore: number | null;
   status: MatchStatus;
+  statusDetail?: MatchStatusDetail;
   /** @deprecated Use clock.value instead */
   minute?: number;
   clock?: MatchClock;

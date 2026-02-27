@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState, useEffect, useCallback, useRef } from "react";
-import { Match, MatchEvent, Lineup } from "@/lib/types";
+import { Match, MatchEvent, MatchStatusDetail, Lineup } from "@/lib/types";
 import LinescoreTable from "@/components/match-detail/LinescoreTable";
 import TeamStatsView from "@/components/match-detail/TeamStatsView";
 import NFLSituation from "@/components/match-detail/NFLSituation";
@@ -12,6 +12,32 @@ import { generateHypePrimer } from "@/lib/hype-primers";
 import PulseReactions from "@/components/PulseReactions";
 
 type Tab = "summary" | "lineups" | "stats" | "events" | "boxscore" | "h2h" | "plays";
+
+function statusDetailLabel(detail: MatchStatusDetail | undefined): string {
+  switch (detail) {
+    case "aet": return "After Extra Time";
+    case "pen": return "After Penalties";
+    case "postponed": return "Postponed";
+    case "cancelled": return "Cancelled";
+    case "suspended": return "Suspended";
+    case "abandoned": return "Abandoned";
+    case "walkover": return "Walkover";
+    default: return "Full Time";
+  }
+}
+
+function statusDetailBadge(detail: MatchStatusDetail | undefined): { text: string; className: string } {
+  switch (detail) {
+    case "aet": return { text: "AET", className: "text-blue-400/70" };
+    case "pen": return { text: "PEN", className: "text-purple-400/70" };
+    case "postponed": return { text: "Postponed", className: "text-orange-400/80" };
+    case "cancelled": return { text: "Cancelled", className: "text-red-400/80" };
+    case "suspended": return { text: "Suspended", className: "text-orange-400/80" };
+    case "abandoned": return { text: "Abandoned", className: "text-red-400/80" };
+    case "walkover": return { text: "W/O", className: "text-white/40" };
+    default: return { text: "Final", className: "text-white/40" };
+  }
+}
 
 function EventIcon({ type }: { type: MatchEvent["type"] }) {
   switch (type) {
@@ -452,7 +478,7 @@ function EventsTab({ match }: { match: Match }) {
 
         {match.status === "finished" && (
           <div className="text-center pt-3">
-            <span className="text-[10px] text-white/20 uppercase tracking-wider">Full Time</span>
+            <span className="text-[10px] text-white/20 uppercase tracking-wider">{statusDetailLabel(match.statusDetail)}</span>
           </div>
         )}
         {match.status === "live" && (
@@ -505,7 +531,7 @@ function EventsTab({ match }: { match: Match }) {
 
       {match.status === "finished" && (
         <div className="text-center pt-3">
-          <span className="text-[10px] text-white/20 uppercase tracking-wider">Full Time</span>
+          <span className="text-[10px] text-white/20 uppercase tracking-wider">{statusDetailLabel(match.statusDetail)}</span>
         </div>
       )}
       {match.status === "live" && (
@@ -1304,12 +1330,12 @@ export default function MatchDetail({
               </span>
             </div>
           )}
-          {match.status === "finished" && (
-            <span className="text-xs font-semibold text-white/40 px-2.5 py-1 bg-white/5 rounded-full">
-              Final
+          {(match.status === "finished" || match.statusDetail === "postponed" || match.statusDetail === "cancelled") && (
+            <span className={`text-xs font-semibold px-2.5 py-1 bg-white/5 rounded-full ${statusDetailBadge(match.statusDetail).className}`}>
+              {statusDetailBadge(match.statusDetail).text}
             </span>
           )}
-          {match.status === "upcoming" && (
+          {match.status === "upcoming" && !match.statusDetail && (
             <span className="text-xs text-white/40 px-2.5 py-1 bg-white/5 rounded-full">
               {new Date(match.startTime).toLocaleTimeString([], {
                 hour: "2-digit",

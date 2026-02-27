@@ -39,6 +39,27 @@ function formatLiveTime(match: Match): string {
   }
 }
 
+function statusBadgeText(match: Match): { text: string; className: string } {
+  switch (match.statusDetail) {
+    case "aet":
+      return { text: "AET", className: "text-xs font-semibold text-blue-400/70" };
+    case "pen":
+      return { text: "PEN", className: "text-xs font-semibold text-purple-400/70" };
+    case "postponed":
+      return { text: "PPD", className: "text-xs font-semibold text-orange-400/80" };
+    case "cancelled":
+      return { text: "CAN", className: "text-xs font-semibold text-red-400/80" };
+    case "suspended":
+      return { text: "SUS", className: "text-xs font-semibold text-orange-400/80" };
+    case "abandoned":
+      return { text: "ABD", className: "text-xs font-semibold text-red-400/80" };
+    case "walkover":
+      return { text: "W/O", className: "text-xs font-semibold text-white/50" };
+    default:
+      return { text: "FT", className: "text-xs font-semibold text-white/50" };
+  }
+}
+
 function StatusBadge({ match }: { match: Match }) {
   if (match.status === "live") {
     return (
@@ -53,8 +74,9 @@ function StatusBadge({ match }: { match: Match }) {
       </div>
     );
   }
-  if (match.status === "finished") {
-    return <span className="text-xs font-semibold text-white/50">FT</span>;
+  if (match.status === "finished" || match.statusDetail === "postponed" || match.statusDetail === "cancelled") {
+    const { text, className } = statusBadgeText(match);
+    return <span className={className}>{text}</span>;
   }
   const time = new Date(match.startTime);
   return (

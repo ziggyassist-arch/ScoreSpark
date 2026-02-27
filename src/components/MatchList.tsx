@@ -33,6 +33,12 @@ const LEAGUE_LOGOS: Record<string, string> = {
   "Saudi Pro League": "https://a.espncdn.com/i/teamlogos/leagues/500/sau.1.png",
 };
 
+const POPULAR_LEAGUES = [
+  'UEFA Champions League', 'Premier League', 'La Liga', 'Bundesliga',
+  'Serie A', 'Ligue 1', 'MLS', 'Championship', 'UEFA Europa League',
+  'Copa Libertadores', 'Liga MX', 'NBA', 'NFL', 'NHL', 'MLB',
+];
+
 function sortMatches(matches: Match[], favorites: string[]): Match[] {
   const statusOrder: Record<string, number> = { live: 0, upcoming: 1, finished: 2 };
   return [...matches].sort((a, b) => {
@@ -56,12 +62,28 @@ export default function MatchList({ matches }: { matches: Match[] }) {
   const sorted = sortMatches(matches, favorites);
   const grouped = groupMatchesByLeague(sorted);
 
-  // Order leagues: live matches first
-  const leagueOrder = Object.entries(grouped).sort(([, aMatches], [, bMatches]) => {
+  // Order leagues: live first, then popular leagues by priority, then alphabetical
+  const leagueOrder = Object.entries(grouped).sort(([aLeague, aMatches], [bLeague, bMatches]) => {
     const aHasLive = aMatches.some((m) => m.status === "live") ? 0 : 1;
     const bHasLive = bMatches.some((m) => m.status === "live") ? 0 : 1;
-    return aHasLive - bHasLive;
+    if (aHasLive !== bHasLive) return aHasLive - bHasLive;
+
+    const aPriority = POPULAR_LEAGUES.indexOf(aLeague);
+    const bPriority = POPULAR_LEAGUES.indexOf(bLeague);
+    const aIsPopular = aPriority !== -1;
+    const bIsPopular = bPriority !== -1;
+    if (aIsPopular && bIsPopular) return aPriority - bPriority;
+    if (aIsPopular) return -1;
+    if (bIsPopular) return 1;
+
+    return aLeague.localeCompare(bLeague);
   });
+
+  // Find where popular leagues end for the divider
+  const lastPopularIdx = leagueOrder.reduce((last, [league], idx) =>
+    POPULAR_LEAGUES.includes(league) ? idx : last, -1
+  );
+  const hasOtherLeagues = lastPopularIdx < leagueOrder.length - 1 && lastPopularIdx >= 0;
 
   if (matches.length === 0) {
     return (
@@ -80,8 +102,15 @@ export default function MatchList({ matches }: { matches: Match[] }) {
 
   return (
     <div className="space-y-3 animate-slide-up">
-      {leagueOrder.map(([league, leagueMatches]) => (
+      {leagueOrder.map(([league, leagueMatches], idx) => (
         <div key={league}>
+          {hasOtherLeagues && idx === lastPopularIdx + 1 && (
+            <div className="flex items-center gap-2 my-3">
+              <div className="flex-1 h-px bg-white/10" />
+              <span className="text-[9px] font-semibold text-white/25 uppercase tracking-wider">More Leagues</span>
+              <div className="flex-1 h-px bg-white/10" />
+            </div>
+          )}
           <div className="flex items-center gap-1.5 mb-1.5">
             {LEAGUE_LOGOS[league] && (
               // eslint-disable-next-line @next/next/no-img-element

@@ -109,6 +109,210 @@ function GoalScorers({ events, side }: { events: MatchEvent[]; side: "home" | "a
   );
 }
 
+// — Match Timeline —
+
+function MatchTimeline({ events, homeTeam, awayTeam }: { events: MatchEvent[]; homeTeam: string; awayTeam: string }) {
+  if (events.length === 0) return null;
+
+  const maxMinute = Math.max(90, ...events.map((e) => e.minute));
+  // Extend slightly past 90 for added time
+  const timelineEnd = maxMinute > 90 ? maxMinute + 2 : 90;
+
+  // Compute running score at each goal
+  const sortedEvents = [...events].sort((a, b) => a.minute - b.minute);
+  let homeGoals = 0;
+  let awayGoals = 0;
+  const goalScores = new Map<number, string>(); // event index → score string
+  sortedEvents.forEach((e, idx) => {
+    if (e.type === "goal" || e.type === "penalty" || e.type === "own-goal") {
+      if (e.team === "home") homeGoals++;
+      else awayGoals++;
+      goalScores.set(idx, `${homeGoals}-${awayGoals}`);
+    }
+  });
+
+  const minuteMarkers = [0, 15, 30, 45, 60, 75, 90].filter((m) => m <= timelineEnd);
+
+  // Group events by position to handle overlaps
+  const homeEvents = sortedEvents
+    .map((e, idx) => ({ ...e, originalIdx: idx }))
+    .filter((e) => e.team === "home");
+  const awayEvents = sortedEvents
+    .map((e, idx) => ({ ...e, originalIdx: idx }))
+    .filter((e) => e.team === "away");
+
+  const getEventColor = (type: MatchEvent["type"]) => {
+    switch (type) {
+      case "goal": return "bg-live-green";
+      case "penalty": return "bg-live-green";
+      case "own-goal": return "bg-live-red";
+      case "yellow-card": return "bg-yellow-400";
+      case "red-card": return "bg-red-500";
+      case "substitution": return "bg-blue-400";
+      default: return "bg-white/40";
+    }
+  };
+
+  const getEventLabel = (type: MatchEvent["type"]) => {
+    switch (type) {
+      case "goal": return "⚽";
+      case "penalty": return "P";
+      case "own-goal": return "OG";
+      case "yellow-card": return "";
+      case "red-card": return "";
+      case "substitution": return "⇄";
+      default: return "";
+    }
+  };
+
+  const isGoal = (type: MatchEvent["type"]) =>
+    type === "goal" || type === "penalty" || type === "own-goal";
+
+  const renderEvent = (
+    event: MatchEvent & { originalIdx: number },
+    side: "home" | "away"
+  ) => {
+    const leftPct = (event.minute / timelineEnd) * 100;
+    const goal = isGoal(event.type);
+    const score = goalScores.get(event.originalIdx);
+
+    return (
+      <div
+        key={`${side}-${event.originalIdx}`}
+        className="absolute flex flex-col items-center"
+        style={{
+          left: `${leftPct}%`,
+          ...(side === "home"
+            ? { bottom: 0, transform: "translateX(-50%)" }
+            : { top: 0, transform: "translateX(-50%)" }),
+        }}
+      >
+        {side === "home" ? (
+          <>
+            {/* Player name + score */}
+            <div className="flex flex-col items-center mb-0.5">
+              <span className="text-[8px] text-white/50 whitespace-nowrap max-w-[60px] truncate leading-tight">
+                {event.player.split(" ").pop()}
+              </span>
+              {goal && score && (
+                <span className="text-[9px] font-bold text-live-green leading-tight">
+                  {score}
+                </span>
+              )}
+            </div>
+            {/* Event marker */}
+            {goal ? (
+              <div className="w-5 h-5 rounded-full bg-live-green/20 border border-live-green flex items-center justify-center text-[9px]">
+                {getEventLabel(event.type)}
+              </div>
+            ) : (
+              <div
+                className={`${
+                  event.type === "substitution"
+                    ? "w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] text-white"
+                    : "w-2.5 h-3.5 rounded-[1px]"
+                } ${getEventColor(event.type)}`}
+              >
+                {event.type === "substitution" ? getEventLabel(event.type) : ""}
+              </div>
+            )}
+            {/* Connector line */}
+            <div className="w-px h-1.5 bg-white/20" />
+          </>
+        ) : (
+          <>
+            {/* Connector line */}
+            <div className="w-px h-1.5 bg-white/20" />
+            {/* Event marker */}
+            {goal ? (
+              <div className="w-5 h-5 rounded-full bg-live-green/20 border border-live-green flex items-center justify-center text-[9px]">
+                {getEventLabel(event.type)}
+              </div>
+            ) : (
+              <div
+                className={`${
+                  event.type === "substitution"
+                    ? "w-3.5 h-3.5 rounded-full flex items-center justify-center text-[8px] text-white"
+                    : "w-2.5 h-3.5 rounded-[1px]"
+                } ${getEventColor(event.type)}`}
+              >
+                {event.type === "substitution" ? getEventLabel(event.type) : ""}
+              </div>
+            )}
+            {/* Player name + score */}
+            <div className="flex flex-col items-center mt-0.5">
+              {goal && score && (
+                <span className="text-[9px] font-bold text-live-green leading-tight">
+                  {score}
+                </span>
+              )}
+              <span className="text-[8px] text-white/50 whitespace-nowrap max-w-[60px] truncate leading-tight">
+                {event.player.split(" ").pop()}
+              </span>
+            </div>
+          </>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className="bg-white/[0.03] rounded-xl p-3 border border-white/5">
+      {/* Team labels */}
+      <div className="flex justify-between items-center mb-1 px-1">
+        <span className="text-[10px] text-white/40 uppercase tracking-wider">{homeTeam}</span>
+        <span className="text-[10px] text-white/40 uppercase tracking-wider">{awayTeam}</span>
+      </div>
+
+      <div className="relative" style={{ height: "100px" }}>
+        {/* Home events zone (top half) */}
+        <div className="absolute inset-x-0 top-0 h-[40px] px-2">
+          <div className="relative w-full h-full">
+            {homeEvents.map((e) => renderEvent(e, "home"))}
+          </div>
+        </div>
+
+        {/* Timeline bar (center) */}
+        <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 px-2">
+          {/* Background bar */}
+          <div className="h-1 bg-white/10 rounded-full relative">
+            {/* Half-time dashed line */}
+            <div
+              className="absolute top-1/2 -translate-y-1/2 w-px h-6 border-l border-dashed border-white/30"
+              style={{ left: `${(45 / timelineEnd) * 100}%` }}
+            />
+            {/* Minute markers */}
+            {minuteMarkers.map((m) => (
+              <div
+                key={m}
+                className="absolute -bottom-3.5"
+                style={{ left: `${(m / timelineEnd) * 100}%`, transform: "translateX(-50%)" }}
+              >
+                <div className="w-px h-1.5 bg-white/15 mx-auto" />
+                <span className="text-[8px] text-white/25 tabular-nums">{m}</span>
+              </div>
+            ))}
+          </div>
+          {/* HT label */}
+          <div
+            className="absolute -top-3"
+            style={{ left: `${(45 / timelineEnd) * 100}%`, transform: "translateX(-50%)" }}
+          >
+            <span className="text-[8px] text-white/30 font-medium">HT</span>
+          </div>
+        </div>
+
+        {/* Away events zone (bottom half) */}
+        <div className="absolute inset-x-0 bottom-0 h-[40px] px-2">
+          <div className="relative w-full h-full">
+            {awayEvents.map((e) => renderEvent(e, "away"))}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // — Soccer tabs —
 
 function SoccerSummaryTab({ match }: { match: Match }) {
@@ -118,6 +322,16 @@ function SoccerSummaryTab({ match }: { match: Match }) {
 
   return (
     <div className="space-y-4">
+      {/* Visual Timeline */}
+      {match.events.length > 0 && (
+        <MatchTimeline
+          events={match.events}
+          homeTeam={match.homeTeam.shortName}
+          awayTeam={match.awayTeam.shortName}
+        />
+      )}
+
+      {/* Detailed Event List */}
       {match.events.length > 0 ? (
         <div className="space-y-1">
           {match.events.map((event, i) => (

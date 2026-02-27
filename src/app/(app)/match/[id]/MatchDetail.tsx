@@ -389,7 +389,11 @@ function eventAccentColor(type: MatchEvent["type"]): string {
 }
 
 function EventsTab({ match }: { match: Match }) {
-  if (match.events.length === 0) {
+  const commentary = match.sportDetail?.commentary;
+  const hasCommentary = commentary && commentary.length > 0;
+  const hasEvents = match.events.length > 0;
+
+  if (!hasCommentary && !hasEvents) {
     return (
       <div className="text-center py-12 text-white/30">
         <p>No commentary available</p>
@@ -398,6 +402,75 @@ function EventsTab({ match }: { match: Match }) {
     );
   }
 
+  // Full minute-by-minute commentary from ESPN
+  if (hasCommentary) {
+    return (
+      <div className="space-y-1">
+        <div className="flex items-center gap-2 mb-3">
+          <svg className="w-4 h-4 text-white/30" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span className="text-xs font-semibold text-white/30 uppercase tracking-wider">Match Commentary</span>
+        </div>
+        {[...commentary].reverse().map((item, i) => {
+          // Detect if this is a key moment (goal, card, etc.) by checking text
+          const lower = item.text.toLowerCase();
+          const isGoal = lower.includes("goal!") || lower.includes("scores");
+          const isCard = lower.includes("yellow card") || lower.includes("red card");
+          const isSub = lower.includes("substitution");
+          const isKeyMoment = isGoal || isCard || isSub;
+          const accentClass = isGoal
+            ? "border-l-live-green bg-live-green/5"
+            : isCard && lower.includes("red")
+              ? "border-l-live-red bg-live-red/5"
+              : isCard
+                ? "border-l-yellow-400 bg-yellow-400/5"
+                : isSub
+                  ? "border-l-blue-accent bg-blue-accent/5"
+                  : "border-l-transparent";
+
+          return (
+            <div
+              key={i}
+              className={`flex gap-3 py-1.5 px-2 rounded border-l-[3px] ${accentClass} ${isKeyMoment ? "bg-white/[0.03]" : ""}`}
+            >
+              <div className="flex-shrink-0 w-9 text-right">
+                {item.minute ? (
+                  <span className={`text-[11px] font-bold tabular-nums ${isKeyMoment ? "text-white/70" : "text-white/30"}`}>
+                    {item.minute}
+                  </span>
+                ) : (
+                  <span className="text-[11px] text-white/20">--</span>
+                )}
+              </div>
+              <p className={`text-[12px] leading-relaxed min-w-0 ${isKeyMoment ? "text-white/90 font-medium" : "text-white/50"}`}>
+                {item.text}
+              </p>
+            </div>
+          );
+        })}
+
+        {match.status === "finished" && (
+          <div className="text-center pt-3">
+            <span className="text-[10px] text-white/20 uppercase tracking-wider">Full Time</span>
+          </div>
+        )}
+        {match.status === "live" && (
+          <div className="text-center pt-3">
+            <div className="flex items-center justify-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-live-pulse absolute inline-flex h-full w-full rounded-full bg-live-red opacity-75" />
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
+              </span>
+              <span className="text-[10px] text-live-green font-bold uppercase tracking-wider">Live</span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Fallback: event-based commentary (goals, cards, subs only)
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-2 mb-3">
@@ -430,7 +503,6 @@ function EventsTab({ match }: { match: Match }) {
         );
       })}
 
-      {/* Match period markers */}
       {match.status === "finished" && (
         <div className="text-center pt-3">
           <span className="text-[10px] text-white/20 uppercase tracking-wider">Full Time</span>

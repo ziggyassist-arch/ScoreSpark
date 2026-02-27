@@ -67,6 +67,16 @@ function mapKeyEventsToMatchEvents(
   return events.sort((a, b) => a.minute - b.minute);
 }
 
+/** Extract minute-by-minute commentary from ESPN summary response */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractCommentary(summary: any): { minute: string; text: string }[] | undefined {
+  if (!Array.isArray(summary.commentary) || summary.commentary.length === 0) return undefined;
+  return summary.commentary.map((c: { time?: { displayValue?: string }; text?: string }) => ({
+    minute: c.time?.displayValue ?? "",
+    text: c.text ?? "",
+  }));
+}
+
 /**
  * Fetch soccer matches from ESPN for a specific league
  */
@@ -285,6 +295,10 @@ export async function getMatchDetailById(
             const awayId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "away")?.team?.id ?? "";
             match.events = mapKeyEventsToMatchEvents(summary.keyEvents, homeId, awayId);
           }
+          const commentary = extractCommentary(summary);
+          if (commentary) {
+            match.sportDetail = { ...match.sportDetail, commentary };
+          }
         } catch {
           // Events enrichment failed — return match without events
         }
@@ -343,6 +357,12 @@ export async function getMatchDetailById(
                 homeId,
                 awayId
               );
+            }
+
+            // Extract minute-by-minute commentary
+            const commentary = extractCommentary(summary);
+            if (commentary) {
+              normalizedMatch.sportDetail = { ...normalizedMatch.sportDetail, commentary };
             }
 
             return { match: normalizedMatch, lineups: null };

@@ -49,6 +49,8 @@ export interface SportDetail {
   leaders?: { category: string; playerName: string; displayValue: string; teamSide: "home" | "away" }[];
   /** Team stats from scoreboard: [{name, home, away}] */
   teamStats?: { name: string; homeValue: string; awayValue: string }[];
+  /** Minute-by-minute commentary from ESPN summary API */
+  commentary?: { minute: string; text: string }[];
   /** NFL situation */
   situation?: {
     down?: number;

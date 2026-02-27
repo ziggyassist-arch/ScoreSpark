@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Match, MatchEvent, Lineup } from "@/lib/types";
 import LinescoreTable from "@/components/match-detail/LinescoreTable";
 import TeamStatsView from "@/components/match-detail/TeamStatsView";
@@ -1189,13 +1189,71 @@ function getTabsForSport(sport: string, hasStats: boolean, hasLineups: boolean, 
   return tabs;
 }
 
+const POLL_INTERVAL = 30_000;
+
+function useRelativeTime(date: Date) {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, []);
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 5) return "just now";
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}m ago`;
+}
+
 export default function MatchDetail({
-  match,
-  lineups,
+  match: initialMatch,
+  lineups: initialLineups,
 }: {
   match: Match;
   lineups: { home: Lineup; away: Lineup } | null;
 }) {
+  const [match, setMatch] = useState(initialMatch);
+  const [lineups, setLineups] = useState(initialLineups);
+  const [lastUpdated, setLastUpdated] = useState(new Date());
+  const [isPolling, setIsPolling] = useState(false);
+  const matchIdRef = useRef(initialMatch.id);
+
+  // Reset state when navigating to a different match
+  useEffect(() => {
+    if (initialMatch.id !== matchIdRef.current) {
+      matchIdRef.current = initialMatch.id;
+      setMatch(initialMatch);
+      setLineups(initialLineups);
+      setLastUpdated(new Date());
+    }
+  }, [initialMatch, initialLineups]);
+
+  const fetchUpdate = useCallback(async () => {
+    try {
+      setIsPolling(true);
+      const res = await fetch(`/api/v1/matches/${matchIdRef.current}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.match) {
+        setMatch(data.match);
+        if (data.lineups) setLineups(data.lineups);
+        setLastUpdated(new Date());
+      }
+    } catch {
+      // Keep showing last known data
+    } finally {
+      setIsPolling(false);
+    }
+  }, []);
+
+  // Auto-poll when match is live
+  useEffect(() => {
+    if (match.status !== "live") return;
+    const id = setInterval(fetchUpdate, POLL_INTERVAL);
+    return () => clearInterval(id);
+  }, [match.status, fetchUpdate]);
+
+  const relativeTime = useRelativeTime(lastUpdated);
+
   const hasTeamStats = (match.sportDetail?.teamStats?.length ?? 0) > 0;
   const isFDMatch = match.id.startsWith("fd-");
   const tabs = getTabsForSport(match.sport, hasTeamStats, !!lineups, isFDMatch);
@@ -1231,13 +1289,18 @@ export default function MatchDetail({
             {match.league}
           </span>
           {match.status === "live" && (
-            <div className="flex items-center gap-1.5 px-2.5 py-1 bg-live-green/10 rounded-full">
-              <span className="relative flex h-2 w-2">
-                <span className="animate-live-pulse absolute inline-flex h-full w-full rounded-full bg-live-red opacity-75" />
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
-              </span>
-              <span className="text-xs font-bold text-live-green">
-                {match.clock?.displayValue ?? "LIVE"}
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5 px-2.5 py-1 bg-live-green/10 rounded-full">
+                <span className="relative flex h-2 w-2">
+                  <span className="animate-live-pulse absolute inline-flex h-full w-full rounded-full bg-live-red opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-live-red" />
+                </span>
+                <span className="text-xs font-bold text-live-green">
+                  {match.clock?.displayValue ?? "LIVE"}
+                </span>
+              </div>
+              <span className={`text-[10px] transition-colors ${isPolling ? "text-gold-spark" : "text-white/25"}`}>
+                {isPolling ? "Updating..." : relativeTime}
               </span>
             </div>
           )}

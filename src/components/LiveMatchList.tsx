@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { Match, Sport } from "@/lib/types";
 import { useLiveScores } from "@/hooks/useLiveScores";
@@ -52,6 +52,20 @@ interface LiveMatchListProps {
   sport?: Sport;
 }
 
+function useRelativeTime(date: Date, enabled: boolean) {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    if (!enabled) return;
+    const id = setInterval(() => setTick((t) => t + 1), 1000);
+    return () => clearInterval(id);
+  }, [enabled]);
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+  if (seconds < 5) return "just now";
+  if (seconds < 60) return `${seconds}s ago`;
+  const minutes = Math.floor(seconds / 60);
+  return `${minutes}m ago`;
+}
+
 export default function LiveMatchList({ initialMatches, sport }: LiveMatchListProps) {
   const [selectedDate, setSelectedDate] = useState(todayStr());
   const [dateMatches, setDateMatches] = useState<Match[] | null>(null);
@@ -60,7 +74,7 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
   const isToday = selectedDate === todayStr();
 
   // Live polling only active for today's matches
-  const { matches: liveMatches, hasLiveMatches, isPolling } = useLiveScores({
+  const { matches: liveMatches, lastUpdated, hasLiveMatches, isPolling } = useLiveScores({
     initialMatches,
     sport,
     enabled: isToday,
@@ -101,6 +115,7 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
     [sport]
   );
 
+  const relativeTime = useRelativeTime(lastUpdated, isToday && hasLiveMatches);
   const displayMatches = isToday ? liveMatches : (dateMatches ?? []);
   const dateHeader = formatDateHeader(selectedDate);
   const isPast = new Date(selectedDate + "T12:00:00") < new Date(todayStr() + "T12:00:00");
@@ -133,7 +148,7 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
             className={`w-1.5 h-1.5 rounded-full ${isPolling ? "bg-gold-spark" : "bg-live-green"} transition-colors`}
           />
           <span className="text-[10px] text-white/30">
-            {isPolling ? "Updating..." : "Auto-updating every 30s"}
+            {isPolling ? "Updating..." : `Updated ${relativeTime}`}
           </span>
         </div>
       )}

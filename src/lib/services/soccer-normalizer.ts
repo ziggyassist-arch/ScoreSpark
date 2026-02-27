@@ -63,7 +63,16 @@ function competitionShortCode(code: string): string {
 
 function competitionFullName(code: string): string {
   const comp = FREE_TIER_COMPETITIONS.find((c) => c.code === code);
-  return comp?.name ?? code;
+  if (comp) return comp.name;
+
+  // Extra names for competitions returned by the API but not in FREE_TIER list
+  const extraNames: Record<string, string> = {
+    CLI: "Copa Libertadores",
+    BSA: "Brasileirão Série A",
+    WC: "World Cup",
+    EC: "European Championship",
+  };
+  return extraNames[code] ?? code;
 }
 
 function normalizeTeam(fdTeam: { id: number; name: string; shortName: string; tla: string; crest: string }): Team {

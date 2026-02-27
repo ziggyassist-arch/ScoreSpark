@@ -71,8 +71,8 @@ export const ESPN_SOCCER_LEAGUES: Record<string, { slug: string; name: string; c
   KEN: { slug: "ken.1", name: "Kenyan Premier League", country: "Kenya", region: "Africa" },
 
   // === EUROPEAN CUPS ===
-  UCL_ESPN: { slug: "uefa.champions", name: "Champions League", country: "Europe", region: "Cups" },
-  UEL_ESPN: { slug: "uefa.europa", name: "Europa League", country: "Europe", region: "Cups" },
+  UCL: { slug: "uefa.champions", name: "Champions League", country: "Europe", region: "Cups" },
+  UEL: { slug: "uefa.europa", name: "Europa League", country: "Europe", region: "Cups" },
 
   // === SECOND DIVISIONS ===
   ENG2: { slug: "eng.2", name: "Championship", country: "England", region: "Europe" },

@@ -78,8 +78,8 @@ const ESPN_SOCCER_LEAGUE_MAP: Record<string, string> = {
   ghanaian: "GHA",
   kenyan: "KEN",
   // European cups (ESPN versions)
-  "ucl-espn": "UCL_ESPN",
-  "uel-espn": "UEL_ESPN",
+  "ucl-espn": "UCL",
+  "uel-espn": "UEL",
   // Second divisions
   "eng-championship": "ENG2",
   "esp-segunda": "ESP2",

@@ -233,27 +233,117 @@ async function fetchSoccerMatches(date?: string): Promise<Match[]> {
     r.status === "fulfilled" ? r.value : []
   );
 
-  // Deduplicate: when both fd- and ESPN versions exist for the same match,
-  // prefer the ESPN version (richer data: events, stats, commentary).
-  // Only remove an fd- match when a matching ESPN match exists on the same date
-  // AND the ESPN version is at least as complete (has score data, or both upcoming).
-  const espnSigMap = new Map<string, Match>();
-  for (const m of espnMatches) {
-    const dateOnly = m.startTime.slice(0, 10);
-    const sig = `${m.homeTeam.shortName.toLowerCase()}|${m.awayTeam.shortName.toLowerCase()}|${dateOnly}`;
-    espnSigMap.set(sig, m);
+  // --- Enrich stale fd matches with ESPN scores ---
+  // fd returns TIMED status with null scores; after normalizer overrides status
+  // to finished/live, we still need actual scores from ESPN.
+  const fdLeagueShortToESPN: Record<string, string> = {
+    EPL: "eng.1", LAL: "esp.1", BUN: "ger.1", SA: "ita.1", L1: "fra.1", UCL: "uefa.champions",
+  };
+
+  const staleMatches = fdMatches.filter(
+    (m) => (m.status === "finished" || m.status === "live") && m.homeScore == null && m.awayScore == null
+  );
+
+  if (staleMatches.length > 0) {
+    // First: try matching against ESPN matches we already fetched
+    for (const m of staleMatches) {
+      const dateOnly = m.startTime.slice(0, 10);
+      const espnMatch = espnMatches.find((em) => {
+        if (em.startTime.slice(0, 10) !== dateOnly) return false;
+        return (
+          (fuzzyTeamMatch(m.homeTeam.name, em.homeTeam.name) ||
+            m.homeTeam.shortName.toLowerCase() === em.homeTeam.shortName.toLowerCase()) &&
+          (fuzzyTeamMatch(m.awayTeam.name, em.awayTeam.name) ||
+            m.awayTeam.shortName.toLowerCase() === em.awayTeam.shortName.toLowerCase())
+        );
+      });
+      if (espnMatch && espnMatch.homeScore != null) {
+        m.homeScore = espnMatch.homeScore;
+        m.awayScore = espnMatch.awayScore;
+        if (espnMatch.statusDetail) m.statusDetail = espnMatch.statusDetail;
+      }
+    }
+
+    // Second: for remaining un-enriched matches, fetch ESPN scoreboards by league
+    const remaining = staleMatches.filter((m) => m.homeScore == null);
+    if (remaining.length > 0) {
+      const slugsToFetch = new Map<string, Match[]>();
+      for (const m of remaining) {
+        const slug = fdLeagueShortToESPN[m.leagueShort];
+        if (!slug) continue;
+        if (!slugsToFetch.has(slug)) slugsToFetch.set(slug, []);
+        slugsToFetch.get(slug)!.push(m);
+      }
+
+      await Promise.all(
+        Array.from(slugsToFetch.entries()).map(async ([slug, matches]) => {
+          try {
+            const espnDate = matches[0].startTime.slice(0, 10).replace(/-/g, "");
+            const scoreboard = await getESPNSoccerScoreboard(slug, espnDate);
+            for (const m of matches) {
+              const event = scoreboard.events.find((e) => {
+                const comp = e.competitions?.[0];
+                if (!comp) return false;
+                const home = comp.competitors.find((c) => c.homeAway === "home");
+                const away = comp.competitors.find((c) => c.homeAway === "away");
+                if (!home || !away) return false;
+                return (
+                  (fuzzyTeamMatch(m.homeTeam.name, home.team.shortDisplayName) ||
+                    fuzzyTeamMatch(m.homeTeam.name, home.team.displayName) ||
+                    m.homeTeam.shortName.toLowerCase() === home.team.abbreviation.toLowerCase()) &&
+                  (fuzzyTeamMatch(m.awayTeam.name, away.team.shortDisplayName) ||
+                    fuzzyTeamMatch(m.awayTeam.name, away.team.displayName) ||
+                    m.awayTeam.shortName.toLowerCase() === away.team.abbreviation.toLowerCase())
+                );
+              });
+              if (event) {
+                const comp = event.competitions[0];
+                const home = comp.competitors.find((c) => c.homeAway === "home");
+                const away = comp.competitors.find((c) => c.homeAway === "away");
+                if (home) m.homeScore = parseInt(home.score, 10) || 0;
+                if (away) m.awayScore = parseInt(away.score, 10) || 0;
+                const espnState = comp.status?.type?.state;
+                if (espnState === "post") {
+                  m.status = "finished";
+                  const statusName = comp.status?.type?.name;
+                  if (statusName === "STATUS_FINAL_OVERTIME" || statusName === "STATUS_FINAL_OT") {
+                    m.statusDetail = "aet";
+                  } else if (statusName === "STATUS_FINAL_PENALTY" || statusName === "STATUS_FINAL_PEN") {
+                    m.statusDetail = "pen";
+                  } else {
+                    m.statusDetail = "ft";
+                  }
+                }
+              }
+            }
+          } catch {
+            // ESPN enrichment failed — leave fd data as-is
+          }
+        })
+      );
+    }
   }
 
-  const dedupedFd = fdMatches.filter((m) => {
-    const dateOnly = m.startTime.slice(0, 10);
-    const sig = `${m.homeTeam.shortName.toLowerCase()}|${m.awayTeam.shortName.toLowerCase()}|${dateOnly}`;
-    const espnMatch = espnSigMap.get(sig);
+  // --- Deduplicate using fuzzy team name matching ---
+  // When both fd- and ESPN versions exist for the same match,
+  // prefer the ESPN version (richer data: events, stats, commentary).
+  const dedupedFd = fdMatches.filter((fdMatch) => {
+    const fdDate = fdMatch.startTime.slice(0, 10);
+    const espnMatch = espnMatches.find((em) => {
+      if (em.startTime.slice(0, 10) !== fdDate) return false;
+      return (
+        (fuzzyTeamMatch(fdMatch.homeTeam.name, em.homeTeam.name) ||
+          fdMatch.homeTeam.shortName.toLowerCase() === em.homeTeam.shortName.toLowerCase()) &&
+        (fuzzyTeamMatch(fdMatch.awayTeam.name, em.awayTeam.name) ||
+          fdMatch.awayTeam.shortName.toLowerCase() === em.awayTeam.shortName.toLowerCase())
+      );
+    });
     if (!espnMatch) return true; // No ESPN equivalent — keep fd match
 
     // ESPN has live/finished data (score) — prefer ESPN
     if (espnMatch.status === "live" || espnMatch.status === "finished") return false;
     // Both upcoming — prefer ESPN (will have richer data when match starts)
-    if (espnMatch.status === "upcoming" && m.status === "upcoming") return false;
+    if (espnMatch.status === "upcoming" && fdMatch.status === "upcoming") return false;
 
     // Edge case: keep fd match if statuses don't align
     return true;

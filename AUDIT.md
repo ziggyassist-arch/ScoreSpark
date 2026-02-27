@@ -1,65 +1,36 @@
 # ScoreSpark vs FotMob — Gap Audit
 **Date:** 2026-02-27
 
-## Priority 1: CRITICAL (Basic functionality missing)
+## Completed Fixes (deployed to Vercel)
 
-### 1. ⏱ No live match minute/clock on match list
-**FotMob:** Shows "45'+2" or "67'" next to live matches — the single most important live data point.
-**ScoreSpark:** `MatchCard.tsx` line 29-31: Falls back to `match.clock?.displayValue` → `match.clock?.value` → `"LIVE"`. 
-**Problem:** For `fd-` soccer matches, `clock` is never populated by football-data.org API. Shows only "LIVE" with no minute.
-**Fix:** Enrich fd- matches with ESPN clock data, OR calculate elapsed time from `startTime` for fd- matches.
+1. ✅ **Live match minute** — fd- matches show "23'", "67'", "HT" instead of "LIVE"
+2. ✅ **ESPN enrichment** — fd- match details get events/stats/commentary from ESPN for PL/La Liga/Serie A/Bundesliga/Ligue 1/UCL
+3. ✅ **Auto-refresh polling** — 30s polling for live matches, "Updated Xs ago" indicator
+4. ✅ **Date navigation** — FotMob-style 7-day date strip
+5. ✅ **HT score + red card indicators** — Half-time score on cards/detail, tiny red rectangles for red cards
+6. ✅ **Match status variants** — AET, PEN, PPD, CAN, SUS, ABD instead of just "FT"
+7. ✅ **Popular league ordering** — Big 5 + UCL at top, "More Leagues" divider
+8. ✅ **Aggregate scores + team form** — UCL two-leg aggregates, W/D/L form dots
+9. ✅ **Goal scorers in header** — Scorer names grouped by player in match detail header
+10. ✅ **Visual event timeline** — FotMob-style horizontal timeline with events plotted
+11. ✅ **League position + tappable links** — "5th" under team names, league name links to standings
 
-### 2. 🎯 fd- match detail has no events/stats/commentary
-**FotMob:** Every match has events (goals, cards, subs), stats (possession, shots), and commentary.
-**ScoreSpark:** `match-service.ts` `getMatchDetailById()` for fd- matches only calls football-data.org which returns basic score data. No events are mapped, stats are empty, no commentary.
-**Fix:** For fd- matches, cross-reference ESPN to find matching event, fetch ESPN summary for events + stats + commentary.
+## Remaining FotMob Gaps
 
-### 3. 📊 fd- match cards show no score detail
-**FotMob:** Match cards show goal scorers inline (e.g., "Salah 23', 67'").
-**ScoreSpark:** `MatchCard.tsx` line 204+: Shows goal scorers from `match.events` — but fd- matches have empty events array.
-**Fix:** Same as #2 — populate events for fd- matches.
+### HIGH
+- [ ] Match momentum/pressure indicator for live matches
+- [ ] Better upcoming match card (countdown, broadcast info)
+- [ ] Player page (tap player name → career stats)
+- [ ] xG (expected goals) display
 
-### 4. 🔄 No auto-refresh for live data
-**FotMob:** Live matches update every 30-60 seconds automatically.
-**ScoreSpark:** Pages are server-rendered (RSC). No client-side polling or WebSocket for live updates.
-**Fix:** Add client-side polling (setInterval fetch) for live match data, or SSE/WebSocket. Start with simple 30s polling.
+### MEDIUM
+- [ ] Shot map visualization
+- [ ] Search for teams/players/leagues
+- [ ] Notifications/alerts for goals/match start
+- [ ] League filter on scores page (show only PL, only La Liga, etc.)
 
-## Priority 2: HIGH (Expected basic features)
-
-### 5. 📅 No date picker / date navigation
-**FotMob:** Has left/right arrows + calendar to see yesterday's, today's, tomorrow's matches.
-**ScoreSpark:** Only shows today's matches. No date navigation.
-**Fix:** Add date parameter to scores pages + date nav UI.
-
-### 6. 🏆 Match detail: No half-time score indicator
-**FotMob:** Shows "HT 1-0" or similar between-half indicators.
-**ScoreSpark:** No half-time score shown anywhere for soccer.
-**Fix:** Include HT score from ESPN summary or fd API.
-
-### 7. ⚽ Match detail: No shot map
-**FotMob:** Shows visual shot map with xG.
-**ScoreSpark:** No shot map.
-**Fix:** Lower priority — needs detailed shot data API.
-
-### 8. 🔔 Favorites don't affect match list ordering
-**FotMob:** Favorite teams/leagues appear at top.
-**ScoreSpark:** Has favorites feature but doesn't prioritize them in match list.
-**Fix:** Sort favorited matches to top.
-
-## Priority 3: MEDIUM (Polish features)
-
-### 9. Team page has no recent form (W/D/L dots)
-### 10. No "live" sorting — live matches should float to top
-### 11. Standings page needs league aliases (✅ JUST FIXED)
-### 12. No search functionality
-### 13. No match notifications/alerts
-
-## Fix Order (one at a time, verified):
-1. **#1** — Live match minute for fd- matches
-2. **#2** — fd- match detail enrichment (events + stats + commentary)
-3. **#4** — Auto-refresh for live data
-4. **#5** — Date navigation
-5. **#6** — Half-time score
-6. **#3** — (Solved by #2)
-7. **#8** — Favorites ordering
-8. **#10** — Live match sorting
+### LOW
+- [ ] Formation change tracking during match
+- [ ] Referee stats
+- [ ] Weather info for upcoming matches
+- [ ] Social sharing of match cards

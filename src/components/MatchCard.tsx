@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Match } from "@/lib/types";
 import { useFavorites } from "@/lib/favorites";
@@ -60,7 +61,24 @@ function statusBadgeText(match: Match): { text: string; className: string } {
   }
 }
 
+function formatCountdown(ms: number): string | null {
+  if (ms <= 0 || ms > 24 * 60 * 60 * 1000) return null;
+  const totalMin = Math.floor(ms / 60000);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  if (h > 0) return `In ${h}h ${m}m`;
+  return `In ${m}m`;
+}
+
 function StatusBadge({ match }: { match: Match }) {
+  const [now, setNow] = useState(() => Date.now());
+
+  useEffect(() => {
+    if (match.status !== "upcoming") return;
+    const id = setInterval(() => setNow(Date.now()), 60_000);
+    return () => clearInterval(id);
+  }, [match.status]);
+
   if (match.status === "live") {
     return (
       <div className="flex items-center gap-1.5">
@@ -79,6 +97,10 @@ function StatusBadge({ match }: { match: Match }) {
     return <span className={className}>{text}</span>;
   }
   const time = new Date(match.startTime);
+  const countdown = formatCountdown(time.getTime() - now);
+  if (countdown) {
+    return <span className="text-xs font-medium text-emerald-400/70">{countdown}</span>;
+  }
   return (
     <span className="text-xs text-white/40">
       {time.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
@@ -100,6 +122,10 @@ export default function MatchCard({ match }: { match: Match }) {
     }
   };
 
+  const isFeatured = match.sport === "soccer"
+    && match.homeLeaguePosition != null && match.homeLeaguePosition <= 6
+    && match.awayLeaguePosition != null && match.awayLeaguePosition <= 6;
+
   const sportBorderColors: Record<string, string> = {
     soccer: "border-l-sport-soccer/40",
     nba: "border-l-sport-nba/40",
@@ -107,7 +133,9 @@ export default function MatchCard({ match }: { match: Match }) {
     nhl: "border-l-sport-nhl/40",
     mlb: "border-l-sport-mlb/40",
   };
-  const sportBorderColor = sportBorderColors[match.sport] ?? "border-l-sport-nfl/40";
+  const sportBorderColor = isFeatured
+    ? "border-l-amber-400/70"
+    : sportBorderColors[match.sport] ?? "border-l-sport-nfl/40";
 
   return (
     <Link href={`/match/${match.id}`} className="block group" onClick={handleReveal}>
@@ -116,9 +144,12 @@ export default function MatchCard({ match }: { match: Match }) {
       >
         {/* League + Status row */}
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] font-medium text-white/40 uppercase tracking-wide">
-            {match.leagueShort}
-          </span>
+          <div className="flex items-center gap-1">
+            {isFeatured && <span className="text-[10px]" title="Top 6 clash">🔥</span>}
+            <span className="text-[10px] font-medium text-white/40 uppercase tracking-wide">
+              {match.leagueShort}
+            </span>
+          </div>
           <StatusBadge match={match} />
         </div>
 
@@ -141,12 +172,18 @@ export default function MatchCard({ match }: { match: Match }) {
               )}
             </div>
             <span
-              className={`tabular-nums text-base font-bold ml-3 ${
+              className={`tabular-nums font-bold ml-3 ${
+                match.status === "live" ? "text-lg" : "text-base"
+              } ${
                 !revealed ? "blur-sm select-none" :
                 match.status === "live"
-                  ? "text-white"
+                  ? match.homeScore !== null && match.awayScore !== null && match.homeScore > match.awayScore
+                    ? "text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]"
+                    : "text-white/70"
                   : match.status === "finished"
-                  ? "text-white/80"
+                  ? match.homeScore !== null && match.awayScore !== null && match.homeScore > match.awayScore
+                    ? "text-white/90"
+                    : "text-white/60"
                   : "text-white/30"
               }`}
             >
@@ -171,12 +208,18 @@ export default function MatchCard({ match }: { match: Match }) {
               )}
             </div>
             <span
-              className={`tabular-nums text-base font-bold ml-3 ${
+              className={`tabular-nums font-bold ml-3 ${
+                match.status === "live" ? "text-lg" : "text-base"
+              } ${
                 !revealed ? "blur-sm select-none" :
                 match.status === "live"
-                  ? "text-white"
+                  ? match.awayScore !== null && match.homeScore !== null && match.awayScore > match.homeScore
+                    ? "text-white drop-shadow-[0_0_6px_rgba(255,255,255,0.4)]"
+                    : "text-white/70"
                   : match.status === "finished"
-                  ? "text-white/80"
+                  ? match.awayScore !== null && match.homeScore !== null && match.awayScore > match.homeScore
+                    ? "text-white/90"
+                    : "text-white/60"
                   : "text-white/30"
               }`}
             >

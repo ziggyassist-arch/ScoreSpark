@@ -77,6 +77,38 @@ function FormDots({ form }: { form: ("W" | "D" | "L")[] }) {
   );
 }
 
+function GoalScorers({ events, side }: { events: MatchEvent[]; side: "home" | "away" }) {
+  const goals = events.filter(
+    (e) => e.team === side && (e.type === "goal" || e.type === "penalty" || e.type === "own-goal")
+  );
+  if (goals.length === 0) return null;
+
+  const grouped = new Map<string, { minutes: number[]; suffix: string }>();
+  for (const g of goals) {
+    const suffix = g.type === "penalty" ? " (P)" : g.type === "own-goal" ? " (OG)" : "";
+    const key = `${g.player}|${suffix}`;
+    const entry = grouped.get(key);
+    if (entry) {
+      entry.minutes.push(g.minute);
+    } else {
+      grouped.set(key, { minutes: [g.minute], suffix });
+    }
+  }
+
+  const lines = Array.from(grouped.entries()).map(([key, { minutes, suffix }]) => {
+    const name = key.split("|")[0];
+    return `${name} ${minutes.sort((a, b) => a - b).join("', ")}\'${suffix}`;
+  });
+
+  return (
+    <div className={`mt-1 ${side === "home" ? "text-left" : "text-right"}`}>
+      {lines.map((line, i) => (
+        <p key={i} className="text-[10px] text-white/40 leading-tight">{line}</p>
+      ))}
+    </div>
+  );
+}
+
 // — Soccer tabs —
 
 function SoccerSummaryTab({ match }: { match: Match }) {
@@ -1388,6 +1420,9 @@ export default function MatchDetail({
               </p>
             )}
             {match.homeForm && <FormDots form={match.homeForm} />}
+            {match.sport === "soccer" && match.status !== "upcoming" && (
+              <GoalScorers events={match.events} side="home" />
+            )}
           </div>
 
           {/* Score — centered */}
@@ -1445,6 +1480,9 @@ export default function MatchDetail({
               </p>
             )}
             {match.awayForm && <FormDots form={match.awayForm} />}
+            {match.sport === "soccer" && match.status !== "upcoming" && (
+              <GoalScorers events={match.events} side="away" />
+            )}
           </div>
         </div>
       </div>

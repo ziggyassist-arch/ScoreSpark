@@ -593,6 +593,44 @@ export async function getMatchDetailById(
         });
 
         if (espnEvent) {
+          // Update status and scores from ESPN when it has fresher data than FD
+          const espnComp = espnEvent.competitions?.[0];
+          if (espnComp) {
+            const espnState = espnComp.status?.type?.state;
+            const espnStatusName = espnComp.status?.type?.name;
+            const espnHome = espnComp.competitors?.find((c) => c.homeAway === "home");
+            const espnAway = espnComp.competitors?.find((c) => c.homeAway === "away");
+
+            if (espnState === "in") {
+              // ESPN says live — override FD's stale status
+              match.status = "live";
+              if (espnHome) match.homeScore = parseInt(espnHome.score, 10) || 0;
+              if (espnAway) match.awayScore = parseInt(espnAway.score, 10) || 0;
+              match.statusDetail = undefined;
+              const espnClock = espnComp.status?.displayClock;
+              if (espnClock) {
+                const val = parseInt(espnClock, 10) || 0;
+                match.clock = { displayValue: `${val}'`, value: val };
+                match.minute = val;
+              }
+            } else if (espnState === "post") {
+              // ESPN says finished — override FD's stale status
+              match.status = "finished";
+              if (espnHome) match.homeScore = parseInt(espnHome.score, 10) || 0;
+              if (espnAway) match.awayScore = parseInt(espnAway.score, 10) || 0;
+              match.clock = undefined;
+              match.minute = undefined;
+              // Determine statusDetail from ESPN
+              if (espnStatusName === "STATUS_FINAL_OVERTIME" || espnStatusName === "STATUS_FINAL_OT") {
+                match.statusDetail = "aet";
+              } else if (espnStatusName === "STATUS_FINAL_PENALTY" || espnStatusName === "STATUS_FINAL_PEN") {
+                match.statusDetail = "pen";
+              } else {
+                match.statusDetail = "ft";
+              }
+            }
+          }
+
           const summary = await getESPNEventSummary("soccer", espnSlug, espnEvent.id);
 
           // Enrich events (goals, cards, subs)

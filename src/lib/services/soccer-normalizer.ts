@@ -137,13 +137,41 @@ function computeClock(fd: FDMatch): { clock?: Match["clock"]; minute?: number } 
 export function normalizeMatch(fd: FDMatch): Match {
   // Extract main referee
   const mainRef = fd.referees?.find((r) => r.type === "REFEREE");
-  const { clock, minute } = computeClock(fd);
+  let { clock: resolvedClock, minute: resolvedMinute } = computeClock(fd);
+
+  let resolvedStatus = mapStatus(fd.status);
+  let resolvedStatusDetail = mapStatusDetail(fd.status, fd.score.duration);
+
+  // If FD says upcoming (TIMED/SCHEDULED) but kickoff was >15 min ago, override status
+  if (resolvedStatus === "upcoming" && (fd.status === "TIMED" || fd.status === "SCHEDULED")) {
+    const elapsedMin = (Date.now() - new Date(fd.utcDate).getTime()) / 60000;
+    if (elapsedMin > 15) {
+      // More than ~130 min since kickoff → match is almost certainly finished
+      if (elapsedMin > 130) {
+        resolvedStatus = "finished";
+        resolvedStatusDetail = "ft";
+        resolvedClock = undefined;
+        resolvedMinute = undefined;
+      } else {
+        resolvedStatus = "live";
+        // Approximate match minute accounting for ~15 min halftime break
+        let matchMinute: number;
+        if (elapsedMin <= 45) {
+          matchMinute = Math.max(1, Math.floor(elapsedMin));
+        } else if (elapsedMin <= 60) {
+          matchMinute = 45;
+        } else {
+          matchMinute = Math.min(90, Math.floor(elapsedMin - 15));
+        }
+        resolvedClock = { displayValue: `${matchMinute}'`, value: matchMinute };
+        resolvedMinute = matchMinute;
+      }
+    }
+  }
 
   const htHome = fd.score.halfTime.home;
   const htAway = fd.score.halfTime.away;
   const htScore = htHome != null && htAway != null ? { home: htHome, away: htAway } : null;
-
-  const statusDetail = mapStatusDetail(fd.status, fd.score.duration);
 
   // Extract aggregate score for knockout ties (UCL/EL)
   let aggregate: { home: number; away: number } | null = null;
@@ -168,10 +196,10 @@ export function normalizeMatch(fd: FDMatch): Match {
     awayTeam: normalizeTeam(fd.awayTeam),
     homeScore: fd.score.fullTime.home,
     awayScore: fd.score.fullTime.away,
-    status: mapStatus(fd.status),
-    statusDetail,
-    minute: minute ?? fd.minute ?? undefined,
-    clock,
+    status: resolvedStatus,
+    statusDetail: resolvedStatusDetail,
+    minute: resolvedMinute ?? fd.minute ?? undefined,
+    clock: resolvedClock,
     startTime: fd.utcDate,
     events: [],
     venue: fd.venue ?? undefined,

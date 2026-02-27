@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Match, Sport } from "@/lib/types";
 import { useLiveScores } from "@/hooks/useLiveScores";
-import DatePicker from "./DatePicker";
 import MatchList from "./MatchList";
 
 function todayStr(): string {
@@ -50,6 +49,7 @@ function getEmptyDateMessage(sport: Sport | undefined, dateStr: string): string 
 interface LiveMatchListProps {
   initialMatches: Match[];
   sport?: Sport;
+  initialDate?: string;
 }
 
 function useRelativeTime(date: Date, enabled: boolean) {
@@ -66,11 +66,8 @@ function useRelativeTime(date: Date, enabled: boolean) {
   return `${minutes}m ago`;
 }
 
-export default function LiveMatchList({ initialMatches, sport }: LiveMatchListProps) {
-  const [selectedDate, setSelectedDate] = useState(todayStr());
-  const [dateMatches, setDateMatches] = useState<Match[] | null>(null);
-  const [loadingDate, setLoadingDate] = useState(false);
-
+export default function LiveMatchList({ initialMatches, sport, initialDate }: LiveMatchListProps) {
+  const selectedDate = initialDate ?? todayStr();
   const isToday = selectedDate === todayStr();
 
   // Live polling only active for today's matches
@@ -80,55 +77,17 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
     enabled: isToday,
   });
 
-  const handleDateChange = useCallback(
-    async (date: string) => {
-      setSelectedDate(date);
-      const today = todayStr();
-
-      if (date === today) {
-        // Switch back to live data
-        setDateMatches(null);
-        return;
-      }
-
-      // Fetch matches for the selected date
-      setLoadingDate(true);
-      try {
-        const params = new URLSearchParams({ date });
-        if (sport) params.set("sport", sport);
-        const res = await fetch(`/api/v1/matches?${params.toString()}`);
-        if (res.ok) {
-          const data = await res.json();
-          console.log(`[LiveMatchList] Fetched ${data.matches?.length ?? 0} matches for ${date}`);
-          setDateMatches(data.matches ?? []);
-        } else {
-          console.warn(`[LiveMatchList] API returned ${res.status} for date=${date}`);
-          setDateMatches([]);
-        }
-      } catch (err) {
-        console.error("[LiveMatchList] Fetch error:", err);
-        setDateMatches([]);
-      } finally {
-        setLoadingDate(false);
-      }
-    },
-    [sport]
-  );
-
   const relativeTime = useRelativeTime(lastUpdated, isToday && hasLiveMatches);
-  const displayMatches = isToday ? liveMatches : (dateMatches ?? []);
+  const displayMatches = isToday ? liveMatches : initialMatches;
   const dateHeader = formatDateHeader(selectedDate);
   const isPast = new Date(selectedDate + "T12:00:00") < new Date(todayStr() + "T12:00:00");
   const isFuture = new Date(selectedDate + "T12:00:00") > new Date(todayStr() + "T12:00:00");
 
   return (
     <div>
-      {/* Date strip */}
-      <DatePicker selectedDate={selectedDate} onDateChange={handleDateChange} sport={sport} />
-
       {/* Date context header for non-today */}
-      {dateHeader && !loadingDate && (
-        <div className="flex items-center gap-1.5 mt-2 mb-1">
+      {dateHeader && (
+        <div className="flex items-center gap-1.5 mb-2">
           <span className="text-[11px] font-semibold text-white/50">{dateHeader}</span>
           <span className="text-[9px] text-white/20 px-1.5 py-0.5 bg-white/5 rounded-full">
             {isPast ? "Results" : isFuture ? "Schedule" : ""}
@@ -143,7 +102,7 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
 
       {/* Live indicator */}
       {isToday && hasLiveMatches && (
-        <div className="flex items-center gap-1.5 mt-2 mb-2">
+        <div className="flex items-center gap-1.5 mb-2">
           <div
             className={`w-1.5 h-1.5 rounded-full ${isPolling ? "bg-gold-spark" : "bg-live-green"} transition-colors`}
           />
@@ -153,22 +112,9 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
         </div>
       )}
 
-      {/* Loading state for non-today dates */}
-      {loadingDate && (
-        <div className="flex flex-col items-center justify-center py-8">
-          <Image
-            src="/scorespark_white_transparent_bg.png"
-            alt=""
-            width={32}
-            height={32}
-            className="h-8 w-8 object-contain animate-pulse-glow opacity-40"
-          />
-        </div>
-      )}
-
       {/* Match list or contextual empty state */}
-      {!loadingDate && displayMatches.length > 0 && <MatchList matches={displayMatches} />}
-      {!loadingDate && displayMatches.length === 0 && !isToday && (
+      {displayMatches.length > 0 && <MatchList matches={displayMatches} />}
+      {displayMatches.length === 0 && !isToday && (
         <div className="flex flex-col items-center py-10 gap-2">
           <Image
             src="/scorespark_white_transparent_bg.png"
@@ -182,7 +128,7 @@ export default function LiveMatchList({ initialMatches, sport }: LiveMatchListPr
           </p>
         </div>
       )}
-      {!loadingDate && displayMatches.length === 0 && isToday && (
+      {displayMatches.length === 0 && isToday && (
         <MatchList matches={[]} />
       )}
     </div>

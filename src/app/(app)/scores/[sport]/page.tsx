@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { getMatchesForSport } from "@/lib/services/match-service";
 import type { Sport } from "@/lib/types";
 import LeagueBar from "@/components/LeagueBar";
 import LiveMatchList from "@/components/LiveMatchList";
+import DateNav from "@/components/DateNav";
 
 const sportLabels: Record<Sport, string> = {
   soccer: "Soccer",
@@ -26,21 +28,24 @@ export const dynamic = "force-dynamic";
 
 export default async function SportScoresPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ sport: string }>;
+  searchParams: Promise<{ date?: string }>;
 }) {
   const { sport } = await params;
+  const { date } = await searchParams;
 
   if (!validSports.has(sport)) {
     notFound();
   }
 
-  const matches = await getMatchesForSport(sport as Sport);
+  const matches = await getMatchesForSport(sport as Sport, date);
   const label = sportLabels[sport as Sport];
   const liveCount = matches.filter((m) => m.status === "live").length;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-white">{label}</h1>
@@ -51,11 +56,16 @@ export default async function SportScoresPage({
         </p>
       </div>
 
+      {/* Date Navigation */}
+      <Suspense>
+        <DateNav />
+      </Suspense>
+
       {/* Top Leagues — soccer only */}
       {sport === "soccer" && <LeagueBar />}
 
       {/* Match List with live polling */}
-      <LiveMatchList initialMatches={matches} sport={sport as Sport} />
+      <LiveMatchList initialMatches={matches} sport={sport as Sport} initialDate={date} />
     </div>
   );
 }

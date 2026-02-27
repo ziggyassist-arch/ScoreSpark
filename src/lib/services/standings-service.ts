@@ -17,7 +17,9 @@ import type { StandingRow, NBAStandingRow, NHLStandingRow } from "@/lib/types";
 type StandingsResult =
   | { type: "soccer"; rows: StandingRow[] }
   | { type: "nba"; rows: NBAStandingRow[] }
-  | { type: "nhl"; rows: NHLStandingRow[] };
+  | { type: "nhl"; rows: NHLStandingRow[] }
+  | { type: "nfl"; rows: NBAStandingRow[] }
+  | { type: "mlb"; rows: NBAStandingRow[] };
 
 // Map our league IDs to football-data competition codes
 const SOCCER_LEAGUE_MAP: Record<string, CompetitionCode> = {
@@ -324,6 +326,8 @@ export async function getStandingsForLeague(leagueId: string): Promise<Standings
       return { type: "soccer", rows: await fetchESPNSoccerStandings(leagueId) };
 
     // NBA
+    case "nba":
+      return { type: "nba", rows: [...await fetchNBAStandings("east"), ...await fetchNBAStandings("west")] };
     case "nba-east":
       return { type: "nba", rows: await fetchNBAStandings("east") };
     case "nba-west":
@@ -334,16 +338,20 @@ export async function getStandingsForLeague(leagueId: string): Promise<Standings
       return { type: "nhl", rows: await fetchNHLStandings() };
 
     // NFL
+    case "nfl":
+      return { type: "nfl", rows: [...await fetchNFLStandings("afc"), ...await fetchNFLStandings("nfc")] };
     case "nfl-afc":
-      return { type: "nba", rows: await fetchNFLStandings("afc") };
+      return { type: "nfl", rows: await fetchNFLStandings("afc") };
     case "nfl-nfc":
-      return { type: "nba", rows: await fetchNFLStandings("nfc") };
+      return { type: "nfl", rows: await fetchNFLStandings("nfc") };
 
     // MLB
+    case "mlb":
+      return { type: "mlb", rows: [...await fetchMLBStandings("al"), ...await fetchMLBStandings("nl")] };
     case "mlb-al":
-      return { type: "nba", rows: await fetchMLBStandings("al") };
+      return { type: "mlb", rows: await fetchMLBStandings("al") };
     case "mlb-nl":
-      return { type: "nba", rows: await fetchMLBStandings("nl") };
+      return { type: "mlb", rows: await fetchMLBStandings("nl") };
 
     default:
       return { type: "soccer", rows: await fetchSoccerStandings("epl") };

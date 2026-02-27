@@ -459,12 +459,12 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
 }
 
 const SOCCER_LEAGUES = new Set(["epl", "laliga", "bundesliga", "seriea", "ligue1", "ucl", "uel", "eredivisie", "championship", "ligapt"]);
-const MLB_LEAGUES = new Set(["mlb-al", "mlb-nl"]);
-
 type StandingsData =
   | { type: "soccer"; rows: StandingRow[] }
   | { type: "nba"; rows: NBAStandingRow[] }
-  | { type: "nhl"; rows: NHLStandingRow[] };
+  | { type: "nhl"; rows: NHLStandingRow[] }
+  | { type: "nfl"; rows: NBAStandingRow[] }
+  | { type: "mlb"; rows: NBAStandingRow[] };
 
 export default function StandingsView({ league }: { league: string }) {
   const pathname = usePathname();
@@ -545,8 +545,9 @@ export default function StandingsView({ league }: { league: string }) {
       {!loading && data && (
         <div className="bg-card rounded-2xl p-4 border border-white/5">
           {data.type === "soccer" && <SoccerTable standings={data.rows as StandingRow[]} />}
-          {data.type === "nba" && MLB_LEAGUES.has(league) && <MLBTable standings={data.rows as NBAStandingRow[]} />}
-          {data.type === "nba" && !MLB_LEAGUES.has(league) && <NBATable standings={data.rows as NBAStandingRow[]} />}
+          {data.type === "nba" && <NBATable standings={data.rows as NBAStandingRow[]} />}
+          {data.type === "nfl" && <NBATable standings={data.rows as NBAStandingRow[]} />}
+          {data.type === "mlb" && <MLBTable standings={data.rows as NBAStandingRow[]} />}
           {data.type === "nhl" && <NHLTable standings={data.rows as NHLStandingRow[]} />}
         </div>
       )}

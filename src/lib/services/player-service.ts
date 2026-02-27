@@ -35,6 +35,7 @@ const ESPN_SPORT_PATHS: Record<string, string> = {
   nfl: "football/nfl",
   nhl: "hockey/nhl",
   mlb: "baseball/mlb",
+  soccer: "soccer",
 };
 
 /**
@@ -93,7 +94,7 @@ async function fetchSoccerPlayer(id: number): Promise<PlayerProfile | null> {
  * Fetch ESPN player (NBA, NFL, NHL, MLB)
  */
 async function fetchESPNPlayer(
-  sport: "nba" | "nfl" | "nhl" | "mlb",
+  sport: "nba" | "nfl" | "nhl" | "mlb" | "soccer",
   espnId: string
 ): Promise<PlayerProfile | null> {
   const cacheKey = `player:${sport}:${espnId}`;
@@ -191,12 +192,19 @@ export async function getPlayerProfile(
     return fetchSoccerPlayer(fdId);
   }
 
+  // fdp-{id} format (from team squad listings)
+  if (playerId.startsWith("fdp-")) {
+    const fdId = parseInt(playerId.replace("fdp-", ""), 10);
+    if (isNaN(fdId)) return null;
+    return fetchSoccerPlayer(fdId);
+  }
+
   // espn-{sport}-player-{id}
-  const espnMatch = playerId.match(/^espn-(nba|nfl|nhl|mlb)-player-(\d+)$/);
+  const espnMatch = playerId.match(/^espn-(nba|nfl|nhl|mlb|soccer)-player-(\d+)$/);
   if (espnMatch) {
-    const sport = espnMatch[1] as "nba" | "nfl" | "nhl" | "mlb";
+    const sport = espnMatch[1];
     const id = espnMatch[2];
-    return fetchESPNPlayer(sport, id);
+    return fetchESPNPlayer(sport as "nba" | "nfl" | "nhl" | "mlb" | "soccer", id);
   }
 
   return null;

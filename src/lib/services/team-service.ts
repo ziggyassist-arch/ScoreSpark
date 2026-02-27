@@ -1,5 +1,6 @@
 import { config } from "@/lib/config";
 import { cacheGet, cacheSet } from "./cache";
+import { ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
 import type { Team, Sport } from "@/lib/types";
 
 const FD_BASE = config.footballData.baseUrl;
@@ -372,6 +373,15 @@ function parseESPNTeamId(teamId: string): { sport: Sport; espnId: string } | nul
   return { sport: match[1] as Sport, espnId: match[2] };
 }
 
+/** Common ESPN soccer league slugs to try when looking up a team */
+const ESPN_SOCCER_SLUGS = [
+  "eng.1", "esp.1", "ger.1", "ita.1", "fra.1",
+  "usa.1", "mex.1", "arg.1", "bra.1",
+  "uefa.champions", "uefa.europa",
+  ...Object.values(ESPN_SOCCER_LEAGUES).map((l) => l.slug),
+];
+const UNIQUE_SOCCER_SLUGS = [...new Set(ESPN_SOCCER_SLUGS)];
+
 /** Fetch team detail from ESPN API */
 async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
   const parsed = parseESPNTeamId(teamId);
@@ -380,6 +390,11 @@ async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
   const cacheKey = `team-espn:${teamId}`;
   const cached = cacheGet<TeamDetail>(cacheKey);
   if (cached) return cached;
+
+  // For soccer, we need to find the right league slug
+  if (parsed.sport === "soccer") {
+    return getESPNSoccerTeamDetail(teamId, parsed.espnId);
+  }
 
   try {
     const path = ESPN_SPORT_PATHS[parsed.sport];
@@ -403,7 +418,7 @@ async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
           position: { abbreviation: string };
           jersey?: string;
         }) => ({
-          id: `espn-p-${p.id}`,
+          id: `espn-${parsed.sport}-player-${p.id}`,
           name: p.fullName,
           position: p.position?.abbreviation ?? "Unknown",
           shirtNumber: p.jersey ? parseInt(p.jersey, 10) : null,
@@ -437,6 +452,109 @@ async function getESPNTeamDetail(teamId: string): Promise<TeamDetail | null> {
   }
 }
 
+/** Fetch ESPN soccer team detail by trying multiple league slugs */
+async function getESPNSoccerTeamDetail(
+  teamId: string,
+  espnId: string
+): Promise<TeamDetail | null> {
+  const cacheKey = `team-espn-soccer:${teamId}`;
+  const cached = cacheGet<TeamDetail>(cacheKey);
+  if (cached) return cached;
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let teamData: any = null;
+  let foundSlug: string | null = null;
+
+  // Try each league slug until we get a valid team response
+  for (const slug of UNIQUE_SOCCER_SLUGS) {
+    try {
+      const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${slug}/teams/${espnId}`;
+      const res = await fetch(url, { next: { revalidate: 600 } });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.team) {
+          teamData = data.team;
+          foundSlug = slug;
+          break;
+        }
+      }
+    } catch {
+      // Try next slug
+    }
+  }
+
+  if (!teamData) return null;
+
+  // Fetch roster using the league slug that worked
+  let squad: TeamDetail["squad"] = [];
+  if (foundSlug) {
+    try {
+      const rosterUrl = `https://site.api.espn.com/apis/site/v2/sports/soccer/${foundSlug}/teams/${espnId}/roster`;
+      const rosterRes = await fetch(rosterUrl, { next: { revalidate: 600 } });
+      if (rosterRes.ok) {
+        const rosterData = await rosterRes.json();
+        const athletes = rosterData.athletes ?? [];
+        // ESPN soccer returns athletes as flat player objects (each entry IS a player),
+        // unlike NBA/NFL where athletes are grouped: [{position, items: [player, ...]}]
+        const isFlatFormat = athletes.length > 0 && "displayName" in athletes[0] && !("items" in athletes[0]);
+        if (isFlatFormat) {
+          for (const p of athletes) {
+            squad.push({
+              id: `espn-soccer-player-${p.id}`,
+              name: p.displayName ?? "Unknown",
+              position: p.position?.displayName ?? p.position?.abbreviation ?? "Unknown",
+              shirtNumber: typeof p.jersey === "number" ? p.jersey : p.jersey ? parseInt(p.jersey, 10) : null,
+              nationality: p.citizenship ?? undefined,
+            });
+          }
+        } else {
+          for (const group of athletes) {
+            const items = group.items ?? [];
+            for (const p of items) {
+              squad.push({
+                id: `espn-soccer-player-${p.id}`,
+                name: p.fullName ?? p.displayName ?? "Unknown",
+                position: p.position?.abbreviation ?? group.position ?? "Unknown",
+                shirtNumber: p.jersey ? parseInt(p.jersey, 10) : null,
+                nationality: p.citizenship ?? undefined,
+              });
+            }
+          }
+        }
+      }
+    } catch {
+      // Roster fetch failed, continue without it
+    }
+  }
+
+  const record = teamData.record?.items?.[0]?.summary;
+  const nextEvent = teamData.nextEvent?.[0];
+  const competitions: string[] = [];
+  if (teamData.standingSummary) competitions.push(teamData.standingSummary);
+  if (record) competitions.push(`Record: ${record}`);
+  if (nextEvent) {
+    const nextDate = new Date(nextEvent.date).toLocaleDateString();
+    competitions.push(`Next: ${nextEvent.shortName ?? nextEvent.name} (${nextDate})`);
+  }
+
+  const detail: TeamDetail = {
+    id: teamId,
+    name: teamData.displayName,
+    shortName: teamData.shortDisplayName || teamData.abbreviation,
+    badge: teamData.logos?.[0]?.href ?? "",
+    sport: "soccer",
+    venue: teamData.franchise?.venue?.fullName ?? teamData.venue?.fullName,
+    coach: undefined,
+    founded: undefined,
+    colors: teamData.color ? `#${teamData.color}` : undefined,
+    competitions,
+    squad,
+  };
+
+  cacheSet(cacheKey, detail, config.cache.teamTTL);
+  return detail;
+}
+
 /** Fetch recent/upcoming matches for an ESPN team */
 async function getESPNTeamMatches(teamId: string): Promise<{
   id: string;
@@ -456,13 +574,35 @@ async function getESPNTeamMatches(teamId: string): Promise<{
   if (cached) return cached;
 
   try {
-    const path = ESPN_SPORT_PATHS[parsed.sport];
-    const url = `https://site.api.espn.com/apis/site/v2/sports/${path}/teams/${parsed.espnId}/schedule`;
-    const res = await fetch(url, { next: { revalidate: 300 } });
-    if (!res.ok) return [];
+    // For soccer, try multiple league slugs to find the schedule
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let events: any[] = [];
+    if (parsed.sport === "soccer") {
+      for (const slug of UNIQUE_SOCCER_SLUGS) {
+        try {
+          const url = `https://site.api.espn.com/apis/site/v2/sports/soccer/${slug}/teams/${parsed.espnId}/schedule`;
+          const res = await fetch(url, { next: { revalidate: 300 } });
+          if (res.ok) {
+            const data = await res.json();
+            if (data.events?.length) {
+              events = data.events.slice(-10);
+              break;
+            }
+          }
+        } catch {
+          // Try next slug
+        }
+      }
+    } else {
+      const path = ESPN_SPORT_PATHS[parsed.sport];
+      const url = `https://site.api.espn.com/apis/site/v2/sports/${path}/teams/${parsed.espnId}/schedule`;
+      const res = await fetch(url, { next: { revalidate: 300 } });
+      if (!res.ok) return [];
+      const data = await res.json();
+      events = (data.events ?? []).slice(-10);
+    }
 
-    const data = await res.json();
-    const events = (data.events ?? []).slice(-10);
+    if (!events.length) return [];
 
     const matches = events.map((ev: {
       id: string;
@@ -511,7 +651,7 @@ async function getESPNTeamMatches(teamId: string): Promise<{
         date: ev.date,
         competition: parsed.sport.toUpperCase(),
       };
-    }).filter(Boolean);
+    }).filter((m): m is NonNullable<typeof m> => m !== null);
 
     cacheSet(cacheKey, matches, config.cache.matchesTTL);
     return matches;

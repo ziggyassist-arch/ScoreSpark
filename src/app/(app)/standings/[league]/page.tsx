@@ -9,9 +9,19 @@ const validLeagues = new Set([
   "nba-east", "nba-west", "nfl-afc", "nfl-nfc", "nhl", "mlb-al", "mlb-nl",
 ]);
 
+const leagueAliases: Record<string, string> = {
+  'premier-league': 'epl',
+  'la-liga': 'laliga',
+  'serie-a': 'seriea',
+  'ligue-1': 'ligue1',
+  'nba': 'nba-east',
+  'nfl': 'nfl-afc',
+  'mlb': 'mlb-al',
+};
+
 export default function StandingsPage() {
   const params = useParams<{ league: string }>();
-  const league = params.league;
+  const league = leagueAliases[params.league] ?? params.league;
 
   if (!validLeagues.has(league)) {
     notFound();

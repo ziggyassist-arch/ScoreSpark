@@ -5,7 +5,7 @@ import { normalizeMatch, normalizeMatchDetail, normalizeMatchLineups } from "./s
 import { getScoreboard, getESPNSoccerScoreboard, getESPNEventSummary, ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
 import { normalizeESPNMatch, normalizeESPNSoccerMatch } from "./espn-normalizer";
 import { allMatches as mockMatches, sampleLineups as mockLineups } from "@/lib/mock-data";
-import type { Match, MatchEvent, Sport, Lineup } from "@/lib/types";
+import type { Match, MatchEvent, MatchStats, Sport, Lineup } from "@/lib/types";
 import type { ESPNKeyEvent } from "@/lib/api/types/espn";
 
 function todayStr(): string {
@@ -75,6 +75,64 @@ function extractCommentary(summary: any): { minute: string; text: string }[] | u
     minute: c.time?.displayValue ?? "",
     text: c.text ?? "",
   }));
+}
+
+/** Map football-data.org competition codes to ESPN soccer league slugs */
+function fdLeagueToESPN(fdCode: string): string | null {
+  const map: Record<string, string> = {
+    PL: "eng.1",
+    PD: "esp.1",
+    SA: "ita.1",
+    BL1: "ger.1",
+    FL1: "fra.1",
+    CL: "uefa.champions",
+  };
+  return map[fdCode] ?? null;
+}
+
+/** Fuzzy team name match: returns true if one name contains the other (case-insensitive) */
+function fuzzyTeamMatch(fdName: string, espnName: string): boolean {
+  const a = fdName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const b = espnName.toLowerCase().replace(/[^a-z0-9]/g, "");
+  return a.includes(b) || b.includes(a);
+}
+
+/** Extract structured match stats from ESPN boxscore */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractStatsFromBoxscore(summary: any): MatchStats | undefined {
+  const teams = summary.boxscore?.teams;
+  if (!Array.isArray(teams) || teams.length < 2) return undefined;
+
+  // ESPN boxscore teams are ordered [away, home] or have homeAway field
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const homeTeam = teams.find((t: any) => t.homeAway === "home") ?? teams[0];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const awayTeam = teams.find((t: any) => t.homeAway === "away") ?? teams[1];
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const getStat = (team: any, ...names: string[]): number => {
+    if (!Array.isArray(team.statistics)) return 0;
+    for (const name of names) {
+      const stat = team.statistics.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (s: any) => s.name?.toLowerCase() === name.toLowerCase()
+      );
+      if (stat) return parseFloat(stat.displayValue) || 0;
+    }
+    return 0;
+  };
+
+  return {
+    possession: [getStat(homeTeam, "possessionPct", "possession"), getStat(awayTeam, "possessionPct", "possession")],
+    shots: [getStat(homeTeam, "totalShots", "shots"), getStat(awayTeam, "totalShots", "shots")],
+    shotsOnTarget: [getStat(homeTeam, "shotsOnTarget"), getStat(awayTeam, "shotsOnTarget")],
+    corners: [getStat(homeTeam, "cornerKicks", "corners"), getStat(awayTeam, "cornerKicks", "corners")],
+    fouls: [getStat(homeTeam, "foulsCommitted", "fouls"), getStat(awayTeam, "foulsCommitted", "fouls")],
+    yellowCards: [getStat(homeTeam, "yellowCards"), getStat(awayTeam, "yellowCards")],
+    redCards: [getStat(homeTeam, "redCards"), getStat(awayTeam, "redCards")],
+    passes: [getStat(homeTeam, "totalPasses", "passes"), getStat(awayTeam, "totalPasses", "passes")],
+    passAccuracy: [getStat(homeTeam, "passAccuracy"), getStat(awayTeam, "passAccuracy")],
+  };
 }
 
 /**
@@ -395,6 +453,57 @@ export async function getMatchDetailById(
     const detail = await getMatchDetail(fdId);
     const match = normalizeMatchDetail(detail);
     const lineups = normalizeMatchLineups(detail);
+
+    // Enrich fd- match with ESPN events, stats, and commentary
+    const espnSlug = fdLeagueToESPN(detail.competition?.code ?? "");
+    if (espnSlug) {
+      try {
+        const matchDate = match.startTime.slice(0, 10).replace(/-/g, "");
+        const scoreboard = await getESPNSoccerScoreboard(espnSlug, matchDate);
+
+        // Find matching ESPN event by fuzzy team name comparison
+        const espnEvent = scoreboard.events.find((e) => {
+          const competitors = e.competitions?.[0]?.competitors ?? [];
+          const espnHome = competitors.find((c) => c.homeAway === "home");
+          const espnAway = competitors.find((c) => c.homeAway === "away");
+          if (!espnHome || !espnAway) return false;
+          const homeMatch =
+            fuzzyTeamMatch(match.homeTeam.name, espnHome.team.shortDisplayName) ||
+            fuzzyTeamMatch(match.homeTeam.name, espnHome.team.displayName) ||
+            match.homeTeam.shortName === espnHome.team.abbreviation;
+          const awayMatch =
+            fuzzyTeamMatch(match.awayTeam.name, espnAway.team.shortDisplayName) ||
+            fuzzyTeamMatch(match.awayTeam.name, espnAway.team.displayName) ||
+            match.awayTeam.shortName === espnAway.team.abbreviation;
+          return homeMatch && awayMatch;
+        });
+
+        if (espnEvent) {
+          const summary = await getESPNEventSummary("soccer", espnSlug, espnEvent.id);
+
+          // Enrich events (goals, cards, subs)
+          if (summary.keyEvents?.length && summary.header?.competitions?.[0]) {
+            const comp = summary.header.competitions[0];
+            const homeId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "home")?.team?.id ?? "";
+            const awayId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "away")?.team?.id ?? "";
+            match.events = mapKeyEventsToMatchEvents(summary.keyEvents, homeId, awayId);
+          }
+
+          // Enrich stats from boxscore
+          const stats = extractStatsFromBoxscore(summary);
+          if (stats) match.stats = stats;
+
+          // Enrich commentary
+          const commentary = extractCommentary(summary);
+          if (commentary) {
+            match.sportDetail = { ...match.sportDetail, commentary };
+          }
+        }
+      } catch {
+        // ESPN enrichment failed — return fd data as-is
+      }
+    }
+
     const result = { match, lineups };
     cacheSet(cacheKey, result, config.cache.matchesTTL);
     return result;

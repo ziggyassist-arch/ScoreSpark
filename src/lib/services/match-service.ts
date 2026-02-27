@@ -235,18 +235,28 @@ async function fetchSoccerMatches(date?: string): Promise<Match[]> {
 
   // Deduplicate: when both fd- and ESPN versions exist for the same match,
   // prefer the ESPN version (richer data: events, stats, commentary).
-  // Build a set of ESPN match signatures: lowercase(homeShortName)|lowercase(awayShortName)|dateOnly
-  const espnSignatures = new Set<string>();
+  // Only remove an fd- match when a matching ESPN match exists on the same date
+  // AND the ESPN version is at least as complete (has score data, or both upcoming).
+  const espnSigMap = new Map<string, Match>();
   for (const m of espnMatches) {
     const dateOnly = m.startTime.slice(0, 10);
     const sig = `${m.homeTeam.shortName.toLowerCase()}|${m.awayTeam.shortName.toLowerCase()}|${dateOnly}`;
-    espnSignatures.add(sig);
+    espnSigMap.set(sig, m);
   }
 
   const dedupedFd = fdMatches.filter((m) => {
     const dateOnly = m.startTime.slice(0, 10);
     const sig = `${m.homeTeam.shortName.toLowerCase()}|${m.awayTeam.shortName.toLowerCase()}|${dateOnly}`;
-    return !espnSignatures.has(sig);
+    const espnMatch = espnSigMap.get(sig);
+    if (!espnMatch) return true; // No ESPN equivalent — keep fd match
+
+    // ESPN has live/finished data (score) — prefer ESPN
+    if (espnMatch.status === "live" || espnMatch.status === "finished") return false;
+    // Both upcoming — prefer ESPN (will have richer data when match starts)
+    if (espnMatch.status === "upcoming" && m.status === "upcoming") return false;
+
+    // Edge case: keep fd match if statuses don't align
+    return true;
   });
 
   const matches = [...dedupedFd, ...espnMatches];

@@ -30,6 +30,8 @@ export interface FDTeam {
   shortName: string;
   tla: string;
   crest: string;
+  /** League position — only present in match detail responses */
+  position?: number;
 }
 
 export interface FDScore {

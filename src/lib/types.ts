@@ -102,6 +102,9 @@ export interface Match {
   /** Recent form: last 5 results */
   homeForm?: ("W" | "D" | "L")[];
   awayForm?: ("W" | "D" | "L")[];
+  /** League position for each team (if available) */
+  homeLeaguePosition?: number;
+  awayLeaguePosition?: number;
 }
 
 export interface Competition {

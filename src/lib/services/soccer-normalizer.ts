@@ -200,7 +200,16 @@ export function normalizeMatchDetail(fd: FDHead2HeadMatch): Match {
     }
   }
 
-  return { ...base, events };
+  // Map league positions from match detail (football-data.org includes position on teams)
+  const homePos = fd.homeTeam.position;
+  const awayPos = fd.awayTeam.position;
+
+  return {
+    ...base,
+    events,
+    ...(homePos ? { homeLeaguePosition: homePos } : {}),
+    ...(awayPos ? { awayLeaguePosition: awayPos } : {}),
+  };
 }
 
 export function normalizeMatchLineups(

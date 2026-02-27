@@ -39,6 +39,25 @@ function statusDetailBadge(detail: MatchStatusDetail | undefined): { text: strin
   }
 }
 
+function ordinal(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] || s[v] || s[0]);
+}
+
+/** Map league names to standings page slugs */
+const leagueStandingsSlug: Record<string, string> = {
+  "Premier League": "epl",
+  "La Liga": "laliga",
+  "Bundesliga": "bundesliga",
+  "Serie A": "seriea",
+  "Ligue 1": "ligue1",
+  "Champions League": "ucl",
+  "Eredivisie": "eredivisie",
+  "Championship": "championship",
+  "Primeira Liga": "ligapt",
+};
+
 function EventIcon({ type }: { type: MatchEvent["type"] }) {
   switch (type) {
     case "goal":
@@ -1572,9 +1591,21 @@ export default function MatchDetail({
       <div className="bg-card rounded-2xl p-6 border border-white/5 mb-6">
         {/* League + Status */}
         <div className="flex items-center justify-between mb-6">
-          <span className={`text-xs font-semibold uppercase tracking-wider ${sportColor}`}>
-            {match.league}
-          </span>
+          {leagueStandingsSlug[match.league] ? (
+            <Link
+              href={`/standings/${leagueStandingsSlug[match.league]}`}
+              className={`text-xs font-semibold uppercase tracking-wider ${sportColor} hover:opacity-80 transition-opacity inline-flex items-center gap-1`}
+            >
+              {match.league}
+              <svg className="w-3 h-3 opacity-40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" />
+              </svg>
+            </Link>
+          ) : (
+            <span className={`text-xs font-semibold uppercase tracking-wider ${sportColor}`}>
+              {match.league}
+            </span>
+          )}
           {match.status === "live" && (
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1.5 px-2.5 py-1 bg-live-green/10 rounded-full">
@@ -1631,6 +1662,11 @@ export default function MatchDetail({
             {match.sportDetail?.homeRecord && (
               <p className="text-[11px] text-white/30 mt-0.5">
                 {match.sportDetail.homeRecord}
+              </p>
+            )}
+            {match.homeLeaguePosition && (
+              <p className="text-[10px] text-white/25 mt-0.5">
+                {ordinal(match.homeLeaguePosition)}
               </p>
             )}
             {match.homeForm && <FormDots form={match.homeForm} />}
@@ -1691,6 +1727,11 @@ export default function MatchDetail({
             {match.sportDetail?.awayRecord && (
               <p className="text-[11px] text-white/30 mt-0.5">
                 {match.sportDetail.awayRecord}
+              </p>
+            )}
+            {match.awayLeaguePosition && (
+              <p className="text-[10px] text-white/25 mt-0.5">
+                {ordinal(match.awayLeaguePosition)}
               </p>
             )}
             {match.awayForm && <FormDots form={match.awayForm} />}

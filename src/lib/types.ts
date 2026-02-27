@@ -42,6 +42,8 @@ export interface MatchClock {
 export interface SportDetail {
   /** Quarter/period/inning scores: [Q1, Q2, Q3, Q4, ...OT] */
   linescores?: { home: number[]; away: number[] };
+  /** Half-time score (soccer) */
+  htScore?: { home: number; away: number } | null;
   /** Team records: "32-18", etc. */
   homeRecord?: string;
   awayRecord?: string;

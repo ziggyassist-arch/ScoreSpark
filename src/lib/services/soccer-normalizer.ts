@@ -115,6 +115,10 @@ export function normalizeMatch(fd: FDMatch): Match {
   const mainRef = fd.referees?.find((r) => r.type === "REFEREE");
   const { clock, minute } = computeClock(fd);
 
+  const htHome = fd.score.halfTime.home;
+  const htAway = fd.score.halfTime.away;
+  const htScore = htHome != null && htAway != null ? { home: htHome, away: htAway } : null;
+
   return {
     id: `fd-${fd.id}`,
     sport: "soccer",
@@ -132,6 +136,7 @@ export function normalizeMatch(fd: FDMatch): Match {
     venue: fd.venue ?? undefined,
     referee: mainRef ? { name: mainRef.name, nationality: mainRef.nationality } : undefined,
     matchday: fd.matchday ?? undefined,
+    sportDetail: htScore ? { htScore } : undefined,
   };
 }
 

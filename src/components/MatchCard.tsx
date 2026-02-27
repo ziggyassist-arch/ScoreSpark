@@ -109,6 +109,9 @@ export default function MatchCard({ match }: { match: Match }) {
               <span className={`text-[13px] font-medium truncate ${homeIsFav ? "text-gold-spark" : "text-white/90"}`}>
                 {match.homeTeam.name}
               </span>
+              {match.events.some(e => e.type === "red-card" && e.team === "home") && (
+                <span className="inline-block w-[3px] h-[10px] bg-red-500 rounded-[1px] flex-shrink-0" />
+              )}
               {homeIsFav && (
                 <svg className="w-3 h-3 text-gold-spark flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
@@ -136,6 +139,9 @@ export default function MatchCard({ match }: { match: Match }) {
               <span className={`text-[13px] font-medium truncate ${awayIsFav ? "text-gold-spark" : "text-white/90"}`}>
                 {match.awayTeam.name}
               </span>
+              {match.events.some(e => e.type === "red-card" && e.team === "away") && (
+                <span className="inline-block w-[3px] h-[10px] bg-red-500 rounded-[1px] flex-shrink-0" />
+              )}
               {awayIsFav && (
                 <svg className="w-3 h-3 text-gold-spark flex-shrink-0" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z" />
@@ -156,6 +162,15 @@ export default function MatchCard({ match }: { match: Match }) {
             </span>
           </div>
         </div>
+
+        {/* Half-time score for finished soccer matches */}
+        {revealed && match.sport === "soccer" && match.status === "finished" && match.sportDetail?.htScore && (
+          <div className="text-center mt-0.5">
+            <span className="text-[10px] text-white/25">
+              HT {match.sportDetail.htScore.home}-{match.sportDetail.htScore.away}
+            </span>
+          </div>
+        )}
 
         {/* Team records for American sports */}
         {match.sportDetail && (match.sportDetail.homeRecord || match.sportDetail.awayRecord) && (

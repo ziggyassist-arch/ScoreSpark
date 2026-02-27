@@ -283,6 +283,11 @@ export function normalizeESPNSoccerMatch(
     ? { displayValue: "FT" }
     : { displayValue: status.type.shortDetail };
 
+  // Extract half-time score from linescores (index 0 = first half)
+  const htScore = home.linescores?.[0] != null && away.linescores?.[0] != null
+    ? { home: Number(home.linescores[0].value) || 0, away: Number(away.linescores[0].value) || 0 }
+    : null;
+
   return {
     id: `espn-soccer-${event.id}`,
     sport: "soccer",
@@ -311,6 +316,7 @@ export function normalizeESPNSoccerMatch(
     venue: comp.venue?.fullName,
     source: "live",
     stats: extractSoccerStats(home, away),
+    sportDetail: htScore ? { htScore } : undefined,
   };
 }
 

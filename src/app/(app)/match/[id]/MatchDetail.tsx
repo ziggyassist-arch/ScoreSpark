@@ -1353,15 +1353,22 @@ export default function MatchDetail({
             {match.status === "upcoming" ? (
               <p className="text-2xl font-bold text-white/30">vs</p>
             ) : (
-              <div className="flex items-baseline justify-center gap-2">
-                <span className="text-5xl font-bold text-white tabular-nums">
-                  {match.homeScore}
-                </span>
-                <span className="text-2xl font-medium text-white/20">-</span>
-                <span className="text-5xl font-bold text-white tabular-nums">
-                  {match.awayScore}
-                </span>
-              </div>
+              <>
+                <div className="flex items-baseline justify-center gap-2">
+                  <span className="text-5xl font-bold text-white tabular-nums">
+                    {match.homeScore}
+                  </span>
+                  <span className="text-2xl font-medium text-white/20">-</span>
+                  <span className="text-5xl font-bold text-white tabular-nums">
+                    {match.awayScore}
+                  </span>
+                </div>
+                {match.sport === "soccer" && match.status === "finished" && match.sportDetail?.htScore && (
+                  <p className="text-xs text-white/30 mt-1">
+                    Half Time: {match.sportDetail.htScore.home}-{match.sportDetail.htScore.away}
+                  </p>
+                )}
+              </>
             )}
           </div>
 

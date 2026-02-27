@@ -21,11 +21,11 @@ const TOP_LEAGUES: LeagueItem[] = [
   { code: "BL1", name: "Bundesliga", short: "Bund.", crest: "/leagues/bl1.png", standingsId: "bundesliga" },
   { code: "SA", name: "Serie A", short: "Serie A", crest: "/leagues/seriea.png", standingsId: "seriea" },
   { code: "FL1", name: "Ligue 1", short: "Ligue 1", crest: "/leagues/ligue1.png", standingsId: "ligue1" },
-  { code: "MLS", name: "MLS", short: "MLS", crest: "/leagues/mls.png", standingsId: "mls" },
+  { code: "MLS", name: "MLS", short: "MLS", crest: "https://a.espncdn.com/i/teamlogos/leagues/500/mls.png", standingsId: "mls" },
   { code: "ELC", name: "Championship", short: "Champ.", crest: "/leagues/championship.png", standingsId: "championship" },
   { code: "DED", name: "Eredivisie", short: "Erev.", crest: "/leagues/eredivisie.png", standingsId: "eredivisie" },
   { code: "PPL", name: "Primeira Liga", short: "Liga PT", crest: "/leagues/ligapt.png", standingsId: "ligapt" },
-  { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "/leagues/ligamx.png", standingsId: "ligamx" },
+  { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "https://a.espncdn.com/i/leaguelogos/soccer/500/17.png", standingsId: "ligamx" },
 ];
 
 // Full list of leagues organized by region — ALL wired to real standings data
@@ -117,8 +117,8 @@ const ALL_LEAGUES: { region: string; leagues: LeagueItem[] }[] = [
   {
     region: "North America",
     leagues: [
-      { code: "MLS", name: "MLS", short: "MLS", crest: "/leagues/mls.png", standingsId: "mls" },
-      { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "/leagues/ligamx.png", standingsId: "ligamx" },
+      { code: "MLS", name: "MLS", short: "MLS", crest: "https://a.espncdn.com/i/teamlogos/leagues/500/mls.png", standingsId: "mls" },
+      { code: "LMX", name: "Liga MX", short: "Liga MX", crest: "https://a.espncdn.com/i/leaguelogos/soccer/500/17.png", standingsId: "ligamx" },
       { code: "NWSL", name: "NWSL (Women)", short: "NWSL", crest: "", standingsId: "nwsl" },
       { code: "USL", name: "USL Championship", short: "USL", crest: "", standingsId: "usl" },
     ],

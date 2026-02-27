@@ -220,12 +220,62 @@ export async function getMatchDetailById(
     }
 
     if (sport === "soccer") {
-      // ESPN soccer match — search across all ESPN soccer leagues
+      // ESPN soccer match — search across all ESPN soccer leagues (today only)
       const allESPNSoccer = await Promise.all(
         Object.keys(ESPN_SOCCER_LEAGUES).map((code) => fetchESPNSoccerLeague(code))
       );
       const match = allESPNSoccer.flat().find((m) => m.id === id);
       if (match) return { match, lineups: null };
+
+      // Fallback: fetch event directly via summary API (works for any date)
+      // Try common league slugs — ESPN event IDs are global, so most slugs will work
+      const soccerLeagueSlugs = [
+        "eng.1", "esp.1", "ger.1", "ita.1", "fra.1",
+        "usa.1", "mex.1", "arg.1", "bra.1",
+        "uefa.champions", "uefa.europa",
+        ...Object.values(ESPN_SOCCER_LEAGUES).map((l) => l.slug),
+      ];
+      // Deduplicate
+      const uniqueSlugs = [...new Set(soccerLeagueSlugs)];
+
+      for (const slug of uniqueSlugs) {
+        try {
+          const summary = await getESPNEventSummary("soccer", slug, eventId);
+          if (summary.header?.competitions?.[0]) {
+            const comp = summary.header.competitions[0];
+            // Find league name from our mapping, or use the slug as fallback
+            const leagueEntry = Object.entries(ESPN_SOCCER_LEAGUES).find(
+              ([, v]) => v.slug === slug
+            );
+            const leagueName = leagueEntry?.[1].name ?? slug;
+            const leagueShort = leagueEntry?.[0] ?? slug;
+
+            const syntheticEvent = {
+              id: eventId,
+              date: comp.date,
+              name: "",
+              shortName: "",
+              competitions: [{
+                id: comp.id,
+                date: comp.date,
+                venue: { id: "", fullName: "" },
+                competitors: comp.competitors,
+                status: comp.status,
+              }],
+              status: comp.status,
+            };
+            const normalizedMatch = normalizeESPNSoccerMatch(
+              syntheticEvent,
+              leagueName,
+              leagueShort
+            );
+            return { match: normalizedMatch, lineups: null };
+          }
+        } catch {
+          // This slug didn't work, try next
+          continue;
+        }
+      }
     }
     return null;
   }

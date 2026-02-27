@@ -284,6 +284,18 @@ export interface ESPNEventSummaryResponse {
   };
   drives?: ESPNDrive[];
   scoringPlays?: ESPNPlay[];
+  /** Soccer key events: goals, cards, substitutions, etc. */
+  keyEvents?: ESPNKeyEvent[];
+}
+
+export interface ESPNKeyEvent {
+  id: string;
+  clock: { value: number; displayValue: string };
+  type: { id: string; text: string };
+  team?: { id: string };
+  participants?: { athlete: { id: string; displayName: string } }[];
+  text?: string;
+  shortText?: string;
 }
 
 export interface ESPNBoxscore {

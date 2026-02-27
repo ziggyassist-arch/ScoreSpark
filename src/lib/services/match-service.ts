@@ -5,7 +5,8 @@ import { normalizeMatch, normalizeMatchDetail, normalizeMatchLineups } from "./s
 import { getScoreboard, getESPNSoccerScoreboard, getESPNEventSummary, ESPN_SOCCER_LEAGUES } from "@/lib/api/espn";
 import { normalizeESPNMatch, normalizeESPNSoccerMatch } from "./espn-normalizer";
 import { allMatches as mockMatches, sampleLineups as mockLineups } from "@/lib/mock-data";
-import type { Match, Sport, Lineup } from "@/lib/types";
+import type { Match, MatchEvent, Sport, Lineup } from "@/lib/types";
+import type { ESPNKeyEvent } from "@/lib/api/types/espn";
 
 function todayStr(): string {
   const d = new Date();
@@ -16,6 +17,54 @@ function dateRangeStr(offset: number): string {
   const d = new Date();
   d.setDate(d.getDate() + offset);
   return d.toISOString().slice(0, 10);
+}
+
+/** Map ESPN event type text to our MatchEvent type */
+function mapESPNEventType(typeText: string): MatchEvent["type"] | null {
+  const lower = typeText.toLowerCase();
+  if (lower.includes("goal") && lower.includes("own")) return "own-goal";
+  if (lower.includes("penalty") && lower.includes("goal")) return "penalty";
+  if (lower.includes("goal")) return "goal";
+  if (lower.includes("yellow")) return "yellow-card";
+  if (lower.includes("red")) return "red-card";
+  if (lower.includes("substitution")) return "substitution";
+  return null;
+}
+
+/** Convert ESPN keyEvents array to MatchEvent[] */
+function mapKeyEventsToMatchEvents(
+  keyEvents: ESPNKeyEvent[],
+  homeTeamId: string,
+  awayTeamId: string
+): MatchEvent[] {
+  const events: MatchEvent[] = [];
+  for (const ke of keyEvents) {
+    const type = mapESPNEventType(ke.type?.text ?? "");
+    if (!type) continue;
+
+    // Prefer displayValue ("20'", "45+2'") as it handles added time;
+    // fall back to clock.value (seconds) if no displayValue
+    const minute = ke.clock?.displayValue
+      ? parseInt(ke.clock.displayValue, 10) || 0
+      : ke.clock?.value != null
+        ? Math.floor(ke.clock.value / 60)
+        : 0;
+
+    const teamId = ke.team?.id;
+    const teamSide: "home" | "away" =
+      teamId === homeTeamId ? "home" : "away";
+
+    events.push({
+      minute,
+      type,
+      player: ke.participants?.[0]?.athlete?.displayName ?? "Unknown",
+      team: teamSide,
+      ...(type === "substitution" && ke.participants?.[1]
+        ? { playerOut: ke.participants[1].athlete?.displayName }
+        : {}),
+    });
+  }
+  return events.sort((a, b) => a.minute - b.minute);
 }
 
 /**
@@ -225,7 +274,22 @@ export async function getMatchDetailById(
         Object.keys(ESPN_SOCCER_LEAGUES).map((code) => fetchESPNSoccerLeague(code))
       );
       const match = allESPNSoccer.flat().find((m) => m.id === id);
-      if (match) return { match, lineups: null };
+      if (match) {
+        // Enrich with events from summary API (scoreboard doesn't include them)
+        const leagueSlug = ESPN_SOCCER_LEAGUES[match.leagueShort]?.slug ?? "eng.1";
+        try {
+          const summary = await getESPNEventSummary("soccer", leagueSlug, eventId);
+          if (summary.keyEvents?.length && summary.header?.competitions?.[0]) {
+            const comp = summary.header.competitions[0];
+            const homeId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "home")?.team?.id ?? "";
+            const awayId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "away")?.team?.id ?? "";
+            match.events = mapKeyEventsToMatchEvents(summary.keyEvents, homeId, awayId);
+          }
+        } catch {
+          // Events enrichment failed — return match without events
+        }
+        return { match, lineups: null };
+      }
 
       // Fallback: fetch event directly via summary API (works for any date)
       // Try common league slugs — ESPN event IDs are global, so most slugs will work
@@ -269,6 +333,18 @@ export async function getMatchDetailById(
               leagueName,
               leagueShort
             );
+
+            // Extract key events (goals, cards, substitutions) from summary
+            if (summary.keyEvents?.length) {
+              const homeId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "home")?.team?.id ?? "";
+              const awayId = comp.competitors.find((c: { homeAway: string }) => c.homeAway === "away")?.team?.id ?? "";
+              normalizedMatch.events = mapKeyEventsToMatchEvents(
+                summary.keyEvents,
+                homeId,
+                awayId
+              );
+            }
+
             return { match: normalizedMatch, lineups: null };
           }
         } catch {

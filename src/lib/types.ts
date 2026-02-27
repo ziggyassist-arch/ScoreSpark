@@ -55,6 +55,8 @@ export interface SportDetail {
   teamStats?: { name: string; homeValue: string; awayValue: string }[];
   /** Minute-by-minute commentary from ESPN summary API */
   commentary?: { minute: string; text: string }[];
+  /** Aggregate score for two-leg knockout ties (UCL/EL) */
+  aggregate?: { home: number; away: number } | null;
   /** NFL situation */
   situation?: {
     down?: number;
@@ -97,6 +99,9 @@ export interface Match {
   referee?: Referee;
   /** Matchday number (soccer) */
   matchday?: number;
+  /** Recent form: last 5 results */
+  homeForm?: ("W" | "D" | "L")[];
+  awayForm?: ("W" | "D" | "L")[];
 }
 
 export interface Competition {

@@ -77,6 +77,41 @@ function extractCommentary(summary: any): { minute: string; text: string }[] | u
   }));
 }
 
+/** Extract aggregate score from ESPN summary notes (for UCL/EL knockout ties) */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function extractAggregateFromESPN(summary: any): { home: number; away: number } | null {
+  // ESPN puts aggregate info in header.competitions[0].notes or headlines
+  const comp = summary.header?.competitions?.[0];
+  if (!comp) return null;
+
+  // Check notes array for aggregate text like "Team A wins 4-2 on aggregate" or "Agg: 4-2"
+  const notes: string[] = [];
+  if (Array.isArray(comp.notes)) {
+    for (const n of comp.notes) {
+      if (typeof n === "string") notes.push(n);
+      else if (n?.headline) notes.push(n.headline);
+      else if (n?.text) notes.push(n.text);
+    }
+  }
+  if (Array.isArray(comp.headlines)) {
+    for (const h of comp.headlines) {
+      if (typeof h === "string") notes.push(h);
+      else if (h?.shortLinkText) notes.push(h.shortLinkText);
+      else if (h?.description) notes.push(h.description);
+    }
+  }
+
+  // Parse "X-Y on aggregate" or "Agg: X-Y" or "aggregate X-Y"
+  for (const text of notes) {
+    const aggMatch = text.match(/(\d+)\s*[-–]\s*(\d+)\s+on\s+agg/i)
+      ?? text.match(/agg(?:regate)?[:\s]+(\d+)\s*[-–]\s*(\d+)/i);
+    if (aggMatch) {
+      return { home: parseInt(aggMatch[1], 10), away: parseInt(aggMatch[2], 10) };
+    }
+  }
+  return null;
+}
+
 /** Map football-data.org competition codes to ESPN soccer league slugs */
 function fdLeagueToESPN(fdCode: string): string | null {
   const map: Record<string, string> = {
@@ -357,6 +392,10 @@ export async function getMatchDetailById(
           if (commentary) {
             match.sportDetail = { ...match.sportDetail, commentary };
           }
+          const aggregate = extractAggregateFromESPN(summary);
+          if (aggregate) {
+            match.sportDetail = { ...match.sportDetail, aggregate };
+          }
         } catch {
           // Events enrichment failed — return match without events
         }
@@ -421,6 +460,12 @@ export async function getMatchDetailById(
             const commentary = extractCommentary(summary);
             if (commentary) {
               normalizedMatch.sportDetail = { ...normalizedMatch.sportDetail, commentary };
+            }
+
+            // Extract aggregate from ESPN notes
+            const aggregate = extractAggregateFromESPN(summary);
+            if (aggregate) {
+              normalizedMatch.sportDetail = { ...normalizedMatch.sportDetail, aggregate };
             }
 
             return { match: normalizedMatch, lineups: null };
@@ -497,6 +542,14 @@ export async function getMatchDetailById(
           const commentary = extractCommentary(summary);
           if (commentary) {
             match.sportDetail = { ...match.sportDetail, commentary };
+          }
+
+          // Enrich aggregate from ESPN notes (if not already set from fd)
+          if (!match.sportDetail?.aggregate) {
+            const aggregate = extractAggregateFromESPN(summary);
+            if (aggregate) {
+              match.sportDetail = { ...match.sportDetail, aggregate };
+            }
           }
         }
       } catch {

@@ -194,6 +194,15 @@ export default function MatchCard({ match }: { match: Match }) {
           </div>
         )}
 
+        {/* Aggregate score for UCL/EL knockout ties */}
+        {revealed && match.sport === "soccer" && match.status === "finished" && match.sportDetail?.aggregate && (
+          <div className="text-center mt-0.5">
+            <span className="text-[10px] text-purple-400/60 font-medium">
+              Agg {match.sportDetail.aggregate.home}-{match.sportDetail.aggregate.away}
+            </span>
+          </div>
+        )}
+
         {/* Team records for American sports */}
         {match.sportDetail && (match.sportDetail.homeRecord || match.sportDetail.awayRecord) && (
           <div className="mt-1 flex justify-between text-[9px] text-white/20 px-8">

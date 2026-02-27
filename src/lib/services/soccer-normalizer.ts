@@ -145,6 +145,20 @@ export function normalizeMatch(fd: FDMatch): Match {
 
   const statusDetail = mapStatusDetail(fd.status, fd.score.duration);
 
+  // Extract aggregate score for knockout ties (UCL/EL)
+  let aggregate: { home: number; away: number } | null = null;
+  const isKnockout = fd.stage && fd.stage !== "GROUP_STAGE" && fd.stage !== "LEAGUE_STAGE";
+  if (isKnockout) {
+    const aggScore = fd.score.aggregateScore;
+    if (aggScore && aggScore.home != null && aggScore.away != null) {
+      aggregate = { home: aggScore.home, away: aggScore.away };
+    }
+  }
+
+  const sportDetail: import("@/lib/types").SportDetail = {};
+  if (htScore) sportDetail.htScore = htScore;
+  if (aggregate) sportDetail.aggregate = aggregate;
+
   return {
     id: `fd-${fd.id}`,
     sport: "soccer",
@@ -163,7 +177,7 @@ export function normalizeMatch(fd: FDMatch): Match {
     venue: fd.venue ?? undefined,
     referee: mainRef ? { name: mainRef.name, nationality: mainRef.nationality } : undefined,
     matchday: fd.matchday ?? undefined,
-    sportDetail: htScore ? { htScore } : undefined,
+    sportDetail: Object.keys(sportDetail).length > 0 ? sportDetail : undefined,
   };
 }
 
@@ -174,6 +188,17 @@ export function normalizeMatchDetail(fd: FDHead2HeadMatch): Match {
     ...normalizeBookings(fd.bookings ?? [], fd.homeTeam.id),
     ...normalizeSubstitutions(fd.substitutions ?? [], fd.homeTeam.id),
   ].sort((a, b) => a.minute - b.minute);
+
+  // Also check fd.aggregates field for knockout tie aggregate (detail response)
+  if (!base.sportDetail?.aggregate && fd.aggregates) {
+    const agg = fd.aggregates;
+    if (agg.homeTeam != null && agg.awayTeam != null) {
+      base.sportDetail = {
+        ...base.sportDetail,
+        aggregate: { home: agg.homeTeam, away: agg.awayTeam },
+      };
+    }
+  }
 
   return { ...base, events };
 }

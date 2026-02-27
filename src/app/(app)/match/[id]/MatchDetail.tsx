@@ -62,6 +62,21 @@ function EventIcon({ type }: { type: MatchEvent["type"] }) {
   }
 }
 
+function FormDots({ form }: { form: ("W" | "D" | "L")[] }) {
+  const colorMap = { W: "bg-live-green", D: "bg-white/30", L: "bg-live-red" };
+  return (
+    <div className="flex items-center gap-1 mt-1">
+      {form.slice(-5).map((result, i) => (
+        <span
+          key={i}
+          className={`w-2 h-2 rounded-full ${colorMap[result]}`}
+          title={result}
+        />
+      ))}
+    </div>
+  );
+}
+
 // — Soccer tabs —
 
 function SoccerSummaryTab({ match }: { match: Match }) {
@@ -1372,6 +1387,7 @@ export default function MatchDetail({
                 {match.sportDetail.homeRecord}
               </p>
             )}
+            {match.homeForm && <FormDots form={match.homeForm} />}
           </div>
 
           {/* Score — centered */}
@@ -1392,6 +1408,11 @@ export default function MatchDetail({
                 {match.sport === "soccer" && match.status === "finished" && match.sportDetail?.htScore && (
                   <p className="text-xs text-white/30 mt-1">
                     Half Time: {match.sportDetail.htScore.home}-{match.sportDetail.htScore.away}
+                  </p>
+                )}
+                {match.sport === "soccer" && match.status === "finished" && match.sportDetail?.aggregate && (
+                  <p className="text-xs text-purple-400/60 font-medium mt-0.5">
+                    Aggregate: {match.sportDetail.aggregate.home}-{match.sportDetail.aggregate.away}
                   </p>
                 )}
               </>
@@ -1423,6 +1444,7 @@ export default function MatchDetail({
                 {match.sportDetail.awayRecord}
               </p>
             )}
+            {match.awayForm && <FormDots form={match.awayForm} />}
           </div>
         </div>
       </div>

@@ -37,6 +37,8 @@ export interface FDScore {
   duration: "REGULAR" | "EXTRA_TIME" | "PENALTY_SHOOTOUT";
   fullTime: { home: number | null; away: number | null };
   halfTime: { home: number | null; away: number | null };
+  /** Aggregate score for two-leg knockout ties (CL/EL) — provided by football-data.org on knockout matches */
+  aggregateScore?: { home: number | null; away: number | null };
 }
 
 export type FDMatchStatus =
@@ -162,4 +164,9 @@ export interface FDHead2HeadMatch extends FDMatch {
   goals: FDGoal[];
   bookings: FDBooking[];
   substitutions: FDSubstitution[];
+  /** Aggregate info for knockout ties (provided on CL/EL knockout matches) */
+  aggregates?: {
+    homeTeam: number;
+    awayTeam: number;
+  };
 }

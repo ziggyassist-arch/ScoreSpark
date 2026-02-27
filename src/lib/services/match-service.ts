@@ -233,7 +233,23 @@ async function fetchSoccerMatches(date?: string): Promise<Match[]> {
     r.status === "fulfilled" ? r.value : []
   );
 
-  const matches = [...fdMatches, ...espnMatches];
+  // Deduplicate: when both fd- and ESPN versions exist for the same match,
+  // prefer the ESPN version (richer data: events, stats, commentary).
+  // Build a set of ESPN match signatures: lowercase(homeShortName)|lowercase(awayShortName)|dateOnly
+  const espnSignatures = new Set<string>();
+  for (const m of espnMatches) {
+    const dateOnly = m.startTime.slice(0, 10);
+    const sig = `${m.homeTeam.shortName.toLowerCase()}|${m.awayTeam.shortName.toLowerCase()}|${dateOnly}`;
+    espnSignatures.add(sig);
+  }
+
+  const dedupedFd = fdMatches.filter((m) => {
+    const dateOnly = m.startTime.slice(0, 10);
+    const sig = `${m.homeTeam.shortName.toLowerCase()}|${m.awayTeam.shortName.toLowerCase()}|${dateOnly}`;
+    return !espnSignatures.has(sig);
+  });
+
+  const matches = [...dedupedFd, ...espnMatches];
   // Cache even empty results for specific dates to avoid repeated API calls
   cacheSet(cacheKey, matches, config.cache.matchesTTL);
 

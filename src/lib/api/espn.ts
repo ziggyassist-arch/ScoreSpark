@@ -39,36 +39,36 @@ export const ESPN_SOCCER_LEAGUES: Record<string, { slug: string; name: string; c
 
   // === NEW — EUROPE ===
   AUT: { slug: "aut.1", name: "Austrian Bundesliga", country: "Austria", region: "Europe" },
-  SUI: { slug: "sui.1", name: "Super League", country: "Switzerland", region: "Europe" },
-  GRE: { slug: "gre.1", name: "Super League", country: "Greece", region: "Europe" },
+  SUI: { slug: "sui.1", name: "Swiss Super League", country: "Switzerland", region: "Europe" },
+  GRE: { slug: "gre.1", name: "Greek Super League", country: "Greece", region: "Europe" },
   CZE: { slug: "cze.1", name: "Czech First League", country: "Czechia", region: "Europe" },
   DEN: { slug: "den.1", name: "Superliga", country: "Denmark", region: "Europe" },
   NOR: { slug: "nor.1", name: "Eliteserien", country: "Norway", region: "Europe" },
   SWE: { slug: "swe.1", name: "Allsvenskan", country: "Sweden", region: "Europe" },
   FIN: { slug: "fin.1", name: "Veikkausliiga", country: "Finland", region: "Europe" },
   ROU: { slug: "rou.1", name: "Liga I", country: "Romania", region: "Europe" },
-  RUS: { slug: "rus.1", name: "Premier League", country: "Russia", region: "Europe" },
+  RUS: { slug: "rus.1", name: "Russian Premier League", country: "Russia", region: "Europe" },
   ISR: { slug: "isr.1", name: "Ligat Ha'al", country: "Israel", region: "Europe" },
-  CYP: { slug: "cyp.1", name: "First Division", country: "Cyprus", region: "Europe" },
+  CYP: { slug: "cyp.1", name: "Cypriot First Division", country: "Cyprus", region: "Europe" },
 
   // === NEW — AMERICAS ===
   COL: { slug: "col.1", name: "Liga BetPlay", country: "Colombia", region: "Americas" },
-  CHI: { slug: "chi.1", name: "Primera División", country: "Chile", region: "Americas" },
-  PER: { slug: "per.1", name: "Liga 1", country: "Peru", region: "Americas" },
-  URU: { slug: "uru.1", name: "Primera División", country: "Uruguay", region: "Americas" },
+  CHI: { slug: "chi.1", name: "Chilean Primera División", country: "Chile", region: "Americas" },
+  PER: { slug: "per.1", name: "Peruvian Liga 1", country: "Peru", region: "Americas" },
+  URU: { slug: "uru.1", name: "Uruguayan Primera División", country: "Uruguay", region: "Americas" },
   ECU: { slug: "ecu.1", name: "Liga Pro", country: "Ecuador", region: "Americas" },
   PAR: { slug: "par.1", name: "División de Honor", country: "Paraguay", region: "Americas" },
 
   // === NEW — ASIA & AFRICA ===
   IND: { slug: "ind.1", name: "Indian Super League", country: "India", region: "Asia" },
-  IDN: { slug: "idn.1", name: "Liga 1", country: "Indonesia", region: "Asia" },
+  IDN: { slug: "idn.1", name: "Indonesian Liga 1", country: "Indonesia", region: "Asia" },
   THA: { slug: "tha.1", name: "Thai League", country: "Thailand", region: "Asia" },
   SGP: { slug: "sgp.1", name: "S.League", country: "Singapore", region: "Asia" },
-  MYS: { slug: "mys.1", name: "Super League", country: "Malaysia", region: "Asia" },
+  MYS: { slug: "mys.1", name: "Malaysian Super League", country: "Malaysia", region: "Asia" },
   CHN: { slug: "chn.1", name: "Chinese Super League", country: "China", region: "Asia" },
   NGA: { slug: "nga.1", name: "NPFL", country: "Nigeria", region: "Africa" },
-  GHA: { slug: "gha.1", name: "Premier League", country: "Ghana", region: "Africa" },
-  KEN: { slug: "ken.1", name: "Premier League", country: "Kenya", region: "Africa" },
+  GHA: { slug: "gha.1", name: "Ghana Premier League", country: "Ghana", region: "Africa" },
+  KEN: { slug: "ken.1", name: "Kenyan Premier League", country: "Kenya", region: "Africa" },
 
   // === EUROPEAN CUPS ===
   UCL_ESPN: { slug: "uefa.champions", name: "Champions League", country: "Europe", region: "Cups" },

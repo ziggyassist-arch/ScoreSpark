@@ -1,10 +1,11 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import Image from "next/image";
 import { Match, Sport } from "@/lib/types";
 import { useLiveScores } from "@/hooks/useLiveScores";
 import MatchList from "./MatchList";
+import LeagueFilter from "./LeagueFilter";
 
 function todayStr(): string {
   const d = new Date();
@@ -66,9 +67,26 @@ function useRelativeTime(date: Date, enabled: boolean) {
   return `${minutes}m ago`;
 }
 
+const FILTER_STORAGE_KEY = "scorespark-league-filter";
+
 export default function LiveMatchList({ initialMatches, sport, initialDate }: LiveMatchListProps) {
   const selectedDate = initialDate ?? todayStr();
   const isToday = selectedDate === todayStr();
+
+  // League filter state — persisted in sessionStorage
+  const [selectedLeague, setSelectedLeague] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    return sessionStorage.getItem(FILTER_STORAGE_KEY) || null;
+  });
+
+  const handleLeagueSelect = useCallback((league: string | null) => {
+    setSelectedLeague(league);
+    if (league) {
+      sessionStorage.setItem(FILTER_STORAGE_KEY, league);
+    } else {
+      sessionStorage.removeItem(FILTER_STORAGE_KEY);
+    }
+  }, []);
 
   // Live polling only active for today's matches
   const { matches: liveMatches, lastUpdated, hasLiveMatches, isPolling } = useLiveScores({
@@ -78,7 +96,20 @@ export default function LiveMatchList({ initialMatches, sport, initialDate }: Li
   });
 
   const relativeTime = useRelativeTime(lastUpdated, isToday && hasLiveMatches);
-  const displayMatches = isToday ? liveMatches : initialMatches;
+  const allMatches = isToday ? liveMatches : initialMatches;
+
+  // Clear filter if the selected league no longer has matches
+  useEffect(() => {
+    if (selectedLeague && !allMatches.some((m) => m.league === selectedLeague)) {
+      handleLeagueSelect(null);
+    }
+  }, [allMatches, selectedLeague, handleLeagueSelect]);
+
+  const displayMatches = useMemo(
+    () => selectedLeague ? allMatches.filter((m) => m.league === selectedLeague) : allMatches,
+    [allMatches, selectedLeague]
+  );
+
   const dateHeader = formatDateHeader(selectedDate);
   const isPast = new Date(selectedDate + "T12:00:00") < new Date(todayStr() + "T12:00:00");
   const isFuture = new Date(selectedDate + "T12:00:00") > new Date(todayStr() + "T12:00:00");
@@ -92,12 +123,21 @@ export default function LiveMatchList({ initialMatches, sport, initialDate }: Li
           <span className="text-[9px] text-white/20 px-1.5 py-0.5 bg-white/5 rounded-full">
             {isPast ? "Results" : isFuture ? "Schedule" : ""}
           </span>
-          {displayMatches.length > 0 && (
+          {allMatches.length > 0 && (
             <span className="text-[9px] text-white/20 ml-auto">
-              {displayMatches.length} game{displayMatches.length !== 1 ? "s" : ""}
+              {allMatches.length} game{allMatches.length !== 1 ? "s" : ""}
             </span>
           )}
         </div>
+      )}
+
+      {/* League filter bar */}
+      {allMatches.length > 0 && (
+        <LeagueFilter
+          matches={allMatches}
+          selected={selectedLeague}
+          onSelect={handleLeagueSelect}
+        />
       )}
 
       {/* Live indicator */}

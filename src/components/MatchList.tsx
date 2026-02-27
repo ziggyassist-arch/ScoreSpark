@@ -6,7 +6,7 @@ import { groupMatchesByLeague } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
 import MatchCard from "./MatchCard";
 
-const LEAGUE_LOGOS: Record<string, string> = {
+export const LEAGUE_LOGOS: Record<string, string> = {
   "NBA": "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
   "NBA (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
   "NFL": "https://a.espncdn.com/i/teamlogos/leagues/500/nfl.png",
@@ -33,7 +33,7 @@ const LEAGUE_LOGOS: Record<string, string> = {
   "Saudi Pro League": "https://a.espncdn.com/i/teamlogos/leagues/500/sau.1.png",
 };
 
-const POPULAR_LEAGUES = [
+export const POPULAR_LEAGUES = [
   'UEFA Champions League', 'Premier League', 'La Liga', 'Bundesliga',
   'Serie A', 'Ligue 1', 'MLS', 'Championship', 'UEFA Europa League',
   'Copa Libertadores', 'Liga MX', 'NBA', 'NFL', 'NHL', 'MLB',

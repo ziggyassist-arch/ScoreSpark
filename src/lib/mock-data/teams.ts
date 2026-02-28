@@ -27,6 +27,23 @@ const REAL_BADGES: Record<string, string> = {
   "TOT": "https://crests.football-data.org/73.png",
   "NEW": "https://crests.football-data.org/67.png",
   "AVL": "https://crests.football-data.org/58.png",
+  // La Liga
+  "RMA": "https://crests.football-data.org/86.png",
+  "BAR": "https://crests.football-data.org/81.png",
+  "ATM": "https://crests.football-data.org/78.png",
+  "RSO": "https://crests.football-data.org/92.png",
+  // Bundesliga
+  "BAY": "https://crests.football-data.org/5.png",
+  "BVB": "https://crests.football-data.org/4.png",
+  "RBL": "https://crests.football-data.org/721.png",
+  "B04": "https://crests.football-data.org/3.png",
+  // Serie A
+  "INT": "https://crests.football-data.org/108.png",
+  "ACM": "https://crests.football-data.org/98.png",
+  "JUV": "https://crests.football-data.org/109.png",
+  "NAP": "https://crests.football-data.org/113.png",
+  // Ligue 1
+  "PSG": "https://crests.football-data.org/524.png",
   // NBA - ESPN
   "LAL": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
   "BOS": "https://a.espncdn.com/i/teamlogos/nba/500/bos.png",
@@ -293,6 +310,111 @@ export const soccerTeams: MockTeamData[] = [
       ["Jhon Durán", "Offence", 9, "Colombia"],
       ["Robin Olsen", "Goalkeeper", 33, "Sweden"],
       ["Leander Dendoncker", "Midfield", 32, "Belgium"],
+    ]),
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// LA LIGA
+// ═══════════════════════════════════════════════════════════════
+
+export const laLigaTeams: MockTeamData[] = [
+  {
+    team: makeTeam("mock-soccer-9", "Real Madrid", "RMA", "soccer"),
+    venue: "Santiago Bernabéu", coach: "Carlo Ancelotti", founded: 1902,
+    squad: makeSquad("mock-soccer-9", [
+      ["Thibaut Courtois", "Goalkeeper", 1, "Belgium"], ["Dani Carvajal", "Defence", 2, "Spain"],
+      ["Éder Militão", "Defence", 3, "Brazil"], ["David Alaba", "Defence", 4, "Austria"],
+      ["Ferland Mendy", "Defence", 23, "France"], ["Aurélien Tchouaméni", "Midfield", 18, "France"],
+      ["Eduardo Camavinga", "Midfield", 12, "France"], ["Luka Modrić", "Midfield", 10, "Croatia"],
+      ["Jude Bellingham", "Midfield", 5, "England"], ["Vinícius Jr.", "Offence", 7, "Brazil"],
+      ["Rodrygo", "Offence", 11, "Brazil"], ["Kylian Mbappé", "Offence", 9, "France"],
+    ]),
+  },
+  {
+    team: makeTeam("mock-soccer-10", "FC Barcelona", "BAR", "soccer"),
+    venue: "Spotify Camp Nou", coach: "Hansi Flick", founded: 1899,
+    squad: makeSquad("mock-soccer-10", [
+      ["Marc-André ter Stegen", "Goalkeeper", 1, "Germany"], ["Jules Koundé", "Defence", 23, "France"],
+      ["Ronald Araújo", "Defence", 4, "Uruguay"], ["Andreas Christensen", "Defence", 15, "Denmark"],
+      ["Alejandro Balde", "Defence", 3, "Spain"], ["Pedri", "Midfield", 8, "Spain"],
+      ["Gavi", "Midfield", 6, "Spain"], ["Frenkie de Jong", "Midfield", 21, "Netherlands"],
+      ["Lamine Yamal", "Offence", 19, "Spain"], ["Robert Lewandowski", "Offence", 9, "Poland"],
+      ["Raphinha", "Offence", 11, "Brazil"],
+    ]),
+  },
+  {
+    team: makeTeam("mock-soccer-11", "Atletico Madrid", "ATM", "soccer"),
+    venue: "Metropolitano", coach: "Diego Simeone", founded: 1903,
+    squad: makeSquad("mock-soccer-11", [
+      ["Jan Oblak", "Goalkeeper", 13, "Slovenia"], ["Nahuel Molina", "Defence", 16, "Argentina"],
+      ["José Giménez", "Defence", 2, "Uruguay"], ["Axel Witsel", "Defence", 20, "Belgium"],
+      ["Reinildo", "Defence", 23, "Mozambique"], ["Rodrigo De Paul", "Midfield", 5, "Argentina"],
+      ["Koke", "Midfield", 6, "Spain"], ["Saúl Ñíguez", "Midfield", 17, "Spain"],
+      ["Antoine Griezmann", "Offence", 7, "France"], ["Álvaro Morata", "Offence", 19, "Spain"],
+      ["Memphis Depay", "Offence", 9, "Netherlands"],
+    ]),
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// BUNDESLIGA
+// ═══════════════════════════════════════════════════════════════
+
+export const bundesligaTeams: MockTeamData[] = [
+  {
+    team: makeTeam("mock-soccer-12", "Bayern Munich", "BAY", "soccer"),
+    venue: "Allianz Arena", coach: "Thomas Tuchel", founded: 1900,
+    squad: makeSquad("mock-soccer-12", [
+      ["Manuel Neuer", "Goalkeeper", 1, "Germany"], ["Joshua Kimmich", "Defence", 6, "Germany"],
+      ["Dayot Upamecano", "Defence", 2, "France"], ["Min-jae Kim", "Defence", 3, "South Korea"],
+      ["Alphonso Davies", "Defence", 19, "Canada"], ["Leon Goretzka", "Midfield", 8, "Germany"],
+      ["Jamal Musiala", "Midfield", 42, "Germany"], ["Thomas Müller", "Offence", 25, "Germany"],
+      ["Leroy Sané", "Offence", 10, "Germany"], ["Serge Gnabry", "Offence", 7, "Germany"],
+      ["Harry Kane", "Offence", 9, "England"],
+    ]),
+  },
+  {
+    team: makeTeam("mock-soccer-13", "Borussia Dortmund", "BVB", "soccer"),
+    venue: "Signal Iduna Park", coach: "Edin Terzić", founded: 1909,
+    squad: makeSquad("mock-soccer-13", [
+      ["Gregor Kobel", "Goalkeeper", 1, "Switzerland"], ["Julian Ryerson", "Defence", 26, "Norway"],
+      ["Nico Schlotterbeck", "Defence", 4, "Germany"], ["Mats Hummels", "Defence", 15, "Germany"],
+      ["Ramy Bensebaini", "Defence", 5, "Algeria"], ["Marcel Sabitzer", "Midfield", 20, "Austria"],
+      ["Emre Can", "Midfield", 23, "Germany"], ["Julian Brandt", "Midfield", 10, "Germany"],
+      ["Karim Adeyemi", "Offence", 27, "Germany"], ["Marco Reus", "Offence", 11, "Germany"],
+      ["Niclas Füllkrug", "Offence", 14, "Germany"],
+    ]),
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// SERIE A
+// ═══════════════════════════════════════════════════════════════
+
+export const serieATeams: MockTeamData[] = [
+  {
+    team: makeTeam("mock-soccer-14", "Inter Milan", "INT", "soccer"),
+    venue: "San Siro", coach: "Simone Inzaghi", founded: 1908,
+    squad: makeSquad("mock-soccer-14", [
+      ["Yann Sommer", "Goalkeeper", 1, "Switzerland"], ["Denzel Dumfries", "Defence", 2, "Netherlands"],
+      ["Alessandro Bastoni", "Defence", 95, "Italy"], ["Francesco Acerbi", "Defence", 15, "Italy"],
+      ["Federico Dimarco", "Defence", 32, "Italy"], ["Nicolò Barella", "Midfield", 23, "Italy"],
+      ["Hakan Çalhanoğlu", "Midfield", 20, "Turkey"], ["Henrikh Mkhitaryan", "Midfield", 22, "Armenia"],
+      ["Marcus Thuram", "Offence", 9, "France"], ["Lautaro Martínez", "Offence", 10, "Argentina"],
+      ["Alexis Sánchez", "Offence", 70, "Chile"],
+    ]),
+  },
+  {
+    team: makeTeam("mock-soccer-15", "Juventus", "JUV", "soccer"),
+    venue: "Allianz Stadium", coach: "Massimiliano Allegri", founded: 1897,
+    squad: makeSquad("mock-soccer-15", [
+      ["Wojciech Szczęsny", "Goalkeeper", 1, "Poland"], ["Danilo", "Defence", 6, "Brazil"],
+      ["Gleison Bremer", "Defence", 3, "Brazil"], ["Federico Gatti", "Defence", 4, "Italy"],
+      ["Andrea Cambiaso", "Defence", 27, "Italy"], ["Adrien Rabiot", "Midfield", 25, "France"],
+      ["Manuel Locatelli", "Midfield", 5, "Italy"], ["Filip Kostić", "Midfield", 17, "Serbia"],
+      ["Federico Chiesa", "Offence", 7, "Italy"], ["Dušan Vlahović", "Offence", 9, "Serbia"],
+      ["Timothy Weah", "Offence", 22, "USA"],
     ]),
   },
 ];
@@ -1067,6 +1189,9 @@ export const mlbTeams: MockTeamData[] = [
 
 export const allMockTeams: MockTeamData[] = [
   ...soccerTeams,
+  ...laLigaTeams,
+  ...bundesligaTeams,
+  ...serieATeams,
   ...nbaTeams,
   ...nflTeams,
   ...nhlTeams,

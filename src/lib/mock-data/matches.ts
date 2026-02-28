@@ -1,5 +1,5 @@
 import type { Match, MatchEvent, MatchStats, SportDetail, Sport } from "../types";
-import { soccerTeams, nbaTeams, nflTeams, nhlTeams, mlbTeams } from "./teams";
+import { soccerTeams, laLigaTeams, bundesligaTeams, serieATeams, nbaTeams, nflTeams, nhlTeams, mlbTeams } from "./teams";
 
 // Helper to get team object by index in sport array
 const s = (i: number) => soccerTeams[i].team;
@@ -272,6 +272,143 @@ export const soccerMatches: Match[] = [
     venue: "Anfield",
     source: "mock",
     matchday: 28,
+  },
+];
+
+// ═══════════════════════════════════════════════════════════════
+// MULTI-LEAGUE SOCCER MATCHES
+// ═══════════════════════════════════════════════════════════════
+
+const ll = (i: number) => laLigaTeams[i].team;
+const bl = (i: number) => bundesligaTeams[i].team;
+const sa = (i: number) => serieATeams[i].team;
+
+export const multiLeagueSoccerMatches: Match[] = [
+  // La Liga
+  {
+    id: "mock-soccer-m11", sport: "soccer", league: "La Liga", leagueShort: "LL",
+    homeTeam: ll(0), awayTeam: ll(2),
+    homeScore: 2, awayScore: 1, status: "finished",
+    startTime: `${today}T15:00:00Z`,
+    events: [
+      { type: "goal", minute: 23, player: "Jude Bellingham", team: "home" },
+      { type: "goal", minute: 67, player: "Antoine Griezmann", team: "away" },
+      { type: "goal", minute: 89, player: "Vinícius Jr.", team: "home" },
+    ],
+    sportDetail: { htScore: { home: 1, away: 0 } },
+    venue: "Santiago Bernabéu", source: "mock", matchday: 26,
+  },
+  {
+    id: "mock-soccer-m12", sport: "soccer", league: "La Liga", leagueShort: "LL",
+    homeTeam: ll(1), awayTeam: ll(0),
+    homeScore: 1, awayScore: 1, status: "live",
+    startTime: `${today}T20:00:00Z`,
+    clock: { value: 62, displayValue: "62'" },
+    events: [
+      { type: "goal", minute: 15, player: "Robert Lewandowski", team: "home" },
+      { type: "goal", minute: 55, player: "Kylian Mbappé", team: "away" },
+    ],
+    venue: "Spotify Camp Nou", source: "mock", matchday: 26,
+  },
+  {
+    id: "mock-soccer-m13", sport: "soccer", league: "La Liga", leagueShort: "LL",
+    homeTeam: ll(2), awayTeam: ll(1),
+    homeScore: null, awayScore: null, status: "upcoming",
+    startTime: `${dayAfter}T18:00:00Z`,
+    events: [],
+    venue: "Metropolitano", source: "mock", matchday: 27,
+  },
+  // Bundesliga
+  {
+    id: "mock-soccer-m14", sport: "soccer", league: "Bundesliga", leagueShort: "BL",
+    homeTeam: bl(0), awayTeam: bl(1),
+    homeScore: 3, awayScore: 2, status: "finished",
+    startTime: `${today}T14:30:00Z`,
+    events: [
+      { type: "goal", minute: 12, player: "Harry Kane", team: "home" },
+      { type: "goal", minute: 34, player: "Niclas Füllkrug", team: "away" },
+      { type: "goal", minute: 45, player: "Harry Kane", team: "home" },
+      { type: "goal", minute: 58, player: "Karim Adeyemi", team: "away" },
+      { type: "goal", minute: 71, player: "Jamal Musiala", team: "home" },
+    ],
+    sportDetail: { htScore: { home: 2, away: 1 } },
+    venue: "Allianz Arena", source: "mock", matchday: 24,
+  },
+  {
+    id: "mock-soccer-m15", sport: "soccer", league: "Bundesliga", leagueShort: "BL",
+    homeTeam: bl(1), awayTeam: bl(0),
+    homeScore: 0, awayScore: 0, status: "live",
+    startTime: `${today}T17:30:00Z`,
+    clock: { value: 28, displayValue: "28'" },
+    events: [],
+    venue: "Signal Iduna Park", source: "mock", matchday: 25,
+  },
+  {
+    id: "mock-soccer-m16", sport: "soccer", league: "Bundesliga", leagueShort: "BL",
+    homeTeam: bl(0), awayTeam: s(0),
+    homeScore: null, awayScore: null, status: "upcoming",
+    startTime: `${dayAfter}T20:00:00Z`,
+    events: [],
+    venue: "Allianz Arena", source: "mock", matchday: 25,
+  },
+  // Serie A
+  {
+    id: "mock-soccer-m17", sport: "soccer", league: "Serie A", leagueShort: "SA",
+    homeTeam: sa(0), awayTeam: sa(1),
+    homeScore: 1, awayScore: 0, status: "finished",
+    startTime: `${today}T17:45:00Z`,
+    events: [
+      { type: "goal", minute: 73, player: "Lautaro Martínez", team: "home" },
+    ],
+    sportDetail: { htScore: { home: 0, away: 0 } },
+    venue: "San Siro", source: "mock", matchday: 27,
+  },
+  {
+    id: "mock-soccer-m18", sport: "soccer", league: "Serie A", leagueShort: "SA",
+    homeTeam: sa(1), awayTeam: sa(0),
+    homeScore: 2, awayScore: 2, status: "live",
+    startTime: `${today}T19:45:00Z`,
+    clock: { value: 78, displayValue: "78'" },
+    events: [
+      { type: "goal", minute: 11, player: "Dušan Vlahović", team: "home" },
+      { type: "goal", minute: 33, player: "Marcus Thuram", team: "away" },
+      { type: "goal", minute: 55, player: "Federico Chiesa", team: "home" },
+      { type: "goal", minute: 70, player: "Lautaro Martínez", team: "away" },
+    ],
+    venue: "Allianz Stadium", source: "mock", matchday: 27,
+  },
+  // Champions League
+  {
+    id: "mock-soccer-m19", sport: "soccer", league: "UEFA Champions League", leagueShort: "UCL",
+    homeTeam: s(0), awayTeam: ll(0),
+    homeScore: 1, awayScore: 1, status: "live",
+    startTime: `${today}T20:00:00Z`,
+    clock: { value: 44, displayValue: "44'" },
+    events: [
+      { type: "goal", minute: 18, player: "Bukayo Saka", team: "home" },
+      { type: "goal", minute: 37, player: "Jude Bellingham", team: "away" },
+    ],
+    venue: "Emirates Stadium", source: "mock", matchday: 7,
+  },
+  {
+    id: "mock-soccer-m20", sport: "soccer", league: "UEFA Champions League", leagueShort: "UCL",
+    homeTeam: bl(0), awayTeam: sa(0),
+    homeScore: 2, awayScore: 0, status: "finished",
+    startTime: `${today}T20:00:00Z`,
+    events: [
+      { type: "goal", minute: 29, player: "Harry Kane", team: "home" },
+      { type: "goal", minute: 64, player: "Jamal Musiala", team: "home" },
+    ],
+    sportDetail: { htScore: { home: 1, away: 0 } },
+    venue: "Allianz Arena", source: "mock", matchday: 7,
+  },
+  {
+    id: "mock-soccer-m21", sport: "soccer", league: "UEFA Champions League", leagueShort: "UCL",
+    homeTeam: ll(1), awayTeam: s(2),
+    homeScore: null, awayScore: null, status: "upcoming",
+    startTime: `${dayAfter}T20:00:00Z`,
+    events: [],
+    venue: "Spotify Camp Nou", source: "mock", matchday: 8,
   },
 ];
 
@@ -1050,6 +1187,7 @@ export const mlbMatches: Match[] = [
 
 export const allMockMatches: Match[] = [
   ...soccerMatches,
+  ...multiLeagueSoccerMatches,
   ...nbaMatches,
   ...nflMatches,
   ...nhlMatches,
@@ -1058,7 +1196,7 @@ export const allMockMatches: Match[] = [
 
 export function getMatchesForSport(sport: Sport): Match[] {
   switch (sport) {
-    case "soccer": return soccerMatches;
+    case "soccer": return [...soccerMatches, ...multiLeagueSoccerMatches];
     case "nba": return nbaMatches;
     case "nfl": return nflMatches;
     case "nhl": return nhlMatches;

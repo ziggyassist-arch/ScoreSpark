@@ -1,10 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Image from "next/image";
 import { Match } from "@/lib/types";
 import { groupMatchesByLeague } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
-import MatchCard from "./MatchCard";
+import MatchRow from "./MatchRow";
 
 export const LEAGUE_LOGOS: Record<string, string> = {
   "NBA": "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
@@ -15,7 +16,6 @@ export const LEAGUE_LOGOS: Record<string, string> = {
   "NHL (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/nhl.png",
   "MLB": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
   "MLB (Demo)": "https://a.espncdn.com/i/teamlogos/leagues/500/mlb.png",
-  // Soccer — football-data.org leagues
   "Premier League": "https://crests.football-data.org/PL.png",
   "La Liga": "https://crests.football-data.org/PD.png",
   "Bundesliga": "https://crests.football-data.org/BL1.png",
@@ -25,12 +25,32 @@ export const LEAGUE_LOGOS: Record<string, string> = {
   "Championship": "https://crests.football-data.org/ELC.png",
   "Eredivisie": "https://crests.football-data.org/DED.png",
   "Primeira Liga": "https://crests.football-data.org/PPL.png",
-  // Soccer — ESPN leagues
   "MLS": "https://a.espncdn.com/i/teamlogos/leagues/500/mls.png",
   "Liga MX": "https://a.espncdn.com/i/teamlogos/leagues/500/mex.1.png",
   "Scottish Premiership": "https://a.espncdn.com/i/teamlogos/leagues/500/sco.1.png",
   "Brasileirao Serie A": "https://a.espncdn.com/i/teamlogos/leagues/500/bra.1.png",
   "Saudi Pro League": "https://a.espncdn.com/i/teamlogos/leagues/500/sau.1.png",
+};
+
+const LEAGUE_COUNTRY: Record<string, string> = {
+  "Premier League": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+  "La Liga": "🇪🇸",
+  "Bundesliga": "🇩🇪",
+  "Serie A": "🇮🇹",
+  "Ligue 1": "🇫🇷",
+  "Championship": "🏴󠁧󠁢󠁥󠁮󠁧󠁿",
+  "Eredivisie": "🇳🇱",
+  "Primeira Liga": "🇵🇹",
+  "MLS": "🇺🇸",
+  "Liga MX": "🇲🇽",
+  "Scottish Premiership": "🏴󠁧󠁢󠁳󠁣󠁴󠁿",
+  "Brasileirao Serie A": "🇧🇷",
+  "Saudi Pro League": "🇸🇦",
+  "UEFA Champions League": "🏆",
+  "NBA": "🇺🇸",
+  "NFL": "🇺🇸",
+  "NHL": "🇺🇸",
+  "MLB": "🇺🇸",
 };
 
 export const POPULAR_LEAGUES = [
@@ -42,19 +62,65 @@ export const POPULAR_LEAGUES = [
 function sortMatches(matches: Match[], favorites: string[]): Match[] {
   const statusOrder: Record<string, number> = { live: 0, upcoming: 1, finished: 2 };
   return [...matches].sort((a, b) => {
-    // Favorite teams first
-    const aFav =
-      favorites.includes(a.homeTeam.id) || favorites.includes(a.awayTeam.id)
-        ? 0
-        : 1;
-    const bFav =
-      favorites.includes(b.homeTeam.id) || favorites.includes(b.awayTeam.id)
-        ? 0
-        : 1;
+    const aFav = favorites.includes(a.homeTeam.id) || favorites.includes(a.awayTeam.id) ? 0 : 1;
+    const bFav = favorites.includes(b.homeTeam.id) || favorites.includes(b.awayTeam.id) ? 0 : 1;
     if (aFav !== bFav) return aFav - bFav;
-    // Then by status
     return statusOrder[a.status] - statusOrder[b.status];
   });
+}
+
+function LeagueSection({ league, matches }: { league: string; matches: Match[] }) {
+  const [collapsed, setCollapsed] = useState(false);
+  const hasLive = matches.some(m => m.status === "live");
+  const logo = LEAGUE_LOGOS[league];
+  const flag = LEAGUE_COUNTRY[league] || "";
+
+  return (
+    <div className="bg-surface rounded-lg overflow-hidden border border-white/[0.04]">
+      {/* League header */}
+      <button
+        onClick={() => setCollapsed(!collapsed)}
+        className="w-full flex items-center gap-2 px-2.5 py-2 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+      >
+        {logo && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img
+            src={logo}
+            alt={league}
+            width={16}
+            height={16}
+            className="w-4 h-4 object-contain flex-shrink-0"
+            onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
+          />
+        )}
+        {flag && <span className="text-xs">{flag}</span>}
+        <span className="text-[11px] font-semibold text-white/50 uppercase tracking-wider flex-1 text-left">
+          {league}
+        </span>
+        {hasLive && (
+          <span className="px-1.5 py-0.5 text-[8px] font-bold bg-live-green/15 text-live-green rounded-full">
+            LIVE
+          </span>
+        )}
+        <span className="text-[10px] text-white/20 tabular-nums">{matches.length}</span>
+        <svg
+          className={`w-3 h-3 text-white/20 transition-transform ${collapsed ? "-rotate-90" : ""}`}
+          fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+
+      {/* Match rows */}
+      {!collapsed && (
+        <div>
+          {matches.map(match => (
+            <MatchRow key={match.id} match={match} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function MatchList({ matches }: { matches: Match[] }) {
@@ -62,28 +128,18 @@ export default function MatchList({ matches }: { matches: Match[] }) {
   const sorted = sortMatches(matches, favorites);
   const grouped = groupMatchesByLeague(sorted);
 
-  // Order leagues: live first, then popular leagues by priority, then alphabetical
   const leagueOrder = Object.entries(grouped).sort(([aLeague, aMatches], [bLeague, bMatches]) => {
-    const aHasLive = aMatches.some((m) => m.status === "live") ? 0 : 1;
-    const bHasLive = bMatches.some((m) => m.status === "live") ? 0 : 1;
+    const aHasLive = aMatches.some(m => m.status === "live") ? 0 : 1;
+    const bHasLive = bMatches.some(m => m.status === "live") ? 0 : 1;
     if (aHasLive !== bHasLive) return aHasLive - bHasLive;
 
     const aPriority = POPULAR_LEAGUES.indexOf(aLeague);
     const bPriority = POPULAR_LEAGUES.indexOf(bLeague);
-    const aIsPopular = aPriority !== -1;
-    const bIsPopular = bPriority !== -1;
-    if (aIsPopular && bIsPopular) return aPriority - bPriority;
-    if (aIsPopular) return -1;
-    if (bIsPopular) return 1;
-
+    if (aPriority !== -1 && bPriority !== -1) return aPriority - bPriority;
+    if (aPriority !== -1) return -1;
+    if (bPriority !== -1) return 1;
     return aLeague.localeCompare(bLeague);
   });
-
-  // Find where popular leagues end for the divider
-  const lastPopularIdx = leagueOrder.reduce((last, [league], idx) =>
-    POPULAR_LEAGUES.includes(league) ? idx : last, -1
-  );
-  const hasOtherLeagues = lastPopularIdx < leagueOrder.length - 1 && lastPopularIdx >= 0;
 
   if (matches.length === 0) {
     return (
@@ -101,43 +157,9 @@ export default function MatchList({ matches }: { matches: Match[] }) {
   }
 
   return (
-    <div className="space-y-3 animate-slide-up">
-      {leagueOrder.map(([league, leagueMatches], idx) => (
-        <div key={league}>
-          {hasOtherLeagues && idx === lastPopularIdx + 1 && (
-            <div className="flex items-center gap-2 my-3">
-              <div className="flex-1 h-px bg-white/10" />
-              <span className="text-[9px] font-semibold text-white/25 uppercase tracking-wider">More Leagues</span>
-              <div className="flex-1 h-px bg-white/10" />
-            </div>
-          )}
-          <div className="flex items-center gap-1.5 mb-1.5">
-            {LEAGUE_LOGOS[league] && (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={LEAGUE_LOGOS[league]}
-                alt={league}
-                width={14}
-                height={14}
-                className="w-3.5 h-3.5 object-contain"
-                onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }}
-              />
-            )}
-            <h3 className="text-[10px] font-semibold text-white/40 uppercase tracking-wider">
-              {league}
-            </h3>
-            {leagueMatches.some((m) => m.status === "live") && (
-              <span className="px-1.5 py-0.5 text-[9px] font-bold bg-live-green/15 text-live-green rounded-full">
-                LIVE
-              </span>
-            )}
-          </div>
-          <div className="space-y-1">
-            {leagueMatches.map((match) => (
-              <MatchCard key={match.id} match={match} />
-            ))}
-          </div>
-        </div>
+    <div className="space-y-2 animate-slide-up">
+      {leagueOrder.map(([league, leagueMatches]) => (
+        <LeagueSection key={league} league={league} matches={leagueMatches} />
       ))}
     </div>
   );

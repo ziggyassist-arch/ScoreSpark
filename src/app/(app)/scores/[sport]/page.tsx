@@ -45,15 +45,15 @@ export default async function SportScoresPage({
   const liveCount = matches.filter((m) => m.status === "live").length;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-white">{label}</h1>
-        <p className="text-sm text-white/40 mt-1">
-          {liveCount > 0
-            ? `${liveCount} live ${liveCount === 1 ? "match" : "matches"} right now`
-            : "No live matches right now"}
-        </p>
+      <div className="flex items-baseline gap-3">
+        <h1 className="text-lg font-bold text-white">{label}</h1>
+        {liveCount > 0 && (
+          <span className="text-xs font-semibold text-live-green">
+            {liveCount} LIVE
+          </span>
+        )}
       </div>
 
       {/* Date Navigation */}

@@ -439,7 +439,27 @@ export async function search(q: string) {
       href: l.href,
     }));
 
-  return { results: [...matchedLeagues, ...matchedTeams] };
+  // Search players across all teams
+  const matchedPlayers: { type: "player"; id: string; name: string; team: string; teamBadge: string; sport: string; href: string }[] = [];
+  for (const td of allMockTeams) {
+    for (const p of td.squad) {
+      if (p.name.toLowerCase().includes(query)) {
+        matchedPlayers.push({
+          type: "player",
+          id: p.id,
+          name: p.name,
+          team: td.team.name,
+          teamBadge: td.team.badge,
+          sport: td.team.sport,
+          href: `/player/${p.id}`,
+        });
+        if (matchedPlayers.length >= 5) break;
+      }
+    }
+    if (matchedPlayers.length >= 5) break;
+  }
+
+  return { results: [...matchedLeagues, ...matchedTeams, ...matchedPlayers] };
 }
 
 // ═══════════════════════════════════════════════════════════════

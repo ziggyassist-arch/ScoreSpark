@@ -4,11 +4,13 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 
 interface SearchResult {
-  type: "team" | "league";
+  type: "team" | "league" | "player";
   id: string;
   name: string;
   shortName?: string;
   badge?: string;
+  teamBadge?: string;
+  team?: string;
   sport: string;
   href: string;
 }
@@ -140,9 +142,9 @@ export default function SearchBar({ onClose }: { onClose?: () => void }) {
                 selectedIdx === i ? "bg-white/10" : "hover:bg-white/5"
               }`}
             >
-              {r.type === "team" && r.badge ? (
+              {(r.type === "team" && r.badge) || (r.type === "player" && r.teamBadge) ? (
                 // eslint-disable-next-line @next/next/no-img-element
-                <img src={r.badge} alt="" className="w-6 h-6 object-contain flex-shrink-0" />
+                <img src={r.badge || r.teamBadge} alt="" className="w-6 h-6 object-contain flex-shrink-0" />
               ) : (
                 <div className="w-6 h-6 rounded-md bg-white/10 flex items-center justify-center flex-shrink-0">
                   <svg className="w-3.5 h-3.5 text-white/40" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
@@ -152,7 +154,7 @@ export default function SearchBar({ onClose }: { onClose?: () => void }) {
               )}
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-white/90 truncate">{r.name}</p>
-                <p className="text-[10px] text-white/30 capitalize">{r.type}</p>
+                <p className="text-[10px] text-white/30 capitalize">{r.type === "player" && r.team ? `${r.team}` : r.type}</p>
               </div>
               <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded ${SPORT_COLORS[r.sport] ?? "bg-white/10 text-white/40"}`}>
                 {r.sport}

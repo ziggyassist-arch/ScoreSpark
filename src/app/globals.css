@@ -218,3 +218,8 @@ html.light ::selection {
 
 /* Focus border */
 html.light .focus-within\:border-gold-spark\/40:focus-within { border-color: rgba(184, 134, 11, 0.4); }
+
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTeamsForSport, getSoccerTeamsForCompetition, SOCCER_LEAGUES } from "@/lib/services/team-service";
+import * as mock from "@/lib/services/mock-provider";
 import type { Sport } from "@/lib/types";
 
 const SPORTS: Sport[] = ["soccer", "nba", "nfl", "nhl", "mlb"];
@@ -25,6 +26,12 @@ export async function GET(request: NextRequest) {
 
   if (q.length < 2) {
     return NextResponse.json({ results: [] });
+  }
+
+  // Mock mode: use mock search
+  if (mock.isMockMode()) {
+    const result = await mock.search(request.nextUrl.searchParams.get("q") ?? "");
+    return NextResponse.json(result);
   }
 
   // Fetch teams from all sports in parallel

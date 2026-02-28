@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTeamsForSport, getSoccerTeamsForCompetition } from "@/lib/services/team-service";
+import * as mock from "@/lib/services/mock-provider";
 import type { Sport } from "@/lib/types";
 
 const validSports = new Set(["soccer", "nba", "nfl", "nhl", "mlb"]);
@@ -10,6 +11,13 @@ export async function GET(request: NextRequest) {
 
   if (!sport || !validSports.has(sport)) {
     return NextResponse.json({ error: "Invalid sport" }, { status: 400 });
+  }
+
+  if (mock.isMockMode()) {
+    const teams = sport === "soccer"
+      ? await mock.getSoccerTeamsForCompetition(league || "PL")
+      : await mock.getTeamsForSport(sport as Sport);
+    return NextResponse.json({ teams });
   }
 
   if (sport === "soccer") {

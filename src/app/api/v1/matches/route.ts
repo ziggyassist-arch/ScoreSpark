@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAllMatches, getMatchesForSport } from "@/lib/services/match-service";
+import * as mock from "@/lib/services/mock-provider";
 import type { Sport } from "@/lib/types";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +15,11 @@ export async function GET(request: NextRequest) {
 
   try {
     let matches;
-    if (sport && VALID_SPORTS.has(sport)) {
+    if (mock.isMockMode()) {
+      matches = sport && VALID_SPORTS.has(sport)
+        ? await mock.getMatchesForSport(sport as Sport, date)
+        : await mock.getAllMatches(date);
+    } else if (sport && VALID_SPORTS.has(sport)) {
       matches = await getMatchesForSport(sport as Sport, date);
     } else {
       matches = await getAllMatches(date);

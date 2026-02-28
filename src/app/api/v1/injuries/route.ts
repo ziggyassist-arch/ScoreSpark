@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getInjuries } from "@/lib/api/espn";
+import * as mock from "@/lib/services/mock-provider";
 
 const VALID_SPORTS = new Set(["nba", "nfl", "nhl", "mlb"]);
 
@@ -14,7 +15,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const data = await getInjuries(sport as "nba" | "nfl" | "nhl" | "mlb");
+    const data = mock.isMockMode()
+      ? await mock.getInjuries(sport as "nba" | "nfl" | "nhl" | "mlb")
+      : await getInjuries(sport as "nba" | "nfl" | "nhl" | "mlb");
     return NextResponse.json(data);
   } catch (err) {
     console.error("[API /injuries] error:", err);

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getTopScorers, FREE_TIER_COMPETITIONS } from "@/lib/api/football-data";
+import * as mock from "@/lib/services/mock-provider";
 import type { CompetitionCode } from "@/lib/api/football-data";
 
 const VALID_COMPETITIONS = new Set<string>(FREE_TIER_COMPETITIONS.map((c) => c.code));
@@ -15,7 +16,9 @@ export async function GET(request: NextRequest) {
   }
 
   try {
-    const data = await getTopScorers(competition as CompetitionCode, 25);
+    const data = mock.isMockMode()
+      ? await mock.getTopScorers(competition)
+      : await getTopScorers(competition as CompetitionCode, 25);
     return NextResponse.json(data);
   } catch (err) {
     console.error("[API /scorers] error:", err);

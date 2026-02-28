@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getStandingsForLeague } from "@/lib/services/standings-service";
+import * as mock from "@/lib/services/mock-provider";
 
 export async function GET(
   _request: NextRequest,
@@ -8,7 +9,9 @@ export async function GET(
   const { competition } = await params;
 
   try {
-    const result = await getStandingsForLeague(competition);
+    const result = mock.isMockMode()
+      ? await mock.getStandingsForLeague(competition)
+      : await getStandingsForLeague(competition);
     return NextResponse.json(result);
   } catch (err) {
     console.error("[API /standings/:competition] error:", err);

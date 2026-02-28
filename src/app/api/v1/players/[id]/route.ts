@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getPlayerProfile } from "@/lib/services/player-service";
+import * as mock from "@/lib/services/mock-provider";
 
 export async function GET(
   _request: NextRequest,
@@ -8,7 +9,9 @@ export async function GET(
   const { id } = await params;
 
   try {
-    const player = await getPlayerProfile(id);
+    const player = mock.isMockMode()
+      ? await mock.getPlayerProfile(id)
+      : await getPlayerProfile(id);
     if (!player) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }

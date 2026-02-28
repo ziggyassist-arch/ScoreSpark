@@ -113,6 +113,67 @@ export function getStandingsForLeague(leagueId: string): StandingsResult | null 
     case "ligue1":
     case "FL1":
     case "fra.1":
+    // All other soccer leagues → reuse EPL mock data
+    case "ucl":
+    case "uel":
+    case "uel-espn":
+    case "eredivisie":
+    case "DED":
+    case "championship":
+    case "eng-championship":
+    case "ELC":
+    case "ligapt":
+    case "PPL":
+    case "mls":
+    case "ligamx":
+    case "brasileirao":
+    case "aleague":
+    case "scottish":
+    case "superlig":
+    case "jupiler":
+    case "russian":
+    case "greek":
+    case "swedish":
+    case "danish":
+    case "norwegian":
+    case "austrian":
+    case "swiss":
+    case "czech":
+    case "finnish":
+    case "romanian":
+    case "israeli":
+    case "cypriot":
+    case "argentina":
+    case "colombian":
+    case "chilean":
+    case "peruvian":
+    case "uruguayan":
+    case "ecuadorian":
+    case "paraguayan":
+    case "jleague":
+    case "chinese":
+    case "indian":
+    case "saudipro":
+    case "thai":
+    case "indonesian":
+    case "malaysian":
+    case "singapore":
+    case "nigerian":
+    case "ghanaian":
+    case "kenyan":
+    case "nwsl":
+    case "usl":
+    case "wsl":
+    case "fa-cup":
+    case "efl-cup":
+    case "esp-segunda":
+    case "copa-del-rey":
+    case "ger-2bundesliga":
+    case "dfb-pokal":
+    case "ita-serieb":
+    case "coppa-italia":
+    case "fra-ligue2":
+    case "coupe-de-france":
       return { type: "soccer", rows: eplStandings };
     case "nba":
     case "nba-east":

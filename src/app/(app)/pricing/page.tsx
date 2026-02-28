@@ -47,7 +47,7 @@ export default function PricingPage() {
       <div className="text-center mb-10">
         <h1 className="text-3xl font-bold text-white">Choose Your Plan</h1>
         <p className="text-sm text-white/40 mt-2">
-          Unlock the full ScoreSpark experience
+          More scores. More stats. Less noise.
         </p>
       </div>
 

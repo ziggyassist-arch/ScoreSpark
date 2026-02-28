@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getTeamDetail, getTeamMatches } from "@/lib/services/team-service";
+import * as mock from "@/lib/services/mock-provider";
 import TeamPageClient from "./TeamPageClient";
 
 export const dynamic = "force-dynamic";
@@ -17,7 +18,9 @@ export default async function TeamPage({
 
   let team;
   try {
-    team = await getTeamDetail(id);
+    team = mock.isMockMode()
+      ? await mock.getTeamDetail(id)
+      : await getTeamDetail(id);
   } catch (err) {
     console.error("[team page] getTeamDetail error:", err);
     notFound();
@@ -29,7 +32,9 @@ export default async function TeamPage({
 
   let matches: Awaited<ReturnType<typeof getTeamMatches>> = [];
   try {
-    matches = await getTeamMatches(id);
+    matches = mock.isMockMode()
+      ? await mock.getTeamMatches(id)
+      : await getTeamMatches(id);
   } catch (err) {
     console.error("[team page] getTeamMatches error:", err);
     matches = [];

@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getPlayerProfile } from "@/lib/services/player-service";
+import * as mock from "@/lib/services/mock-provider";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -14,7 +15,9 @@ export default async function PlayerPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const player = await getPlayerProfile(id);
+  const player = mock.isMockMode()
+    ? await mock.getPlayerProfile(id)
+    : await getPlayerProfile(id);
   if (!player) notFound();
 
   const sportColors: Record<string, string> = {

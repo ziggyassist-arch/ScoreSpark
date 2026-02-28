@@ -73,11 +73,11 @@ const SPORT_KEYWORDS: Record<Sport, RegExp> = {
 
 // Keywords that mean the article is definitely NOT this sport
 const OTHER_SPORT_SIGNALS: Record<Sport, RegExp> = {
-  soccer: /\b(nba|nfl|nhl|mlb|basketball|hockey|baseball|touchdown|quarterback|slam dunk|home run|stanley cup|super bowl)\b/i,
-  nba: /\b(nfl|nhl|mlb|soccer|hockey|baseball|touchdown|quarterback|stanley cup|home run|premier league|champions league|world cup|la liga)\b/i,
-  nfl: /\b(nba|nhl|mlb|soccer|basketball|hockey|baseball|slam dunk|stanley cup|home run|premier league|champions league|world cup|la liga)\b/i,
-  nhl: /\b(nba|nfl|mlb|soccer|basketball|baseball|touchdown|quarterback|slam dunk|home run|super bowl|premier league|champions league|world cup|la liga)\b/i,
-  mlb: /\b(nba|nfl|nhl|soccer|basketball|hockey|touchdown|quarterback|slam dunk|stanley cup|super bowl|premier league|champions league|world cup|la liga)\b/i,
+  soccer: /\b(nba|nfl|nhl|mlb|basketball|hockey|baseball|touchdown|quarterback|slam dunk|home run|stanley cup|super bowl|lakers|celtics|warriors|bucks|nuggets|suns|76ers|sixers|knicks|nets|heat|chiefs|eagles|49ers|cowboys|packers|ravens|bills|dolphins|bengals|lions|oilers|avalanche|bruins|maple leafs|canadiens|rangers|penguins|yankees|dodgers|red sox|astros|braves|mets|phillies|cubs|pelicans|jazz|kraken|canucks|grizzlies|thunder|clippers|blazers|rockets|rams|seahawks|jets|patriots|saints)\b/i,
+  nba: /\b(nfl|nhl|mlb|soccer|football|hockey|baseball|touchdown|quarterback|stanley cup|home run|super bowl|premier league|champions league|world cup|la liga|arsenal|chelsea|liverpool|manchester|tottenham|bundesliga|serie a|ligue 1)\b/i,
+  nfl: /\b(nba|nhl|mlb|soccer|football|basketball|hockey|baseball|slam dunk|stanley cup|home run|premier league|champions league|world cup|la liga|arsenal|chelsea|liverpool|manchester|tottenham|lakers|celtics|warriors|bucks|yankees|dodgers)\b/i,
+  nhl: /\b(nba|nfl|mlb|soccer|football|basketball|baseball|touchdown|quarterback|slam dunk|home run|super bowl|premier league|champions league|world cup|la liga|arsenal|chelsea|liverpool|manchester|lakers|celtics|warriors|yankees|dodgers)\b/i,
+  mlb: /\b(nba|nfl|nhl|soccer|football|basketball|hockey|touchdown|quarterback|slam dunk|stanley cup|super bowl|premier league|champions league|world cup|la liga|arsenal|chelsea|liverpool|manchester|lakers|celtics|warriors|oilers|avalanche)\b/i,
 };
 
 /** Check if an article is relevant to the requested sport */
@@ -86,8 +86,8 @@ function isRelevantToSport(title: string, url: string, sport: Sport): boolean {
   const hasOwnKeyword = SPORT_KEYWORDS[sport].test(text);
   const hasOtherKeyword = OTHER_SPORT_SIGNALS[sport].test(text);
 
-  // If it has keywords from another sport and none from ours, filter it out
-  if (hasOtherKeyword && !hasOwnKeyword) return false;
+  // If it has keywords from another sport, filter it out (strict mode)
+  if (hasOtherKeyword) return false;
   return true;
 }
 

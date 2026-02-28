@@ -167,8 +167,8 @@ export async function getTeamMatches(
 ): Promise<
   {
     id: string;
-    homeTeam: { id: string; name: string; shortName: string; badge: string };
-    awayTeam: { id: string; name: string; shortName: string; badge: string };
+    homeTeam: { id: string; name: string; shortName: string; badge: string; sport: Sport };
+    awayTeam: { id: string; name: string; shortName: string; badge: string; sport: Sport };
     homeScore: number | null;
     awayScore: number | null;
     status: string;
@@ -188,12 +188,14 @@ export async function getTeamMatches(
         name: m.homeTeam.name,
         shortName: m.homeTeam.shortName,
         badge: m.homeTeam.badge,
+        sport: m.sport,
       },
       awayTeam: {
         id: m.awayTeam.id,
         name: m.awayTeam.name,
         shortName: m.awayTeam.shortName,
         badge: m.awayTeam.badge,
+        sport: m.sport,
       },
       homeScore: m.homeScore,
       awayScore: m.awayScore,

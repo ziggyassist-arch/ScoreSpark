@@ -354,7 +354,7 @@ export async function getTopScorers(_competition: string) {
       id: 2021,
       name: "Premier League",
       code: "PL",
-      emblem: "https://placehold.co/64x64/1E1B3A/7EB6E6?text=PL",
+      emblem: "https://crests.football-data.org/PL.png",
     },
     season: {
       id: 2025,
@@ -376,7 +376,7 @@ export async function getTopScorers(_competition: string) {
         id: parseInt(s.teamId.replace("mock-soccer-", "")) * 100,
         name: s.teamName,
         shortName: s.teamName.substring(0, 3).toUpperCase(),
-        crest: `https://placehold.co/64x64/1E1B3A/7EB6E6?text=${s.teamName.substring(0, 3).toUpperCase()}`,
+        crest: teamById[s.teamId]?.team.badge ?? `https://placehold.co/64x64/1E1B3A/7EB6E6?text=${s.teamName.substring(0, 3).toUpperCase()}`,
       },
       playedMatches: s.playedMatches,
       goals: s.goals,

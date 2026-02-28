@@ -7,21 +7,22 @@ import {
   allMockTeams,
   teamById,
   getTeamsForSport as getTeamsBySport,
-  getMatchesForSportRaw,
+  type MockTeamData,
+} from "../mock-data/teams";
+import {
+  getMatchesForSport as getMatchesForSportRaw,
   allMockMatches,
   getMatchById,
-  getStandingsForLeague as getStandingsByLeague,
-  getPlayerProfile as getPlayerById,
-  getPlayersForTeam,
-  getNewsForSport as getNewsBySport,
-  getInjuriesForSport as getInjuriesBySport,
+} from "../mock-data/matches";
+import { getStandingsForLeague as getStandingsByLeague } from "../mock-data/standings";
+import { getPlayerProfile as getPlayerById } from "../mock-data/players";
+import { getNewsForSport as getNewsBySport } from "../mock-data/news";
+import { getInjuriesForSport as getInjuriesBySport } from "../mock-data/injuries";
+import {
   getLeadersForSport as getLeadersBySport,
   mockSoccerScorers,
-} from "../mock-data";
-import type { MockTeamData } from "../mock-data";
-import type { ESPNInjuryResponse } from "../api/types/espn";
-import type { ESPNLeadersResponse } from "../api/types/espn";
-import type { ESPNPowerIndexResponse } from "../api/types/espn";
+} from "../mock-data/leaders";
+import type { ESPNInjuryResponse, ESPNLeadersResponse, ESPNPowerIndexResponse } from "../api/types/espn";
 
 // ═══════════════════════════════════════════════════════════════
 // Helper

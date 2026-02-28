@@ -16,12 +16,57 @@ export interface MockTeamData {
   squad: MockSquadPlayer[];
 }
 
-function badge(abbr: string): string {
-  return `https://placehold.co/64x64/1E1B3A/7EB6E6?text=${abbr}`;
+// Real team logos from ESPN CDN and football-data.org
+const REAL_BADGES: Record<string, string> = {
+  // Soccer - football-data.org crests
+  "ARS": "https://crests.football-data.org/57.png",
+  "MCI": "https://crests.football-data.org/65.png",
+  "LIV": "https://crests.football-data.org/64.png",
+  "CHE": "https://crests.football-data.org/61.png",
+  "MUN": "https://crests.football-data.org/66.png",
+  "TOT": "https://crests.football-data.org/73.png",
+  "NEW": "https://crests.football-data.org/67.png",
+  "AVL": "https://crests.football-data.org/58.png",
+  // NBA - ESPN
+  "LAL": "https://a.espncdn.com/i/teamlogos/nba/500/lal.png",
+  "BOS": "https://a.espncdn.com/i/teamlogos/nba/500/bos.png",
+  "GSW": "https://a.espncdn.com/i/teamlogos/nba/500/gs.png",
+  "MIL": "https://a.espncdn.com/i/teamlogos/nba/500/mil.png",
+  "DEN": "https://a.espncdn.com/i/teamlogos/nba/500/den.png",
+  "PHI-nba": "https://a.espncdn.com/i/teamlogos/nba/500/phi.png",
+  "MIA-nba": "https://a.espncdn.com/i/teamlogos/nba/500/mia.png",
+  "PHX": "https://a.espncdn.com/i/teamlogos/nba/500/phx.png",
+  // NFL - ESPN
+  "KC": "https://a.espncdn.com/i/teamlogos/nfl/500/kc.png",
+  "SF": "https://a.espncdn.com/i/teamlogos/nfl/500/sf.png",
+  "PHI-nfl": "https://a.espncdn.com/i/teamlogos/nfl/500/phi.png",
+  "DAL-nfl": "https://a.espncdn.com/i/teamlogos/nfl/500/dal.png",
+  "BUF": "https://a.espncdn.com/i/teamlogos/nfl/500/buf.png",
+  "BAL": "https://a.espncdn.com/i/teamlogos/nfl/500/bal.png",
+  "DET": "https://a.espncdn.com/i/teamlogos/nfl/500/det.png",
+  "MIA-nfl": "https://a.espncdn.com/i/teamlogos/nfl/500/mia.png",
+  // NHL - ESPN
+  "EDM": "https://a.espncdn.com/i/teamlogos/nhl/500/edm.png",
+  "FLA": "https://a.espncdn.com/i/teamlogos/nhl/500/fla.png",
+  "DAL-nhl": "https://a.espncdn.com/i/teamlogos/nhl/500/dal.png",
+  "COL": "https://a.espncdn.com/i/teamlogos/nhl/500/col.png",
+  "NYR": "https://a.espncdn.com/i/teamlogos/nhl/500/nyr.png",
+  // MLB - ESPN
+  "LAD": "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png",
+  "NYY": "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png",
+  "ATL": "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
+  "HOU": "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png",
+  "PHI-mlb": "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png",
+};
+
+function badge(abbr: string, sport?: string): string {
+  // Handle duplicate abbreviations across sports
+  const sportKey = sport ? `${abbr}-${sport}` : abbr;
+  return REAL_BADGES[sportKey] || REAL_BADGES[abbr] || `https://placehold.co/64x64/1E1B3A/7EB6E6?text=${abbr}`;
 }
 
 function makeTeam(id: string, name: string, shortName: string, sport: Sport): Team {
-  return { id, name, shortName, badge: badge(shortName), sport };
+  return { id, name, shortName, badge: badge(shortName, sport), sport };
 }
 
 function makeSquad(

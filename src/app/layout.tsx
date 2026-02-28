@@ -12,7 +12,7 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   title: "ScoreSpark — Live Sports Scores, Smarter",
   description:
-    "Real-time scores across 800+ soccer leagues, NBA, NFL and more. Beautiful data visualization, smart notifications, and draft projections.",
+    "Live scores for soccer, NBA, NFL, NHL, and MLB. Standings, lineups, stats, and transfers — all in one place.",
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "32x32" },

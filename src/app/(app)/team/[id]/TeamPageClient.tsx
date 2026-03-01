@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { TeamDetail, SquadPlayer } from "@/lib/services/team-service";
 import type { Team } from "@/lib/types";
 
@@ -17,7 +17,7 @@ interface TeamMatch {
   competition: string;
 }
 
-type Tab = "overview" | "fixtures" | "squad" | "stats" | "standings";
+type Tab = "overview" | "fixtures" | "squad" | "stats" | "standings" | "transfers" | "news";
 
 const sportColors: Record<string, string> = {
   soccer: "text-sport-soccer",
@@ -382,6 +382,122 @@ function StatsTab({ team, matches }: { team: TeamDetail; matches: TeamMatch[] })
   );
 }
 
+/* ─── Transfers Tab ─── */
+function TransfersTab({ team }: { team: TeamDetail }) {
+  const [transfers, setTransfers] = useState<{
+    in: { name: string; from: string; fee?: string }[];
+    out: { name: string; to: string; fee?: string }[];
+  } | null>(null);
+
+  useEffect(() => {
+    async function fetchTransfers() {
+      try {
+        const espnMatch = team.id.match(/^espn-(\w+)-(?:team-)?(\d+)$/);
+        if (!espnMatch) return;
+        const [, sport, espnId] = espnMatch;
+        
+        // For soccer teams, try to get transfer data
+        if (sport === "soccer") {
+          // ESPN doesn't have a direct transfers API, show squad changes
+          const res = await fetch(`/api/v1/team-form?teamId=${team.id}&sport=soccer`);
+          if (res.ok) {
+            // Placeholder — transfers data isn't readily available from ESPN
+            setTransfers({ in: [], out: [] });
+          }
+        } else {
+          setTransfers({ in: [], out: [] });
+        }
+      } catch { /* ignore */ }
+    }
+    fetchTransfers();
+  }, [team.id]);
+
+  return (
+    <div className="bg-card rounded-2xl border border-white/5 p-6">
+      <h2 className="text-lg font-semibold text-white mb-4">Transfers</h2>
+      {!transfers ? (
+        <p className="text-sm text-white/30 text-center py-8">Loading...</p>
+      ) : transfers.in.length === 0 && transfers.out.length === 0 ? (
+        <p className="text-sm text-white/30 text-center py-8">
+          Transfer data is being added. Check back soon.
+        </p>
+      ) : (
+        <div className="space-y-6">
+          {transfers.in.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-green-400 mb-2">Arrivals</h3>
+              {transfers.in.map((t, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-t border-white/5">
+                  <span className="text-sm text-white/80">{t.name}</span>
+                  <span className="text-xs text-white/40">from {t.from}</span>
+                </div>
+              ))}
+            </div>
+          )}
+          {transfers.out.length > 0 && (
+            <div>
+              <h3 className="text-sm font-semibold text-red-400 mb-2">Departures</h3>
+              {transfers.out.map((t, i) => (
+                <div key={i} className="flex items-center justify-between py-2 border-t border-white/5">
+                  <span className="text-sm text-white/80">{t.name}</span>
+                  <span className="text-xs text-white/40">to {t.to}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/* ─── News Tab ─── */
+function NewsTab({ team }: { team: TeamDetail }) {
+  const [articles, setArticles] = useState<{ title: string; source: string; url: string; time: string }[]>([]);
+
+  useEffect(() => {
+    async function fetchNews() {
+      try {
+        const res = await fetch(`/api/v1/news?sport=${team.sport}&team=${encodeURIComponent(team.name)}`);
+        if (res.ok) {
+          const data = await res.json();
+          setArticles(data.articles || []);
+        }
+      } catch { /* ignore */ }
+    }
+    fetchNews();
+  }, [team.sport, team.name]);
+
+  if (articles.length === 0) {
+    return (
+      <div className="bg-card rounded-2xl border border-white/5 p-6">
+        <h2 className="text-lg font-semibold text-white mb-4">News</h2>
+        <p className="text-sm text-white/30 text-center py-8">
+          No recent news found for {team.name}
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="bg-card rounded-2xl border border-white/5 overflow-hidden">
+      <h2 className="text-lg font-semibold text-white p-4 pb-2">News</h2>
+      {articles.map((article, i) => (
+        <a
+          key={i}
+          href={article.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="flex flex-col gap-1 px-4 py-3 border-t border-white/5 hover:bg-white/5 transition-colors"
+        >
+          <span className="text-sm text-white/80 line-clamp-2">{article.title}</span>
+          <span className="text-[11px] text-white/30">{article.source} · {article.time}</span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
 export default function TeamPageClient({
   team,
   matches,
@@ -396,10 +512,12 @@ export default function TeamPageClient({
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "overview", label: "Overview" },
+    { id: "standings", label: "Table" },
     { id: "fixtures", label: "Fixtures" },
     { id: "squad", label: "Squad" },
     { id: "stats", label: "Stats" },
-    { id: "standings", label: "Standings" },
+    { id: "transfers", label: "Transfers" },
+    { id: "news", label: "News" },
   ];
 
   const sportColor = sportColors[team.sport] ?? "text-sport-soccer";
@@ -440,13 +558,13 @@ export default function TeamPageClient({
         </div>
       </div>
 
-      {/* Tabs */}
-      <div className="flex gap-1 bg-surface rounded-xl p-1">
+      {/* Tabs — scrollable for many tabs */}
+      <div className="flex gap-1 bg-surface rounded-xl p-1 overflow-x-auto scrollbar-hide">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
+            className={`flex-shrink-0 px-4 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
               activeTab === tab.id
                 ? "bg-card text-white shadow-sm"
                 : "text-white/40 hover:text-white/60"
@@ -463,6 +581,8 @@ export default function TeamPageClient({
       {activeTab === "squad" && <SquadTab squad={team.squad} sport={team.sport} />}
       {activeTab === "stats" && <StatsTab team={team} matches={matches} />}
       {activeTab === "standings" && <StandingsTab team={team} />}
+      {activeTab === "transfers" && <TransfersTab team={team} />}
+      {activeTab === "news" && <NewsTab team={team} />}
     </div>
   );
 }

@@ -1817,6 +1817,7 @@ export default function MatchDetail({
         <div className="flex items-center justify-center gap-4">
           {/* Home team */}
           <div className="flex-1 flex flex-col items-center min-w-0">
+            <Link href={`/team/${match.homeTeam.id}`} className="flex flex-col items-center hover:opacity-80 transition-opacity">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={match.homeTeam.badge}
@@ -1835,6 +1836,7 @@ export default function MatchDetail({
             <p className="text-sm font-semibold text-white/90 text-center truncate w-full">
               {match.homeTeam.shortName}
             </p>
+            </Link>
             {match.sportDetail?.homeRecord && (
               <p className="text-[11px] text-white/30 mt-0.5">
                 {match.sportDetail.homeRecord}
@@ -1882,6 +1884,7 @@ export default function MatchDetail({
 
           {/* Away team */}
           <div className="flex-1 flex flex-col items-center min-w-0">
+            <Link href={`/team/${match.awayTeam.id}`} className="flex flex-col items-center hover:opacity-80 transition-opacity">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={match.awayTeam.badge}
@@ -1900,6 +1903,7 @@ export default function MatchDetail({
             <p className="text-sm font-semibold text-white/90 text-center truncate w-full">
               {match.awayTeam.shortName}
             </p>
+            </Link>
             {match.sportDetail?.awayRecord && (
               <p className="text-[11px] text-white/30 mt-0.5">
                 {match.sportDetail.awayRecord}

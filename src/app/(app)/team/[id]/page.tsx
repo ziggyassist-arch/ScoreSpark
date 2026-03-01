@@ -19,7 +19,7 @@ export default async function TeamPage({
   let team;
   try {
     team = mock.isMockMode()
-      ? await mock.getTeamDetail(id)
+      ? (await mock.getTeamDetail(id)) ?? (await getTeamDetail(id))
       : await getTeamDetail(id);
   } catch (err) {
     console.error("[team page] getTeamDetail error:", err);
@@ -32,9 +32,8 @@ export default async function TeamPage({
 
   let matches: Awaited<ReturnType<typeof getTeamMatches>> = [];
   try {
-    matches = mock.isMockMode()
-      ? await mock.getTeamMatches(id)
-      : await getTeamMatches(id);
+    const mockMatches = mock.isMockMode() ? await mock.getTeamMatches(id) : [];
+    matches = mockMatches.length > 0 ? mockMatches : await getTeamMatches(id);
   } catch (err) {
     console.error("[team page] getTeamMatches error:", err);
     matches = [];

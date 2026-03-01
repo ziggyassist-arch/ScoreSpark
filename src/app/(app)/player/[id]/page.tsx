@@ -16,7 +16,7 @@ export default async function PlayerPage({
 }) {
   const { id } = await params;
   const player = mock.isMockMode()
-    ? await mock.getPlayerProfile(id)
+    ? (await mock.getPlayerProfile(id)) ?? (await getPlayerProfile(id))
     : await getPlayerProfile(id);
   if (!player) notFound();
 

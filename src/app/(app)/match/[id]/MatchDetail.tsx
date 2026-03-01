@@ -171,6 +171,63 @@ function TopStatsSummary({ match }: { match: Match }) {
   );
 }
 
+/* ─── Team Form (FotMob-style) ─── */
+function TeamFormSection({ match }: { match: Match }) {
+  const [form, setForm] = useState<{
+    home: { id: string; opponent: string; score: string; result: "W" | "D" | "L"; isHome: boolean }[];
+    away: { id: string; opponent: string; score: string; result: "W" | "D" | "L"; isHome: boolean }[];
+  } | null>(null);
+
+  useEffect(() => {
+    async function fetchForm() {
+      try {
+        const [homeRes, awayRes] = await Promise.all([
+          fetch(`/api/v1/team-form?teamId=${match.homeTeam.id}&sport=${match.sport}`),
+          fetch(`/api/v1/team-form?teamId=${match.awayTeam.id}&sport=${match.sport}`),
+        ]);
+        if (homeRes.ok && awayRes.ok) {
+          const homeData = await homeRes.json();
+          const awayData = await awayRes.json();
+          setForm({ home: homeData.matches || [], away: awayData.matches || [] });
+        }
+      } catch { /* ignore */ }
+    }
+    if (match.sport === "soccer") fetchForm();
+  }, [match.homeTeam.id, match.awayTeam.id, match.sport]);
+
+  if (!form || (form.home.length === 0 && form.away.length === 0)) return null;
+
+  const resultColor = (r: "W" | "D" | "L") =>
+    r === "W" ? "bg-green-500" : r === "D" ? "bg-yellow-500" : "bg-red-500";
+
+  const renderTeamForm = (teamName: string, matches: typeof form.home) => (
+    <div>
+      <p className="text-xs text-white/50 mb-2">{teamName}</p>
+      <div className="space-y-1">
+        {matches.slice(0, 5).map((m, i) => (
+          <Link key={i} href={`/match/${m.id}`} className="flex items-center gap-2 py-1 px-2 rounded hover:bg-white/5 transition-colors">
+            <span className={`w-5 h-5 rounded-full ${resultColor(m.result)} flex items-center justify-center text-[10px] font-bold text-white`}>
+              {m.result}
+            </span>
+            <span className="text-xs text-white/60 flex-1 truncate">{m.opponent}</span>
+            <span className="text-xs text-white/40 tabular-nums">{m.score}</span>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+
+  return (
+    <div className="rounded-xl bg-white/5 p-4">
+      <h3 className="text-sm font-semibold text-white/60 mb-3">Team form</h3>
+      <div className="grid grid-cols-2 gap-4">
+        {renderTeamForm(match.homeTeam.shortName, form.home)}
+        {renderTeamForm(match.awayTeam.shortName, form.away)}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Venue Card (FotMob-style) ─── */
 function VenueCard({ match }: { match: Match }) {
   if (!match.venue) return null;
@@ -550,6 +607,9 @@ function SoccerSummaryTab({ match }: { match: Match }) {
 
       {/* Venue & Referee Card */}
       <VenueCard match={match} />
+
+      {/* Team Form */}
+      <TeamFormSection match={match} />
 
       {match.matchday && (
         <p className="text-xs text-white/30 px-1">

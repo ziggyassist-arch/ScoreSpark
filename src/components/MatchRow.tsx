@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Match } from "@/lib/types";
 import { useFavorites } from "@/lib/favorites";
 import { useSpoilerMode } from "@/lib/spoiler-mode";
@@ -94,6 +95,19 @@ function StatusCell({ match }: { match: Match }) {
   );
 }
 
+function TeamLink({ teamId, children, className }: { teamId: string; children: React.ReactNode; className?: string }) {
+  const router = useRouter();
+  return (
+    <span
+      role="link"
+      className={`cursor-pointer hover:underline decoration-white/20 underline-offset-2 ${className ?? ""}`}
+      onClick={(e) => { e.stopPropagation(); e.preventDefault(); router.push(`/team/${teamId}`); }}
+    >
+      {children}
+    </span>
+  );
+}
+
 export default function MatchRow({ match }: { match: Match }) {
   const { isFavorite } = useFavorites();
   const { isRevealed, revealMatch } = useSpoilerMode();
@@ -142,15 +156,15 @@ export default function MatchRow({ match }: { match: Match }) {
           {homeRedCard && (
             <span className="inline-block w-[3px] h-[10px] bg-red-500 rounded-[1px] flex-shrink-0" />
           )}
-          <span className={`text-[13px] truncate ${
+          <TeamLink teamId={match.homeTeam.id} className={`text-[13px] truncate ${
             homeIsFav ? "text-gold-spark font-semibold" :
             isFinished && homeWinning ? "text-white font-semibold" :
             isLive && homeWinning ? "text-white font-semibold" :
             "text-white/80 font-medium"
           }`}>
             {match.homeTeam.name}
-          </span>
-          <Badge src={match.homeTeam.badge} alt={match.homeTeam.name} />
+          </TeamLink>
+          <TeamLink teamId={match.homeTeam.id}><Badge src={match.homeTeam.badge} alt={match.homeTeam.name} /></TeamLink>
         </div>
 
         {/* Score column */}
@@ -169,15 +183,15 @@ export default function MatchRow({ match }: { match: Match }) {
 
         {/* Away team - left aligned */}
         <div className="flex-1 flex items-center gap-1.5 min-w-0 pl-2">
-          <Badge src={match.awayTeam.badge} alt={match.awayTeam.name} />
-          <span className={`text-[13px] truncate ${
+          <TeamLink teamId={match.awayTeam.id}><Badge src={match.awayTeam.badge} alt={match.awayTeam.name} /></TeamLink>
+          <TeamLink teamId={match.awayTeam.id} className={`text-[13px] truncate ${
             awayIsFav ? "text-gold-spark font-semibold" :
             isFinished && awayWinning ? "text-white font-semibold" :
             isLive && awayWinning ? "text-white font-semibold" :
             "text-white/80 font-medium"
           }`}>
             {match.awayTeam.name}
-          </span>
+          </TeamLink>
           {awayRedCard && (
             <span className="inline-block w-[3px] h-[10px] bg-red-500 rounded-[1px] flex-shrink-0" />
           )}

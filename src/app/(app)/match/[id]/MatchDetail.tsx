@@ -900,7 +900,14 @@ function LineupsTab({
                 position: p.position?.abbreviation ?? "?",
                 id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
               }));
-            return { formation: roster.formation ?? "", starters, substitutes: subs };
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const coachEntry = (roster.coaches || []).find((c: any) => c.position?.id === "1" || c.position?.name === "Head Coach");
+            return { 
+              formation: roster.formation ?? "", 
+              starters, 
+              substitutes: subs,
+              coach: coachEntry?.athlete?.displayName ?? roster.coach?.displayName ?? undefined,
+            };
           };
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const homeRoster = data.rosters.find((r: any) => r.homeAway === "home") ?? data.rosters[0];
@@ -1535,6 +1542,12 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
                   </div>
                 ))}
               </div>
+              {lineup.coach && (
+                <div className="mt-2 pt-2 border-t border-white/5">
+                  <span className="text-[10px] text-white/25">Coach: </span>
+                  <span className="text-[11px] text-white/40">{lineup.coach}</span>
+                </div>
+              )}
             </div>
           );
         })}

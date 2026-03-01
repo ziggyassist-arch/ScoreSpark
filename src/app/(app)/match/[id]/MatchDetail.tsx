@@ -228,6 +228,58 @@ function TeamFormSection({ match }: { match: Match }) {
   );
 }
 
+/* ─── Round Context (other matches in same round) ─── */
+function RoundContext({ match }: { match: Match }) {
+  const [roundMatches, setRoundMatches] = useState<{
+    id: string; homeTeam: string; awayTeam: string;
+    homeBadge: string; awayBadge: string;
+    homeScore: number | null; awayScore: number | null; status: string;
+  }[]>([]);
+
+  useEffect(() => {
+    if (match.sport !== "soccer" || !match.league) return;
+    fetch(`/api/v1/round-matches?league=${encodeURIComponent(match.league)}&matchId=${match.id}`)
+      .then(r => r.ok ? r.json() : { matches: [] })
+      .then(d => setRoundMatches(d.matches || []))
+      .catch(() => {});
+  }, [match.sport, match.league, match.id]);
+
+  if (roundMatches.length === 0) return null;
+
+  return (
+    <div className="rounded-xl bg-white/5 p-4">
+      <h3 className="text-sm font-semibold text-white/60 mb-3">{match.league}</h3>
+      <div className="space-y-1.5">
+        {roundMatches.map(m => (
+          <Link key={m.id} href={`/match/${m.id}`} className="flex items-center justify-between py-1.5 px-2 rounded-lg hover:bg-white/5 transition-colors">
+            <div className="flex items-center gap-1.5 flex-1 min-w-0">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.homeBadge} alt="" className="w-4 h-4 object-contain" />
+              <span className="text-xs text-white/70 truncate">{m.homeTeam}</span>
+            </div>
+            <div className="flex items-center gap-1 px-2">
+              {m.homeScore !== null ? (
+                <>
+                  <span className="text-xs font-bold text-white tabular-nums">{m.homeScore}</span>
+                  <span className="text-[10px] text-white/30">-</span>
+                  <span className="text-xs font-bold text-white tabular-nums">{m.awayScore}</span>
+                </>
+              ) : (
+                <span className="text-[10px] text-white/40">{m.status}</span>
+              )}
+            </div>
+            <div className="flex items-center gap-1.5 flex-1 min-w-0 justify-end">
+              <span className="text-xs text-white/70 truncate text-right">{m.awayTeam}</span>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={m.awayBadge} alt="" className="w-4 h-4 object-contain" />
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ─── Venue Card (FotMob-style) ─── */
 function VenueCard({ match }: { match: Match }) {
   if (!match.venue) return null;
@@ -610,6 +662,9 @@ function SoccerSummaryTab({ match }: { match: Match }) {
 
       {/* Team Form */}
       <TeamFormSection match={match} />
+
+      {/* Round Context — other matches in same league/round */}
+      <RoundContext match={match} />
 
       {match.matchday && (
         <p className="text-xs text-white/30 px-1">

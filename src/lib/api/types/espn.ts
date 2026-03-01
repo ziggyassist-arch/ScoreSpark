@@ -33,6 +33,7 @@ export interface ESPNCompetition {
   date: string;
   venue: ESPNVenue;
   competitors: ESPNCompetitor[];
+  attendance?: number;
   status: ESPNStatus;
   odds?: ESPNOdds[];
   situation?: ESPNSituation;

@@ -28,13 +28,48 @@ const sportColors: Record<string, string> = {
 };
 
 function OverviewTab({ team, recent, upcoming }: { team: TeamDetail; recent: TeamMatch[]; upcoming: TeamMatch[] }) {
+  // Next match
+  const nextMatch = upcoming[0];
+
   return (
     <div className="space-y-6">
+      {/* Next Match */}
+      {nextMatch && (
+        <Link href={`/match/${nextMatch.id}`} className="block">
+          <div className="bg-card rounded-2xl p-4 border border-white/5 hover:bg-white/5 transition-colors">
+            <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">Next match</h3>
+            {nextMatch.competition && (
+              <p className="text-[11px] text-white/30 mb-2">{nextMatch.competition}</p>
+            )}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={nextMatch.homeTeam.badge} alt="" width={24} height={24} className="w-6 h-6 object-contain" />
+                <span className="text-sm text-white/80">{nextMatch.homeTeam.shortName}</span>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-white/50">
+                  {new Date(nextMatch.date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                </p>
+                <p className="text-sm font-bold text-white/70">
+                  {new Date(nextMatch.date).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" })}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm text-white/80">{nextMatch.awayTeam.shortName}</span>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={nextMatch.awayTeam.badge} alt="" width={24} height={24} className="w-6 h-6 object-contain" />
+              </div>
+            </div>
+          </div>
+        </Link>
+      )}
+
       {/* Team Info Card */}
       <div className="bg-card rounded-2xl p-4 border border-white/5 space-y-3">
         {team.venue && (
           <div className="flex justify-between items-center">
-            <span className="text-xs text-white/40">Venue</span>
+            <span className="text-xs text-white/40">Stadium</span>
             <span className="text-sm text-white/70">{team.venue}</span>
           </div>
         )}
@@ -48,12 +83,6 @@ function OverviewTab({ team, recent, upcoming }: { team: TeamDetail; recent: Tea
           <div className="flex justify-between items-center">
             <span className="text-xs text-white/40">Founded</span>
             <span className="text-sm text-white/70">{team.founded}</span>
-          </div>
-        )}
-        {team.colors && (
-          <div className="flex justify-between items-center">
-            <span className="text-xs text-white/40">Colors</span>
-            <span className="text-sm text-white/70">{team.colors}</span>
           </div>
         )}
         {team.squad.length > 0 && (

@@ -5,6 +5,7 @@ import type { Sport } from "@/lib/types";
 import LeagueBar from "@/components/LeagueBar";
 import LiveMatchList from "@/components/LiveMatchList";
 import DateNav from "@/components/DateNav";
+import SportNews from "@/components/SportNews";
 
 const sportLabels: Record<Sport, string> = {
   soccer: "Soccer",
@@ -66,6 +67,9 @@ export default async function SportScoresPage({
 
       {/* Match List with live polling */}
       <LiveMatchList initialMatches={matches} sport={sport as Sport} initialDate={date} />
+
+      {/* News Section */}
+      <SportNews sport={sport as Sport} />
     </div>
   );
 }

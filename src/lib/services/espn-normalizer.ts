@@ -279,6 +279,7 @@ export function normalizeESPNMatch(
     startTime: event.date,
     events: [],
     venue: comp.venue?.fullName,
+    attendance: comp.attendance ? Number(comp.attendance) : undefined,
     source: "live",
     sportDetail: extractSportDetail(home, away, comp, sport),
   };

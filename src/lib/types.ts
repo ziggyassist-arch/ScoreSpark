@@ -95,6 +95,7 @@ export interface Match {
   events: MatchEvent[];
   stats?: MatchStats;
   venue?: string;
+  attendance?: number;
   /** Source identifier: "live" for real API data, "mock" for demo data */
   source?: "live" | "mock";
   /** Sport-specific detail (linescores, leaders, etc.) */

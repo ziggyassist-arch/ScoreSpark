@@ -676,6 +676,7 @@ function LineupsTab({
                 name: p.athlete?.displayName ?? "Unknown",
                 number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
                 position: p.position?.abbreviation ?? "?",
+                id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
               }));
             const subs = (roster.roster || [])
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -685,6 +686,7 @@ function LineupsTab({
                 name: p.athlete?.displayName ?? "Unknown",
                 number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
                 position: p.position?.abbreviation ?? "?",
+                id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
               }));
             return { formation: roster.formation ?? "", starters, substitutes: subs };
           };

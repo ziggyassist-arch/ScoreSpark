@@ -126,25 +126,89 @@ function OverviewTab({ team, recent, upcoming }: { team: TeamDetail; recent: Tea
           <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">
             Next Match
           </h3>
-          <div className="bg-card rounded-xl p-4 border border-white/5">
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex flex-col items-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={upcoming[0].homeTeam.badge} alt="" className="w-10 h-10 object-contain" />
-                <span className="text-xs text-white/70 mt-1">{upcoming[0].homeTeam.shortName}</span>
-              </div>
-              <div className="text-center">
-                <p className="text-lg font-bold text-white/30">vs</p>
-                <p className="text-[10px] text-white/30 mt-0.5">
-                  {new Date(upcoming[0].date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
-                </p>
-              </div>
-              <div className="flex flex-col items-center">
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={upcoming[0].awayTeam.badge} alt="" className="w-10 h-10 object-contain" />
-                <span className="text-xs text-white/70 mt-1">{upcoming[0].awayTeam.shortName}</span>
+          <Link href={`/match/${upcoming[0].id}`} className="block">
+            <div className="bg-card rounded-xl p-4 border border-white/5 hover:bg-white/5 transition-colors">
+              <div className="flex items-center justify-center gap-4">
+                <div className="flex flex-col items-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={upcoming[0].homeTeam.badge} alt="" className="w-10 h-10 object-contain" />
+                  <span className="text-xs text-white/70 mt-1">{upcoming[0].homeTeam.shortName}</span>
+                </div>
+                <div className="text-center">
+                  <p className="text-[10px] text-white/40 mb-0.5">{upcoming[0].competition}</p>
+                  <p className="text-lg font-bold text-white/30">vs</p>
+                  <p className="text-[10px] text-white/30 mt-0.5">
+                    {new Date(upcoming[0].date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                  </p>
+                </div>
+                <div className="flex flex-col items-center">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={upcoming[0].awayTeam.badge} alt="" className="w-10 h-10 object-contain" />
+                  <span className="text-xs text-white/70 mt-1">{upcoming[0].awayTeam.shortName}</span>
+                </div>
               </div>
             </div>
+          </Link>
+        </div>
+      )}
+
+      {/* Fixture Difficulty — FotMob-style */}
+      {upcoming.length > 1 && (
+        <div>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">
+            Fixture Difficulty
+          </h3>
+          <div className="flex gap-2">
+            {upcoming.slice(0, 5).map((m) => {
+              const isHome = m.homeTeam.id === team.id;
+              const opponent = isHome ? m.awayTeam : m.homeTeam;
+              return (
+                <Link
+                  key={m.id}
+                  href={`/match/${m.id}`}
+                  className="flex-1 bg-card rounded-lg p-2 border border-white/5 hover:bg-white/5 transition-colors text-center"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={opponent.badge} alt="" className="w-6 h-6 object-contain mx-auto mb-1" />
+                  <p className="text-[10px] text-white/60 truncate">{opponent.shortName}</p>
+                  <p className="text-[9px] text-white/30">{isHome ? "(H)" : "(A)"}</p>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Upcoming Fixtures List */}
+      {upcoming.length > 1 && (
+        <div>
+          <h3 className="text-xs font-semibold text-white/40 uppercase tracking-wider mb-3">
+            Fixtures
+          </h3>
+          <div className="space-y-1">
+            {upcoming.slice(0, 5).map((m) => (
+              <Link
+                key={m.id}
+                href={`/match/${m.id}`}
+                className="flex items-center justify-between py-2 px-3 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  <span className="text-[10px] text-white/30 w-16">
+                    {new Date(m.date).toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" })}
+                  </span>
+                  <span className="text-[10px] text-white/20">{m.competition}</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={m.homeTeam.badge} alt="" className="w-4 h-4 object-contain" />
+                  <span className="text-xs text-white/60">{m.homeTeam.shortName}</span>
+                  <span className="text-xs text-white/30">vs</span>
+                  <span className="text-xs text-white/60">{m.awayTeam.shortName}</span>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={m.awayTeam.badge} alt="" className="w-4 h-4 object-contain" />
+                </div>
+              </Link>
+            ))}
           </div>
         </div>
       )}

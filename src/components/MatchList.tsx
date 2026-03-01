@@ -2,10 +2,23 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { Match } from "@/lib/types";
 import { groupMatchesByLeague } from "@/lib/mock-data";
 import { useFavorites } from "@/lib/favorites";
 import MatchRow from "./MatchRow";
+
+const LEAGUE_URLS: Record<string, string> = {
+  "Premier League": "/league/epl",
+  "LaLiga": "/league/laliga",
+  "Bundesliga": "/league/bundesliga",
+  "Serie A": "/league/serie-a",
+  "Ligue 1": "/league/ligue-1",
+  "MLS": "/league/mls",
+  "Liga MX": "/league/liga-mx",
+  "Champions League": "/league/champions-league",
+  "Europa League": "/league/europa-league",
+};
 
 export const LEAGUE_LOGOS: Record<string, string> = {
   "NBA": "https://a.espncdn.com/i/teamlogos/leagues/500/nba.png",
@@ -94,9 +107,19 @@ function LeagueSection({ league, matches }: { league: string; matches: Match[] }
           />
         )}
         {flag && <span className="text-xs">{flag}</span>}
-        <span className="text-[11px] font-semibold text-white/50 uppercase tracking-wider flex-1 text-left">
-          {league}
-        </span>
+        {LEAGUE_URLS[league] ? (
+          <Link
+            href={LEAGUE_URLS[league]}
+            onClick={(e) => e.stopPropagation()}
+            className="text-[11px] font-semibold text-white/50 uppercase tracking-wider flex-1 text-left hover:text-white/70 transition-colors"
+          >
+            {league}
+          </Link>
+        ) : (
+          <span className="text-[11px] font-semibold text-white/50 uppercase tracking-wider flex-1 text-left">
+            {league}
+          </span>
+        )}
         {hasLive && (
           <span className="px-1.5 py-0.5 text-[8px] font-bold bg-live-green/15 text-live-green rounded-full">
             LIVE

@@ -16,9 +16,12 @@ export interface MatchEvent {
   minute: number;
   type: "goal" | "yellow-card" | "red-card" | "substitution" | "penalty" | "own-goal";
   player: string;
+  playerId?: string;
   team: "home" | "away";
   assistedBy?: string;
+  assistedById?: string;
   playerOut?: string;
+  playerOutId?: string;
 }
 
 export interface MatchStats {
@@ -168,6 +171,7 @@ export interface LineupPlayer {
   number: number;
   name: string;
   position: string;
+  id?: string;
 }
 
 export interface Lineup {

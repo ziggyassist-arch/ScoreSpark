@@ -790,7 +790,11 @@ function LineupsTab({
                   {lineup.starters.map((player) => (
                     <div key={player.number} className="flex items-center gap-2 py-1">
                       <span className="text-[11px] text-white/30 w-5 tabular-nums">{player.number}</span>
-                      <span className="text-xs text-white/70 truncate">{player.name}</span>
+                      {player.id ? (
+                        <Link href={`/player/${player.id}`} className="text-xs text-white/70 truncate hover:text-white hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
+                      ) : (
+                        <span className="text-xs text-white/70 truncate">{player.name}</span>
+                      )}
                       {player.position && (
                         <span className="text-[9px] text-white/20 ml-auto">{player.position}</span>
                       )}
@@ -802,7 +806,11 @@ function LineupsTab({
                   {lineup.substitutes.map((player) => (
                     <div key={player.number} className="flex items-center gap-2 py-0.5">
                       <span className="text-[10px] text-white/20 w-5 tabular-nums">{player.number}</span>
-                      <span className="text-[11px] text-white/40 truncate">{player.name}</span>
+                      {player.id ? (
+                        <Link href={`/player/${player.id}`} className="text-[11px] text-white/40 truncate hover:text-white/60 hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
+                      ) : (
+                        <span className="text-[11px] text-white/40 truncate">{player.name}</span>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -1191,7 +1199,11 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
                 {lineup.substitutes.map((player) => (
                   <div key={player.number} className="flex items-center gap-1.5 py-0.5">
                     <span className="text-[10px] text-white/20 w-4 tabular-nums text-right">{player.number}</span>
-                    <span className="text-[11px] text-white/40 truncate">{player.name}</span>
+                    {player.id ? (
+                      <Link href={`/player/${player.id}`} className="text-[11px] text-white/40 truncate hover:text-white/60 hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
+                    ) : (
+                      <span className="text-[11px] text-white/40 truncate">{player.name}</span>
+                    )}
                   </div>
                 ))}
               </div>

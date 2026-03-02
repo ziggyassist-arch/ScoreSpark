@@ -1179,8 +1179,9 @@ function FotMobEventsTimeline({ match }: { match: Match }) {
   // Split into first/second half
   const firstHalf = eventsWithScore.filter(e => e.minute <= 45);
   const secondHalf = eventsWithScore.filter(e => e.minute > 45);
-  const htHome = firstHalf.length > 0 ? firstHalf[firstHalf.length - 1].runningScore.split(" - ")[0] : "0";
-  const htAway = firstHalf.length > 0 ? firstHalf[firstHalf.length - 1].runningScore.split(" - ")[2] || firstHalf[firstHalf.length - 1].runningScore.split(" - ")[1] : "0";
+  const htParts = firstHalf.length > 0 ? firstHalf[firstHalf.length - 1].runningScore.split(" - ") : ["0", "0"];
+  const htHome = htParts[0] ?? "0";
+  const htAway = htParts[1] ?? "0";
 
   const renderEvent = (evt: typeof eventsWithScore[0], i: number) => {
     const isHome = evt.team === "home";

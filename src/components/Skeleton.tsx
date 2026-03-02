@@ -86,3 +86,31 @@ export function SkeletonTeamCard() {
     </div>
   );
 }
+
+export function SkeletonPlayerRow() {
+  return (
+    <div className="flex items-center gap-3 px-4 py-3 border-b border-white/[0.04]">
+      <SkeletonLine width="24px" height="14px" />
+      <div className="w-8 h-8 rounded-full bg-white/[0.06] animate-pulse flex-shrink-0" />
+      <div className="flex-1 space-y-1.5">
+        <SkeletonLine width="120px" height="13px" />
+        <SkeletonLine width="80px" height="10px" />
+      </div>
+      <SkeletonLine width="40px" height="16px" />
+    </div>
+  );
+}
+
+export function SkeletonDetailHeader() {
+  return (
+    <div className="bg-card rounded-2xl p-6 border border-white/5 animate-pulse">
+      <div className="flex items-center gap-4">
+        <div className="w-16 h-16 rounded-full bg-white/[0.06]" />
+        <div className="flex-1 space-y-2">
+          <SkeletonLine width="180px" height="20px" />
+          <SkeletonLine width="120px" height="12px" />
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -135,7 +135,7 @@ export default function TransfersPage() {
                 href={item.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block bg-card rounded-xl p-4 border border-white/5 hover:border-white/10 hover:bg-card-hover transition-all group"
+                className="block bg-card rounded-xl p-4 border border-white/5 hover:border-white/10 hover:bg-card-hover transition-all group hover-card-lift"
               >
                 <div className="flex items-start gap-3">
                   <div className="flex-1 min-w-0">

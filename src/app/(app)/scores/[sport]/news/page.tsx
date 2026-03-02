@@ -49,7 +49,7 @@ export default async function NewsPage({
             href={article.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex gap-4 p-4 bg-card rounded-2xl border border-white/5 hover:bg-white/5 hover:border-white/10 transition-all group"
+            className="flex gap-4 p-4 bg-card rounded-2xl border border-white/5 hover:bg-white/5 hover:border-white/10 transition-all group hover-card-lift"
           >
             {article.imageUrl && (
               // eslint-disable-next-line @next/next/no-img-element

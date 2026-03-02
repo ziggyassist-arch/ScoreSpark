@@ -80,7 +80,7 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
                   {row.position}
                 </td>
                 <td className="py-3 px-2">
-                  <div className="flex items-center gap-2">
+                  <Link href={`/team/${row.team?.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
@@ -102,7 +102,7 @@ function SoccerTable({ standings }: { standings: StandingRow[] }) {
                     <span className="text-white/80 font-medium sm:hidden">
                       {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
-                  </div>
+                  </Link>
                 </td>
                 <td className="text-center py-3 px-1 text-white/50 tabular-nums">
                   {row.played}
@@ -202,7 +202,7 @@ function NBATable({ standings }: { standings: NBAStandingRow[] }) {
                   {row.position}
                 </td>
                 <td className="py-3 px-2">
-                  <div className="flex items-center gap-2">
+                  <Link href={`/team/${row.team?.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
@@ -224,7 +224,7 @@ function NBATable({ standings }: { standings: NBAStandingRow[] }) {
                     <span className="text-white/80 font-medium sm:hidden">
                       {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
-                  </div>
+                  </Link>
                 </td>
                 <td className="text-center py-3 px-1 text-white/50 tabular-nums">
                   {row.won}
@@ -293,7 +293,7 @@ function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
                   {row.position}
                 </td>
                 <td className="py-3 px-2">
-                  <div className="flex items-center gap-2">
+                  <Link href={`/team/${row.team?.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
@@ -315,7 +315,7 @@ function NHLTable({ standings }: { standings: NHLStandingRow[] }) {
                     <span className="text-white/80 font-medium sm:hidden">
                       {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
-                  </div>
+                  </Link>
                 </td>
                 <td className="text-center py-3 px-1 text-white/50 tabular-nums">
                   {row.played}
@@ -399,7 +399,7 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
                   {row.position}
                 </td>
                 <td className="py-3 px-2">
-                  <div className="flex items-center gap-2">
+                  <Link href={`/team/${row.team?.id}`} className="flex items-center gap-2 hover:opacity-80 transition-opacity">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={row.team?.badge || `https://placehold.co/40x40/1E1B3A/7EB6E6?text=${encodeURIComponent(row.team?.shortName ?? "?")}`}
@@ -421,7 +421,7 @@ function MLBTable({ standings }: { standings: NBAStandingRow[] }) {
                     <span className="text-white/80 font-medium sm:hidden">
                       {row.team?.shortName ?? row.team?.name ?? "???"}
                     </span>
-                  </div>
+                  </Link>
                 </td>
                 <td className="text-center py-3 px-1 text-white/50 tabular-nums">
                   {row.won}

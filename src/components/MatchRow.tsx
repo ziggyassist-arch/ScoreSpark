@@ -140,7 +140,7 @@ export default function MatchRow({ match }: { match: Match }) {
 
   return (
     <Link href={`/match/${match.id}`} className="block group" onClick={handleReveal}>
-      <div className="flex items-center px-2 py-[7px] hover:bg-white/[0.03] transition-colors border-b border-white/[0.04] last:border-b-0">
+      <div className="flex items-center px-2 py-[7px] hover:bg-white/[0.03] transition-colors border-b border-white/[0.04] last:border-b-0 hover-card-lift">
         {/* Status/Time column */}
         <div className="w-[52px] flex-shrink-0 text-center">
           <StatusCell match={match} />

@@ -219,6 +219,92 @@ html.light ::selection {
 /* Focus border */
 html.light .focus-within\:border-gold-spark\/40:focus-within { border-color: rgba(184, 134, 11, 0.4); }
 
+/* SVG stroke colors for icons */
+html.light svg.text-white\/30 { color: rgba(28, 32, 56, 0.3); }
+html.light svg.text-white\/40 { color: rgba(28, 32, 56, 0.4); }
+html.light svg.text-white\/50 { color: rgba(28, 32, 56, 0.5); }
+
+/* Gradient overlays */
+html.light .from-navy-dark { --tw-gradient-from: #F5F6FA; }
+html.light .to-navy-dark { --tw-gradient-to: #F5F6FA; }
+
+/* Card backgrounds in light: ensure enough contrast */
+html.light .bg-surface {
+  background-color: #FFFFFF;
+}
+
+/* Select dropdowns */
+html.light select {
+  color-scheme: light;
+  background-color: #FFFFFF;
+  color: #1C2038;
+}
+html.light select option {
+  background-color: #FFFFFF;
+  color: #1C2038;
+}
+
+/* Stat bars — ensure visible in light mode */
+html.light .bg-white\/25 { background-color: rgba(28, 32, 56, 0.1); }
+html.light .bg-white\/20 { background-color: rgba(28, 32, 56, 0.08); }
+html.light .bg-white\/15 { background-color: rgba(28, 32, 56, 0.06); }
+html.light .bg-white\/\[0\.02\] { background-color: rgba(28, 32, 56, 0.02); }
+html.light .bg-white\/\[0\.03\] { background-color: rgba(28, 32, 56, 0.03); }
+html.light .bg-white\/\[0\.06\] { background-color: rgba(28, 32, 56, 0.06); }
+html.light .hover\:bg-white\/\[0\.02\]:hover { background-color: rgba(28, 32, 56, 0.03); }
+html.light .hover\:bg-white\/\[0\.03\]:hover { background-color: rgba(28, 32, 56, 0.04); }
+
+/* Dividers */
+html.light .divide-white\/5 > :not([hidden]) ~ :not([hidden]) { border-color: rgba(28, 32, 56, 0.08); }
+
+/* Card hover elevation — FotMob-style subtle depth */
+.hover-card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card-lift:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.05);
+}
+
+html.light .hover-card-lift:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(28, 32, 56, 0.06);
+}
+
+/* Scrollbar for non-hidden areas */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: rgba(28, 32, 56, 0.1);
+}
+html.light ::-webkit-scrollbar-thumb:hover {
+  background: rgba(28, 32, 56, 0.2);
+}
+
+/* Light mode: group-hover text */
+html.light .group-hover\:text-white:hover { color: #1C2038; }
+
+/* Light mode: placeholder text */
+html.light .placeholder\:text-white\/25::placeholder { color: rgba(28, 32, 56, 0.25); }
+
+/* Light mode: ring colors */
+html.light .ring-1.ring-white\/10 { --tw-ring-color: rgba(28, 32, 56, 0.1); }
+
+/* Light mode: focus-within borders */
+html.light .focus-within\:border-white\/20:focus-within { border-color: rgba(28, 32, 56, 0.15); }
+
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }

@@ -10,6 +10,8 @@ const sportFilters: { label: string; value: Sport | "all"; emoji: string }[] = [
   { label: "Soccer", value: "soccer", emoji: "\u26BD" },
   { label: "NBA", value: "nba", emoji: "\uD83C\uDFC0" },
   { label: "NFL", value: "nfl", emoji: "\uD83C\uDFC8" },
+  { label: "NHL", value: "nhl", emoji: "\uD83C\uDFD2" },
+  { label: "MLB", value: "mlb", emoji: "\u26BE" },
 ];
 
 export default function FavoritesView() {

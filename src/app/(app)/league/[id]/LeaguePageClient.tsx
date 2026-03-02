@@ -87,7 +87,7 @@ function MatchesGrid({ matches }: { matches: LeagueMatch[] }) {
     <Link
       key={m.id}
       href={`/match/${m.id}`}
-      className="flex items-center justify-between bg-card rounded-xl p-3 border border-white/5 hover:bg-white/5 transition-colors"
+      className="flex items-center justify-between bg-card rounded-xl p-3 border border-white/5 hover:bg-white/5 transition-colors hover-card-lift"
     >
       <div className="flex items-center gap-2 flex-1 min-w-0">
         {/* eslint-disable-next-line @next/next/no-img-element */}

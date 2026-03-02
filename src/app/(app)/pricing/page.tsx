@@ -60,7 +60,7 @@ export default function PricingPage() {
           return (
             <div
               key={tier}
-              className={`relative rounded-2xl border-2 ${colors.border} ${colors.bg} p-6 flex flex-col`}
+              className={`relative rounded-2xl border-2 ${colors.border} ${colors.bg} p-6 flex flex-col hover-card-lift`}
             >
               {isPopular && (
                 <div className="absolute -top-3 left-1/2 -translate-x-1/2">

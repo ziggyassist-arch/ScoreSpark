@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import { getMatchDetailById } from "@/lib/services/match-service";
-import { allMatches } from "@/lib/mock-data";
+import * as mock from "@/lib/services/mock-provider";
+import { allMockMatches } from "@/lib/mock-data/index";
 import MatchDetail from "./MatchDetail";
 
 export function generateStaticParams() {
   // Pre-generate paths for mock matches; real matches use dynamic rendering
-  return allMatches.map((m) => ({ id: m.id }));
+  return allMockMatches.map((m) => ({ id: m.id }));
 }
 
 export function generateMetadata() {
@@ -20,7 +21,9 @@ export default async function MatchPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const result = await getMatchDetailById(id);
+  const result = mock.isMockMode()
+    ? await mock.getMatchDetailById(id)
+    : await getMatchDetailById(id);
   if (!result) notFound();
 
   return <MatchDetail match={result.match} lineups={result.lineups} />;

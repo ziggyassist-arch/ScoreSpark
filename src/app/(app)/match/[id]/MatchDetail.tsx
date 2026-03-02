@@ -945,7 +945,7 @@ function LineupsTab({
                 position: p.position?.abbreviation ?? "?",
                 id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
                 athleteId: p.athlete?.id ?? undefined,
-                headshot: p.athlete?.id ? `https://a.espn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.athlete.id}.png&w=96&h=70` : undefined,
+                headshot: p.athlete?.id ? `https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.athlete.id}.png&w=96&h=70` : undefined,
               }));
             const subs = (roster.roster || [])
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -957,7 +957,7 @@ function LineupsTab({
                 position: p.position?.abbreviation ?? "?",
                 id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
                 athleteId: p.athlete?.id ?? undefined,
-                headshot: p.athlete?.id ? `https://a.espn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.athlete.id}.png&w=96&h=70` : undefined,
+                headshot: p.athlete?.id ? `https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.athlete.id}.png&w=96&h=70` : undefined,
               }));
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const coachEntry = (roster.coaches || []).find((c: any) => c.position?.id === "1" || c.position?.name === "Head Coach");

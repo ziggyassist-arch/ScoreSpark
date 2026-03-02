@@ -70,19 +70,19 @@ export async function getMatchDetailById(
 
 function buildLineup(teamData: MockTeamData, sport: Sport): Lineup {
   const squad = teamData.squad;
-  const starters = squad.slice(0, sport === "soccer" ? 11 : 5).map((p) => ({
+  const mapPlayer = (p: typeof squad[number]) => ({
     number: p.shirtNumber ?? 0,
     name: p.name,
     position: p.position,
-  }));
-  const substitutes = squad.slice(sport === "soccer" ? 11 : 5).map((p) => ({
-    number: p.shirtNumber ?? 0,
-    name: p.name,
-    position: p.position,
-  }));
+    ...(p.espnId ? {
+      headshot: `https://a.espncdn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.espnId}.png&w=96&h=70`,
+    } : {}),
+  });
+  const starters = squad.slice(0, sport === "soccer" ? 11 : 5).map(mapPlayer);
+  const substitutes = squad.slice(sport === "soccer" ? 11 : 5).map(mapPlayer);
 
   const formation = sport === "soccer" ? "4-3-3" : "";
-  return { formation, starters, substitutes };
+  return { formation, starters, substitutes, coach: teamData.coach };
 }
 
 // ═══════════════════════════════════════════════════════════════

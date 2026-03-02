@@ -1069,6 +1069,17 @@ function LineupsTab({
                 <div className="space-y-1">
                   {lineup.starters.map((player) => (
                     <div key={player.number} className="flex items-center gap-2 py-1">
+                      <div className="w-7 h-7 rounded-full bg-[#d9d9d9] overflow-hidden ring-1 ring-white/10 flex-shrink-0 flex items-center justify-center">
+                        {player.headshot ? (
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={player.headshot} alt="" className="w-full h-full object-cover object-top" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }} />
+                            <PlayerSilhouette className="hidden w-4 h-4" />
+                          </>
+                        ) : (
+                          <PlayerSilhouette className="w-4 h-4" />
+                        )}
+                      </div>
                       <span className="text-[11px] text-white/30 w-5 tabular-nums">{player.number}</span>
                       {player.id ? (
                         <Link href={`/player/${player.id}`} className="text-xs text-white/70 truncate hover:text-white hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
@@ -1085,6 +1096,17 @@ function LineupsTab({
                   <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">Subs</p>
                   {lineup.substitutes.map((player) => (
                     <div key={player.number} className="flex items-center gap-2 py-0.5">
+                      <div className="w-6 h-6 rounded-full bg-[#d9d9d9] overflow-hidden ring-1 ring-white/10 flex-shrink-0 flex items-center justify-center">
+                        {player.headshot ? (
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={player.headshot} alt="" className="w-full h-full object-cover object-top" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }} />
+                            <PlayerSilhouette className="hidden w-3.5 h-3.5" />
+                          </>
+                        ) : (
+                          <PlayerSilhouette className="w-3.5 h-3.5" />
+                        )}
+                      </div>
                       <span className="text-[10px] text-white/20 w-5 tabular-nums">{player.number}</span>
                       {player.id ? (
                         <Link href={`/player/${player.id}`} className="text-[11px] text-white/40 truncate hover:text-white/60 hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
@@ -1464,9 +1486,17 @@ function ratingColor(r: number): string {
   return "bg-live-red/70 text-white";
 }
 
-function FormationRow({ players, color, ratings, events }: {
+function PlayerSilhouette({ className = "w-6 h-6" }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none">
+      <circle cx="12" cy="8" r="4" fill="#999" />
+      <path d="M4 20c0-4.418 3.582-8 8-8s8 3.582 8 8" fill="#999" />
+    </svg>
+  );
+}
+
+function FormationRow({ players, ratings, events }: {
   players: { number: number; name: string; headshot?: string; id?: string }[];
-  color: string;
   ratings?: Map<string, number>;
   events?: MatchEvent[];
 }) {
@@ -1494,10 +1524,10 @@ function FormationRow({ players, color, ratings, events }: {
         const rating = ratings?.get(p.name);
         const pEvents = getPlayerEvents(p.name);
         return (
-          <div key={p.number} className="flex flex-col items-center w-11 sm:w-14">
+          <div key={p.number} className="flex flex-col items-center w-12 sm:w-16">
             <div className="relative">
-              {/* Player circle with headshot or number */}
-              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full ${color} flex items-center justify-center shadow-md overflow-hidden ring-1 ring-white/10`}>
+              {/* Player circle — gray bg with headshot or silhouette */}
+              <div className="w-[42px] h-[42px] sm:w-12 sm:h-12 rounded-full bg-[#d9d9d9] flex items-center justify-center shadow-md overflow-hidden ring-2 ring-white/20">
                 {p.headshot ? (
                   <>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1507,18 +1537,16 @@ function FormationRow({ players, color, ratings, events }: {
                       className="w-full h-full object-cover object-top"
                       onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }}
                     />
-                    <span className="hidden text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+                    <PlayerSilhouette className="hidden w-6 h-6 sm:w-7 sm:h-7" />
                   </>
                 ) : (
-                  <span className="text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+                  <PlayerSilhouette className="w-6 h-6 sm:w-7 sm:h-7" />
                 )}
               </div>
-              {/* Jersey number badge (when headshot is shown) */}
-              {p.headshot && (
-                <div className="absolute -top-0.5 -left-0.5 w-4 h-4 rounded-full bg-black/70 flex items-center justify-center ring-1 ring-white/20">
-                  <span className="text-[7px] font-bold text-white tabular-nums">{p.number}</span>
-                </div>
-              )}
+              {/* Jersey number badge — always shown at bottom-left */}
+              <div className="absolute -bottom-0.5 -left-0.5 w-[18px] h-[18px] sm:w-5 sm:h-5 rounded-full bg-black/70 flex items-center justify-center ring-1 ring-white/20">
+                <span className="text-[7px] sm:text-[8px] font-bold text-white tabular-nums">{p.number}</span>
+              </div>
               {/* Rating badge */}
               {rating !== undefined && (
                 <div className={`absolute -bottom-1 -right-1 w-[18px] h-[18px] sm:w-5 sm:h-5 rounded-full ${ratingColor(rating)} flex items-center justify-center shadow-sm`}>
@@ -1545,7 +1573,7 @@ function FormationRow({ players, color, ratings, events }: {
                 </div>
               )}
             </div>
-            <span className="text-[8px] sm:text-[9px] text-white/70 text-center leading-tight mt-0.5 truncate w-full">
+            <span className="text-[9px] sm:text-[10px] pitch-text text-center leading-tight mt-1 truncate w-full drop-shadow">
               {p.name.split(" ").pop()}
             </span>
           </div>
@@ -1593,49 +1621,59 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
       )}
 
       {/* Full pitch */}
-      <div className="relative bg-gradient-to-b from-emerald-900/50 via-emerald-800/30 to-emerald-900/50 rounded-2xl overflow-hidden">
+      <div className="relative pitch-bg rounded-2xl overflow-hidden max-w-[850px] mx-auto">
         {/* Pitch markings */}
         <div className="absolute inset-0 pointer-events-none">
+          {/* Outer border */}
+          <div className="absolute inset-2 sm:inset-3 border pitch-line rounded-sm" />
           {/* Center line */}
-          <div className="absolute left-4 right-4 top-1/2 h-px bg-white/10" />
+          <div className="absolute left-2 right-2 sm:left-3 sm:right-3 top-1/2 h-px pitch-line-bg" />
           {/* Center circle */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-20 h-20 sm:w-28 sm:h-28 rounded-full border border-white/10" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-24 h-24 sm:w-32 sm:h-32 rounded-full border pitch-line" />
           {/* Center dot */}
-          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-white/15" />
-          {/* Top box */}
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-36 sm:w-48 h-12 sm:h-16 border-b border-l border-r border-white/10 rounded-b-sm" />
-          {/* Bottom box */}
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-36 sm:w-48 h-12 sm:h-16 border-t border-l border-r border-white/10 rounded-t-sm" />
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-2 h-2 rounded-full pitch-line-bg" />
+          {/* Top penalty box */}
+          <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 w-40 sm:w-52 h-14 sm:h-20 border-b border-l border-r pitch-line" />
+          {/* Top six-yard box */}
+          <div className="absolute top-2 sm:top-3 left-1/2 -translate-x-1/2 w-20 sm:w-28 h-6 sm:h-8 border-b border-l border-r pitch-line" />
+          {/* Top penalty spot */}
+          <div className="absolute top-[52px] sm:top-[72px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full pitch-line-bg" />
+          {/* Bottom penalty box */}
+          <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 w-40 sm:w-52 h-14 sm:h-20 border-t border-l border-r pitch-line" />
+          {/* Bottom six-yard box */}
+          <div className="absolute bottom-2 sm:bottom-3 left-1/2 -translate-x-1/2 w-20 sm:w-28 h-6 sm:h-8 border-t border-l border-r pitch-line" />
+          {/* Bottom penalty spot */}
+          <div className="absolute bottom-[52px] sm:bottom-[72px] left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full pitch-line-bg" />
         </div>
 
         {/* Home team — top half */}
-        <div className="relative z-10 px-3 pt-4 pb-2">
-          <div className="flex items-center justify-center gap-2 mb-3">
+        <div className="relative z-10 px-4 pt-6 pb-3">
+          <div className="flex items-center justify-center gap-2 mb-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={match.homeTeam.badge} alt="" className="w-4 h-4 object-contain" />
-            <span className="text-[10px] font-bold text-white/50">{match.homeTeam.shortName} ({lineups.home.formation})</span>
+            <span className="text-[10px] font-bold pitch-text">{match.homeTeam.shortName} ({lineups.home.formation})</span>
           </div>
-          <div className="flex flex-col gap-3 sm:gap-4">
+          <div className="flex flex-col gap-4 sm:gap-5">
             {homeRows.map((row, i) => (
-              <FormationRow key={i} players={row} color="bg-blue-accent/80" ratings={homeRatings} events={match.events.filter(e => e.team === "home")} />
+              <FormationRow key={i} players={row} ratings={homeRatings} events={match.events.filter(e => e.team === "home")} />
             ))}
           </div>
         </div>
 
         {/* Divider */}
-        <div className="h-3 sm:h-4" />
+        <div className="h-4 sm:h-6" />
 
         {/* Away team — bottom half (reversed) */}
-        <div className="relative z-10 px-3 pt-2 pb-4">
-          <div className="flex flex-col-reverse gap-3 sm:gap-4">
+        <div className="relative z-10 px-4 pt-3 pb-6">
+          <div className="flex flex-col-reverse gap-4 sm:gap-5">
             {awayRows.map((row, i) => (
-              <FormationRow key={i} players={row} color="bg-live-red/70" ratings={awayRatings} events={match.events.filter(e => e.team === "away")} />
+              <FormationRow key={i} players={row} ratings={awayRatings} events={match.events.filter(e => e.team === "away")} />
             ))}
           </div>
-          <div className="flex items-center justify-center gap-2 mt-3">
+          <div className="flex items-center justify-center gap-2 mt-4">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={match.awayTeam.badge} alt="" className="w-4 h-4 object-contain" />
-            <span className="text-[10px] font-bold text-white/50">{match.awayTeam.shortName} ({lineups.away.formation})</span>
+            <span className="text-[10px] font-bold pitch-text">{match.awayTeam.shortName} ({lineups.away.formation})</span>
           </div>
         </div>
       </div>
@@ -1672,15 +1710,18 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
                   );
                   return (
                     <div key={player.number} className="flex items-center gap-1.5 py-0.5">
-                      {/* Headshot or number */}
-                      {player.headshot ? (
-                        <div className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={player.headshot} alt="" className="w-full h-full object-cover object-top" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
-                        </div>
-                      ) : (
-                        <span className="text-[10px] text-white/20 w-6 tabular-nums text-right flex-shrink-0">{player.number}</span>
-                      )}
+                      {/* Headshot or silhouette */}
+                      <div className="w-7 h-7 rounded-full bg-[#d9d9d9] overflow-hidden ring-1 ring-white/10 flex-shrink-0 flex items-center justify-center">
+                        {player.headshot ? (
+                          <>
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={player.headshot} alt="" className="w-full h-full object-cover object-top" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }} />
+                            <PlayerSilhouette className="hidden w-4 h-4" />
+                          </>
+                        ) : (
+                          <PlayerSilhouette className="w-4 h-4" />
+                        )}
+                      </div>
                       <div className="flex flex-col min-w-0 flex-1">
                         <div className="flex items-center gap-1">
                           {player.id ? (

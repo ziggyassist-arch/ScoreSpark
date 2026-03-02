@@ -305,6 +305,18 @@ html.light .ring-1.ring-white\/10 { --tw-ring-color: rgba(28, 32, 56, 0.1); }
 /* Light mode: focus-within borders */
 html.light .focus-within\:border-white\/20:focus-within { border-color: rgba(28, 32, 56, 0.15); }
 
+/* ── FotMob-style Pitch ── */
+.pitch-bg { background-color: #01935C; }
+.pitch-line { border-color: #0D9F68; }
+.pitch-line-bg { background-color: #0D9F68; }
+/* Keep green pitch in light mode too */
+html.light .pitch-bg { background-color: #01935C; }
+html.light .pitch-line { border-color: #0D9F68; }
+html.light .pitch-line-bg { background-color: #0D9F68; }
+/* Force white text on pitch regardless of theme */
+.pitch-text { color: rgba(255, 255, 255, 0.7); }
+html.light .pitch-text { color: rgba(255, 255, 255, 0.7); }
+
 .safe-area-bottom {
   padding-bottom: env(safe-area-inset-bottom, 0px);
 }

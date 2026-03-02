@@ -173,6 +173,14 @@ export interface LineupPlayer {
   name: string;
   position: string;
   id?: string;
+  headshot?: string;
+  athleteId?: string;
+  nationality?: string;
+  age?: number;
+  subbedIn?: number;    // minute subbed on
+  subbedOut?: number;   // minute subbed off
+  replacedBy?: string;  // name of player who replaced
+  replacedPlayer?: string; // name of player they replaced
 }
 
 export interface Lineup {

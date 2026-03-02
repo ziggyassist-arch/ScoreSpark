@@ -944,6 +944,8 @@ function LineupsTab({
                 number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
                 position: p.position?.abbreviation ?? "?",
                 id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
+                athleteId: p.athlete?.id ?? undefined,
+                headshot: p.athlete?.id ? `https://a.espn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.athlete.id}.png&w=96&h=70` : undefined,
               }));
             const subs = (roster.roster || [])
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -954,6 +956,8 @@ function LineupsTab({
                 number: p.athlete?.jersey ? parseInt(p.athlete.jersey) : undefined,
                 position: p.position?.abbreviation ?? "?",
                 id: p.athlete?.id ? `espn-soccer-player-${p.athlete.id}` : undefined,
+                athleteId: p.athlete?.id ?? undefined,
+                headshot: p.athlete?.id ? `https://a.espn.com/combiner/i?img=/i/headshots/soccer/players/full/${p.athlete.id}.png&w=96&h=70` : undefined,
               }));
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const coachEntry = (roster.coaches || []).find((c: any) => c.position?.id === "1" || c.position?.name === "Head Coach");
@@ -1459,24 +1463,84 @@ function ratingColor(r: number): string {
   return "bg-live-red/70 text-white";
 }
 
-function FormationRow({ players, color, ratings }: {
-  players: { number: number; name: string }[];
+function FormationRow({ players, color, ratings, events }: {
+  players: { number: number; name: string; headshot?: string; id?: string }[];
   color: string;
   ratings?: Map<string, number>;
+  events?: MatchEvent[];
 }) {
+  // Build event lookup for players
+  const getPlayerEvents = (playerName: string) => {
+    if (!events) return { goals: 0, yellowCard: false, redCard: false, subbedOff: false };
+    const lastName = playerName.split(" ").pop()?.toLowerCase() ?? "";
+    const fullLower = playerName.toLowerCase();
+    let goals = 0, yellowCard = false, redCard = false, subbedOff = false;
+    for (const e of events) {
+      const eName = (e.player ?? "").toLowerCase();
+      if (eName === fullLower || eName.endsWith(lastName) || lastName.length > 3 && eName.includes(lastName)) {
+        if (e.type === "goal" || e.type === "penalty") goals++;
+        if (e.type === "yellow-card") yellowCard = true;
+        if (e.type === "red-card") redCard = true;
+        if (e.type === "substitution" && e.playerOut?.toLowerCase().includes(lastName)) subbedOff = true;
+      }
+    }
+    return { goals, yellowCard, redCard, subbedOff };
+  };
+
   return (
     <div className="flex justify-center gap-1 sm:gap-3">
       {players.map((p) => {
         const rating = ratings?.get(p.name);
+        const pEvents = getPlayerEvents(p.name);
         return (
           <div key={p.number} className="flex flex-col items-center w-11 sm:w-14">
             <div className="relative">
-              <div className={`w-8 h-8 sm:w-9 sm:h-9 rounded-full ${color} flex items-center justify-center shadow-md`}>
-                <span className="text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+              {/* Player circle with headshot or number */}
+              <div className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full ${color} flex items-center justify-center shadow-md overflow-hidden ring-1 ring-white/10`}>
+                {p.headshot ? (
+                  <>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={p.headshot}
+                      alt={p.name}
+                      className="w-full h-full object-cover object-top"
+                      onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; (e.target as HTMLImageElement).nextElementSibling?.classList.remove("hidden"); }}
+                    />
+                    <span className="hidden text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+                  </>
+                ) : (
+                  <span className="text-[11px] sm:text-xs font-bold text-white tabular-nums">{p.number}</span>
+                )}
               </div>
+              {/* Jersey number badge (when headshot is shown) */}
+              {p.headshot && (
+                <div className="absolute -top-0.5 -left-0.5 w-4 h-4 rounded-full bg-black/70 flex items-center justify-center ring-1 ring-white/20">
+                  <span className="text-[7px] font-bold text-white tabular-nums">{p.number}</span>
+                </div>
+              )}
+              {/* Rating badge */}
               {rating !== undefined && (
-                <div className={`absolute -bottom-1 -right-1 w-4 h-4 sm:w-[18px] sm:h-[18px] rounded-full ${ratingColor(rating)} flex items-center justify-center`}>
+                <div className={`absolute -bottom-1 -right-1 w-[18px] h-[18px] sm:w-5 sm:h-5 rounded-full ${ratingColor(rating)} flex items-center justify-center shadow-sm`}>
                   <span className="text-[7px] sm:text-[8px] font-bold tabular-nums">{rating.toFixed(1)}</span>
+                </div>
+              )}
+              {/* Event badges */}
+              <div className="absolute -top-0.5 -right-0.5 flex flex-col gap-px">
+                {pEvents.goals > 0 && (
+                  <div className="w-3.5 h-3.5 rounded-full bg-white flex items-center justify-center shadow-sm">
+                    <span className="text-[7px]">⚽</span>
+                  </div>
+                )}
+                {pEvents.yellowCard && (
+                  <div className="w-2.5 h-3 rounded-[1px] bg-yellow-400 shadow-sm" />
+                )}
+                {pEvents.redCard && (
+                  <div className="w-2.5 h-3 rounded-[1px] bg-red-600 shadow-sm" />
+                )}
+              </div>
+              {pEvents.subbedOff && (
+                <div className="absolute -bottom-1 -left-1 w-3.5 h-3.5 rounded-full bg-orange-500/80 flex items-center justify-center">
+                  <span className="text-[6px]">↔</span>
                 </div>
               )}
             </div>
@@ -1491,14 +1555,14 @@ function FormationRow({ players, color, ratings }: {
 }
 
 function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away: Lineup }; match: Match }) {
-  function buildRows(lineup: Lineup): { number: number; name: string }[][] {
+  function buildRows(lineup: Lineup): { number: number; name: string; headshot?: string; id?: string }[][] {
     const parts = lineup.formation?.split("-").map(Number).filter(Boolean) ?? [];
     if (parts.length === 0) return [];
     const rowSizes = [1, ...parts]; // GK + formation
-    const rows: { number: number; name: string }[][] = [];
+    const rows: { number: number; name: string; headshot?: string; id?: string }[][] = [];
     let idx = 0;
     for (const size of rowSizes) {
-      const row: { number: number; name: string }[] = [];
+      const row: { number: number; name: string; headshot?: string; id?: string }[] = [];
       for (let i = 0; i < size && idx < lineup.starters.length; i++) {
         row.push(lineup.starters[idx]);
         idx++;
@@ -1552,7 +1616,7 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
           </div>
           <div className="flex flex-col gap-3 sm:gap-4">
             {homeRows.map((row, i) => (
-              <FormationRow key={i} players={row} color="bg-blue-accent/80" ratings={homeRatings} />
+              <FormationRow key={i} players={row} color="bg-blue-accent/80" ratings={homeRatings} events={match.events.filter(e => e.team === "home")} />
             ))}
           </div>
         </div>
@@ -1564,7 +1628,7 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
         <div className="relative z-10 px-3 pt-2 pb-4">
           <div className="flex flex-col-reverse gap-3 sm:gap-4">
             {awayRows.map((row, i) => (
-              <FormationRow key={i} players={row} color="bg-live-red/70" ratings={awayRatings} />
+              <FormationRow key={i} players={row} color="bg-live-red/70" ratings={awayRatings} events={match.events.filter(e => e.team === "away")} />
             ))}
           </div>
           <div className="flex items-center justify-center gap-2 mt-3">
@@ -1580,27 +1644,71 @@ function FullPitchFormation({ lineups, match }: { lineups: { home: Lineup; away:
         {(["home", "away"] as const).map((side) => {
           const lineup = lineups[side];
           const team = side === "home" ? match.homeTeam : match.awayTeam;
+          const sideEvents = match.events.filter(e => e.team === side);
+          // Build sub info: which sub came on for whom and when
+          const subEvents = sideEvents.filter(e => e.type === "substitution");
           return (
             <div key={side}>
               <p className="text-[10px] text-white/30 uppercase tracking-wider mb-2 font-bold">
                 {team.shortName} Subs
               </p>
-              <div className="space-y-0.5">
-                {lineup.substitutes.map((player) => (
-                  <div key={player.number} className="flex items-center gap-1.5 py-0.5">
-                    <span className="text-[10px] text-white/20 w-4 tabular-nums text-right">{player.number}</span>
-                    {player.id ? (
-                      <Link href={`/player/${player.id}`} className="text-[11px] text-white/40 truncate hover:text-white/60 hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
-                    ) : (
-                      <span className="text-[11px] text-white/40 truncate">{player.name}</span>
-                    )}
-                  </div>
-                ))}
+              <div className="space-y-1">
+                {lineup.substitutes.map((player) => {
+                  const lastName = player.name.split(" ").pop()?.toLowerCase() ?? "";
+                  // Find if this sub came on
+                  const subOn = subEvents.find(e => {
+                    const pName = (e.player ?? "").toLowerCase();
+                    const pOut = (e.playerOut ?? "").toLowerCase();
+                    return pName.includes(lastName) || pOut.includes(lastName);
+                  });
+                  // Find events this sub was involved in after coming on
+                  const subGoals = sideEvents.filter(e =>
+                    (e.type === "goal" || e.type === "penalty") &&
+                    (e.player ?? "").toLowerCase().includes(lastName)
+                  ).length;
+                  const subYellow = sideEvents.some(e =>
+                    e.type === "yellow-card" && (e.player ?? "").toLowerCase().includes(lastName)
+                  );
+                  return (
+                    <div key={player.number} className="flex items-center gap-1.5 py-0.5">
+                      {/* Headshot or number */}
+                      {player.headshot ? (
+                        <div className="w-6 h-6 rounded-full overflow-hidden ring-1 ring-white/10 flex-shrink-0">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={player.headshot} alt="" className="w-full h-full object-cover object-top" onError={(e) => { (e.target as HTMLImageElement).style.display = "none"; }} />
+                        </div>
+                      ) : (
+                        <span className="text-[10px] text-white/20 w-6 tabular-nums text-right flex-shrink-0">{player.number}</span>
+                      )}
+                      <div className="flex flex-col min-w-0 flex-1">
+                        <div className="flex items-center gap-1">
+                          {player.id ? (
+                            <Link href={`/player/${player.id}`} className="text-[11px] text-white/50 truncate hover:text-white/70 hover:underline decoration-white/20 underline-offset-2 transition-colors">{player.name}</Link>
+                          ) : (
+                            <span className="text-[11px] text-white/50 truncate">{player.name}</span>
+                          )}
+                          {subGoals > 0 && <span className="text-[8px]">⚽</span>}
+                          {subYellow && <span className="text-[8px]">🟨</span>}
+                        </div>
+                        {subOn && (
+                          <span className="text-[9px] text-white/25">
+                            {subOn.minute}&apos; ↔ {subOn.player ?? ""}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
               {lineup.coach && (
-                <div className="mt-2 pt-2 border-t border-white/5">
-                  <span className="text-[10px] text-white/25">Coach: </span>
-                  <span className="text-[11px] text-white/40">{lineup.coach}</span>
+                <div className="mt-3 pt-2 border-t border-white/5 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-white/5 flex items-center justify-center flex-shrink-0">
+                    <span className="text-[9px] text-white/30">👔</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-white/25 uppercase tracking-wider">Coach</span>
+                    <p className="text-[11px] text-white/50">{lineup.coach}</p>
+                  </div>
                 </div>
               )}
             </div>

@@ -229,6 +229,121 @@ function TeamFormSection({ match }: { match: Match }) {
 }
 
 /* ─── Round Context (other matches in same round) ─── */
+function NextMatchSection({ match }: { match: Match }) {
+  const [nextMatches, setNextMatches] = useState<{ home: any; away: any } | null>(null);
+
+  useEffect(() => {
+    if (match.status === "upcoming") return;
+
+    const fetchNext = async (teamId: string) => {
+      try {
+        const res = await fetch(`/api/v1/team-form?teamId=${teamId}&sport=${match.sport}`);
+        if (!res.ok) return null;
+        const data = await res.json();
+        // team-form returns recent results; we need upcoming — check if there's a next game
+        // Actually, let's use ESPN schedule directly for upcoming
+        return null; // Will implement via dedicated endpoint
+      } catch { return null; }
+    };
+
+    // For now, try to get next matches from ESPN schedule
+    const fetchNextFromSchedule = async (teamId: string) => {
+      try {
+        // Extract ESPN team ID
+        const espnId = teamId.replace("espn-soccer-", "").replace("fd-", "");
+        if (!espnId || isNaN(Number(espnId))) return null;
+
+        const leagues = ["eng.1","esp.1","ger.1","ita.1","fra.1","usa.1","uefa.champions","rus.1"];
+        for (const league of leagues) {
+          try {
+            const res = await fetch(`https://site.api.espn.com/apis/site/v2/sports/soccer/${league}/teams/${espnId}/schedule`);
+            if (!res.ok) continue;
+            const data = await res.json();
+            const events = data?.events ?? [];
+            const now = new Date();
+            const upcoming = events.find((e: any) => {
+              const d = new Date(e.date);
+              return d > now && e.competitions?.[0]?.status?.type?.name !== "STATUS_FINAL";
+            });
+            if (upcoming) {
+              const comp = upcoming.competitions?.[0];
+              const homeComp = comp?.competitors?.find((c: any) => c.homeAway === "home");
+              const awayComp = comp?.competitors?.find((c: any) => c.homeAway === "away");
+              return {
+                date: upcoming.date,
+                league: upcoming.season?.slug ?? comp?.league?.abbreviation ?? "",
+                home: { name: homeComp?.team?.shortDisplayName ?? "TBD", badge: homeComp?.team?.logo },
+                away: { name: awayComp?.team?.shortDisplayName ?? "TBD", badge: awayComp?.team?.logo },
+                id: `espn-soccer-${upcoming.id}`,
+              };
+            }
+          } catch { continue; }
+        }
+        return null;
+      } catch { return null; }
+    };
+
+    Promise.all([
+      fetchNextFromSchedule(match.homeTeam.id),
+      fetchNextFromSchedule(match.awayTeam.id),
+    ]).then(([home, away]) => {
+      if (home || away) setNextMatches({ home, away });
+    });
+  }, [match.homeTeam.id, match.awayTeam.id, match.sport, match.status]);
+
+  if (!nextMatches) return null;
+
+  const renderNext = (teamName: string, next: any) => {
+    if (!next) return null;
+    const date = new Date(next.date);
+    const dayStr = date.toLocaleDateString(undefined, { weekday: "short", month: "short", day: "numeric" });
+    const timeStr = date.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+
+    return (
+      <Link href={`/match/${next.id}`} className="flex items-center gap-3 bg-white/[0.03] rounded-lg p-3 hover:bg-white/[0.06] transition-colors">
+        <div className="flex items-center gap-2 flex-1 min-w-0">
+          {next.home.badge && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={next.home.badge} alt="" className="w-5 h-5 object-contain" />
+          )}
+          <span className="text-xs text-white/70 truncate">{next.home.name}</span>
+        </div>
+        <div className="flex flex-col items-center flex-shrink-0">
+          <span className="text-[10px] text-white/40">{timeStr}</span>
+          <span className="text-[9px] text-white/25">{dayStr}</span>
+        </div>
+        <div className="flex items-center gap-2 flex-1 min-w-0 justify-end">
+          <span className="text-xs text-white/70 truncate">{next.away.name}</span>
+          {next.away.badge && (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={next.away.badge} alt="" className="w-5 h-5 object-contain" />
+          )}
+        </div>
+      </Link>
+    );
+  };
+
+  return (
+    <div className="rounded-xl bg-white/[0.03] p-4">
+      <h3 className="text-sm font-semibold text-white/60 mb-3">Next match</h3>
+      <div className="space-y-2">
+        {nextMatches.home && (
+          <div>
+            <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">{match.homeTeam.shortName}</p>
+            {renderNext(match.homeTeam.shortName, nextMatches.home)}
+          </div>
+        )}
+        {nextMatches.away && (
+          <div>
+            <p className="text-[10px] text-white/30 uppercase tracking-wider mb-1">{match.awayTeam.shortName}</p>
+            {renderNext(match.awayTeam.shortName, nextMatches.away)}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function RoundContext({ match }: { match: Match }) {
   const [roundMatches, setRoundMatches] = useState<{
     id: string; homeTeam: string; awayTeam: string;
@@ -748,6 +863,9 @@ function SoccerSummaryTab({ match }: { match: Match }) {
 
       {/* Team Form */}
       <TeamFormSection match={match} />
+
+      {/* Next Match for each team */}
+      <NextMatchSection match={match} />
 
       {/* Round Context — other matches in same league/round */}
       <RoundContext match={match} />

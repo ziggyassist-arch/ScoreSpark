@@ -186,6 +186,13 @@ export async function getESPNSoccerScoreboard(
 export async function getESPNSoccerStandings(
   leagueSlug: string
 ): Promise<ESPNStandingsResponse> {
+  // Primary: web API (more reliable for soccer standings)
+  const webUrl = `${WEB_BASE_URL}/v2/sports/soccer/${leagueSlug}/standings`;
+  try {
+    const result = await fetchESPN<ESPNStandingsResponse>(webUrl);
+    if (result?.children?.[0]?.standings?.entries?.length) return result;
+  } catch { /* fall through */ }
+  // Fallback: standard API
   const url = `${BASE_URL}/v2/sports/soccer/${leagueSlug}/standings`;
   return fetchESPN<ESPNStandingsResponse>(url);
 }

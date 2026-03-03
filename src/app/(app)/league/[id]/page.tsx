@@ -42,9 +42,12 @@ const LEAGUE_MAP: Record<string, { name: string; espnSlug: string; sport: string
 
 async function fetchLeagueData(espnSlug: string) {
   const base = "https://site.api.espn.com/apis/site/v2/sports/soccer";
+  const webBase = "https://site.web.api.espn.com/apis/v2/sports/soccer";
   
   const [standingsRes, scoresRes] = await Promise.all([
-    fetch(`${base}/${espnSlug}/standings`, { next: { revalidate: 300 } }),
+    fetch(`${webBase}/${espnSlug}/standings`, { next: { revalidate: 300 } }).catch(() =>
+      fetch(`${base}/${espnSlug}/standings`, { next: { revalidate: 300 } })
+    ),
     fetch(`${base}/${espnSlug}/scoreboard`, { next: { revalidate: 120 } }),
   ]);
 

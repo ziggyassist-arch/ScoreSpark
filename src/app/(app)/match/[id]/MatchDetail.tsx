@@ -281,6 +281,89 @@ function RoundContext({ match }: { match: Match }) {
 }
 
 /* ─── Venue Card (FotMob-style) ─── */
+function MatchInsights({ match }: { match: Match }) {
+  if (match.status === "upcoming" || !match.stats) return null;
+
+  const insights: string[] = [];
+  const home = match.homeTeam.shortName;
+  const away = match.awayTeam.shortName;
+  const stats = match.stats;
+
+  // Possession dominance
+  if (stats.possession) {
+    const [h, a] = stats.possession;
+    if (h > 65) insights.push(`${home} dominated possession with ${h}%`);
+    else if (a > 65) insights.push(`${away} dominated possession with ${a}%`);
+  }
+
+  // Shot efficiency
+  if (stats.shotsOnTarget && stats.shots) {
+    const [hSot, aSot] = stats.shotsOnTarget;
+    const [hTs, aTs] = stats.shots;
+    if (hTs > 0 && hSot / hTs > 0.5 && hTs >= 8) insights.push(`${home} put ${hSot} of ${hTs} shots on target (${Math.round(hSot/hTs*100)}% accuracy)`);
+    if (aTs > 0 && aSot / aTs > 0.5 && aTs >= 8) insights.push(`${away} put ${aSot} of ${aTs} shots on target (${Math.round(aSot/aTs*100)}% accuracy)`);
+    if (hTs >= 15) insights.push(`${home} fired ${hTs} shots in this match`);
+    if (aTs >= 15) insights.push(`${away} fired ${aTs} shots in this match`);
+  }
+
+  // Goals
+  const homeGoals = match.events.filter(e => e.team === "home" && (e.type === "goal" || e.type === "penalty")).length;
+  const awayGoals = match.events.filter(e => e.team === "away" && (e.type === "goal" || e.type === "penalty")).length;
+  const totalGoals = homeGoals + awayGoals;
+  if (totalGoals >= 4) insights.push(`A ${totalGoals}-goal thriller at ${match.venue ?? "this venue"}`);
+  if (totalGoals === 0) insights.push("Both sides failed to find the net in a goalless encounter");
+
+  // Cards
+  const cards = match.events.filter(e => e.type === "yellow-card" || e.type === "red-card");
+  const reds = cards.filter(e => e.type === "red-card");
+  if (reds.length > 0) insights.push(`${reds.map(r => r.player).join(" and ")} saw red in this match`);
+  if (cards.length >= 6) insights.push(`A feisty affair with ${cards.length} cards shown`);
+
+  // Late drama
+  const lateGoals = match.events.filter(e => (e.type === "goal" || e.type === "penalty") && e.minute >= 85);
+  if (lateGoals.length > 0) {
+    insights.push(`Late drama: ${lateGoals.map(g => `${g.player} (${g.minute}')`).join(", ")}`);
+  }
+
+  // Clean sheet
+  if (match.homeScore === 0 && match.status === "finished") insights.push(`${away} kept a clean sheet`);
+  if (match.awayScore === 0 && match.status === "finished") insights.push(`${home} kept a clean sheet`);
+
+  // Form context
+  if (match.homeForm) {
+    const homeWins = match.homeForm.filter(f => f === "W").length;
+    if (homeWins >= 4) insights.push(`${home} came in on a hot streak — ${homeWins} wins in their last 5`);
+    const homeLosses = match.homeForm.filter(f => f === "L").length;
+    if (homeLosses >= 4) insights.push(`${home} have been struggling — ${homeLosses} losses in their last 5`);
+  }
+  if (match.awayForm) {
+    const awayWins = match.awayForm.filter(f => f === "W").length;
+    if (awayWins >= 4) insights.push(`${away} came in on a hot streak — ${awayWins} wins in their last 5`);
+  }
+
+  if (insights.length === 0) return null;
+
+  return (
+    <div className="rounded-xl bg-white/[0.03] p-4">
+      <h3 className="text-sm font-semibold text-white/60 mb-3 flex items-center gap-2">
+        <svg className="w-4 h-4 text-gold-spark/70" fill="currentColor" viewBox="0 0 20 20">
+          <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM4 11a1 1 0 100-2H3a1 1 0 000 2h1zM10 18a1 1 0 001-1v-1a1 1 0 10-2 0v1a1 1 0 001 1z" />
+          <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z" clipRule="evenodd" />
+        </svg>
+        Insights
+      </h3>
+      <div className="space-y-2">
+        {insights.slice(0, 6).map((insight, i) => (
+          <div key={i} className="flex items-start gap-2">
+            <span className="text-gold-spark/50 mt-0.5 text-xs">•</span>
+            <p className="text-xs text-white/50 leading-relaxed">{insight}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function VenueCard({ match }: { match: Match }) {
   if (!match.venue) return null;
 
@@ -651,6 +734,9 @@ function SoccerSummaryTab({ match }: { match: Match }) {
 
       {/* Top Stats Summary */}
       <TopStatsSummary match={match} />
+
+      {/* Match Insights */}
+      <MatchInsights match={match} />
 
       {/* Events Timeline */}
       {match.events.length > 0 && (
